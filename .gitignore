@@ -1,0 +1,46 @@
+appsettings.json
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+nupkg/
+
+# Visual Studio Code
+.vscode
+
+# Rider
+.idea
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio 2015
+.vs/
+api-server/obj/Mindmap.csproj.nuget.cache
+api-server/obj/Mindmap.csproj.nuget.cache
+api-server/obj/Mindmap.csproj.nuget.cache
+api-server/obj/Mindmap.csproj.nuget.g.props
+api-server/obj/Mindmap.csproj.nuget.g.props
+api-server/obj/Mindmap.csproj.nuget.g.targets
+api-server/obj/Mindmap.csproj.nuget.cache
+api-server/obj/project.assets.json

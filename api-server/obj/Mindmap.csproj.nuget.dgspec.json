@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/huangpo-hsiang/project/mindmap/mindmap/mindmap.csproj": {}
+    "/home/huangpo-hsiang/project/mindmap/api-server/Mindmap.csproj": {}
   },
   "projects": {
-    "/home/huangpo-hsiang/project/mindmap/mindmap/mindmap.csproj": {
+    "/home/huangpo-hsiang/project/mindmap/api-server/Mindmap.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/huangpo-hsiang/project/mindmap/mindmap/mindmap.csproj",
-        "projectName": "mindmap",
-        "projectPath": "/home/huangpo-hsiang/project/mindmap/mindmap/mindmap.csproj",
+        "projectUniqueName": "/home/huangpo-hsiang/project/mindmap/api-server/Mindmap.csproj",
+        "projectName": "Mindmap",
+        "projectPath": "/home/huangpo-hsiang/project/mindmap/api-server/Mindmap.csproj",
         "packagesPath": "/home/huangpo-hsiang/.nuget/packages/",
-        "outputPath": "/home/huangpo-hsiang/project/mindmap/mindmap/obj/",
+        "outputPath": "/home/huangpo-hsiang/project/mindmap/api-server/obj/",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "/usr/share/dotnet/sdk/NuGetFallbackFolder"
@@ -50,11 +50,19 @@
               "target": "Package",
               "version": "[2.2.0, )"
             },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[2.2.4, )"
+            },
             "Microsoft.NETCore.App": {
               "suppressParent": "All",
               "target": "Package",
               "version": "[2.2.0, )",
               "autoReferenced": true
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[2.2.0, )"
             }
           },
           "imports": [

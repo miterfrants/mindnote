@@ -1,0 +1,70 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Net;
+using System.Net.Cache;
+using System.Net.Http.Headers;
+using System.Net.WebSockets;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.IdentityModel.Tokens;
+
+using Mindmap.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using Mindmap.Services;
+
+namespace Mindmap.Controllers {
+    [Authorize]
+    [Route ("mindmap/api/v1/auth")]
+    [ApiController]
+    public class AuthController : ControllerBase {
+        private readonly MindmapContext _context;
+        private readonly UserService _userService;
+
+        public AuthController (MindmapContext context, UserService userService) {
+            _context = context;
+            _userService = userService;
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public async Task<dynamic> Post ([FromBody] dynamic postBody) {
+            string token = postBody["code"];
+            // string authorization = Request.Headers["Authorization"];
+            // if (authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) {
+            // validate token 
+            HttpClient http = new HttpClient();
+            string googleValidateUserUrl = "https://www.googleapis.com/oauth2/v3/userinfo?access_token=";
+            HttpResponseMessage response = await http.GetAsync(googleValidateUserUrl+token);
+            string result = await response.Content.ReadAsStringAsync();
+            if((int) response.StatusCode == StatusCodes.Status200OK) {
+                // check user exists
+                var userFromGoogle = JsonConvert.DeserializeObject<JObject>(result);
+                string sub = (string) userFromGoogle["sub"];
+                string email = (string) userFromGoogle["email"];
+                string name = (string) userFromGoogle["name"];
+                User currentUser;
+                if (_context.User.Where(rec => rec.Sub == sub).Count () == 0) {
+                    currentUser = new User { Email = email,  Provider= "GOOGLE", Sub= sub, FullName= name };
+                    _context.User.Add (currentUser);
+                    _context.SaveChanges ();
+                } else {
+                    currentUser = _context.User.SingleOrDefault(rec => rec.Sub == sub); 
+                }
+
+                // generate token
+                userFromGoogle.Add("token", _userService.GenerateToken(currentUser));
+                return userFromGoogle;
+            } else {
+                throw new Exception("Token Failed");
+            }
+        }
+    }
+}
