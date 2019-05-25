@@ -1,4 +1,11 @@
-# How to launch
+# Launch api service
+
+## Build a Docker Image
+```
+docker build -t mindmap
+```
+
+## Launch Docker container
 
 ```
 docker run \
