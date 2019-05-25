@@ -17,3 +17,15 @@ docker run \
 --name mindmap-api-server \
 -p 8081:8081 mindmap-api-server
 ```
+
+secrets.json
+```
+{
+    "Config": {
+        "Secrets": {
+            "DBConnectionString": "host=127.0.0.1;port=5432;database=xxxx;username=xxxx;password=xxxx",
+            "JwtKey": "xxxx"
+        }
+    }
+}
+```
