@@ -25,9 +25,17 @@ namespace Mindmap
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile($"secrets.json", optional: true)
+                .AddEnvironmentVariables();
+
+            // Configuration = configuration;
+            Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
@@ -36,18 +44,19 @@ namespace Mindmap
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
+            
             // inject variable to application layer from appsettings.json
             AppSettings appSettings = new AppSettings();
-            Configuration.Bind("Startup", appSettings);
-            services.Configure<AppSettings>(Configuration.GetSection("Startup"));
+            Configuration.GetSection("Config").Bind(appSettings);
+            services.Configure<AppSettings>(Configuration.GetSection("Config"));
 
             // setup db context
-            services.AddDbContext<MindmapContext>(options => options.UseNpgsql(appSettings.ConnectionStrings.DB));
-            
+            services.AddDbContext<MindmapContext>(options => options.UseNpgsql(appSettings.Secrets.DBConnectionString));
+
             // add JWT secret to application layer 
-            var encodedJwtSecret = Encoding.ASCII.GetBytes(appSettings.Auth.JwtSecret);
-            services.AddAuthentication(x => {
+            var encodedJwtSecret = Encoding.ASCII.GetBytes(appSettings.Secrets.JwtKey);
+            services.AddAuthentication(x =>
+            {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
@@ -70,6 +79,7 @@ namespace Mindmap
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            Newtonsoft.Json.JsonConvert.SerializeObject(env);
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -79,7 +89,7 @@ namespace Mindmap
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();

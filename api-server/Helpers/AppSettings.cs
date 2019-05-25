@@ -4,16 +4,23 @@ namespace Mindmap.Helpers
 {
     public class AppSettings
     {
-        public Auth Auth { get; set; }
-        public ConnectionStrings ConnectionStrings  { get; set; }
+        public Secrets Secrets { get; set; }
+        public Common Common { get; set; }
     }
 
-    public class Auth {
-        public string JwtSecret { get; set; }
+    public class Common
+    {
+        public Auth Auth { get; set; }
+    }
+
+    public class Auth
+    {
         public Int16 JwtExpiration { get; set; }
     }
 
-    public class ConnectionStrings {
-        public string DB { get; set; }
+    public class Secrets
+    {
+        public string DBConnectionString { get; set; }
+        public string JwtKey { get; set; }
     }
 }

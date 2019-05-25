@@ -19,8 +19,8 @@ namespace Mindmap.Services
         private readonly MindmapContext _context;
         public UserService(IOptions<AppSettings> appSettings, MindmapContext context)
         {
-            _jwtSecret = appSettings.Value.Auth.JwtSecret;
-            _jwtExpiration = appSettings.Value.Auth.JwtExpiration;
+            _jwtSecret = appSettings.Value.Secrets.JwtKey;
+            _jwtExpiration = appSettings.Value.Common.Auth.JwtExpiration;
             _context = context;
             
         }
