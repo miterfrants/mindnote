@@ -52,6 +52,7 @@ namespace Mindmap
 
             // setup db context
             services.AddDbContext<MindmapContext>(options => options.UseNpgsql(appSettings.Secrets.DBConnectionString));
+            services.AddDbContext<MindmapContextForView>(options => options.UseNpgsql(appSettings.Secrets.DBConnectionString));
 
             // add JWT secret to application layer 
             var encodedJwtSecret = Encoding.ASCII.GetBytes(appSettings.Secrets.JwtKey);

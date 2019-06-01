@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace Mindmap.Models
 {
-    public partial class User
+    public partial class user
     {
-        public int Id { get; set; }
-        public string Email { get; set; }
-        public string Username { get; set; }
-        public string Hashpwd { get; set; }
-        public DateTime? Birthday { get; set; }
-        public string Vocation { get; set; }
-        public char? Gender { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? DeletedAt { get; set; }
-        public string Salt { get; set; }
-        public string LatestLoginIp { get; set; }
-        public string Provider { get; set; }
-        public string Sub { get; set; }
-        public string FullName { get; set; }
+        public int id { get; set; }
+        public string email { get; set; }
+        public string username { get; set; }
+        public string hashpwd { get; set; }
+        public DateTime? birthday { get; set; }
+        public string vocation { get; set; }
+        public char? gender { get; set; }
+        public DateTime? created_at { get; set; }
+        public DateTime? deleted_at { get; set; }
+        public string salt { get; set; }
+        public string latest_login_ip { get; set; }
+        public string provider { get; set; }
+        public string sub { get; set; }
+        public string full_name { get; set; }
     }
 }
