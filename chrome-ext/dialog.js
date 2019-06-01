@@ -57,7 +57,7 @@ document['chrome-ext-padlet-quickly-collect'] = {
             description = document.querySelector('.' + this.CHROME_EXTENSION_CLASS_PREFIX + '-' + this.CLASSNAME.DESCRIPTION + ' textarea').value;
         var self = this;
         chrome.runtime.sendMessage({
-            msg: 'create_post',
+            msg: 'post_node',
             title: title,
             description: description
         }, function (response) {

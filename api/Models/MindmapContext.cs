@@ -17,6 +17,7 @@ namespace Mindmap.Models
 
         public virtual DbSet<board> board { get; set; }
         public virtual DbSet<node> node { get; set; }
+        public virtual DbSet<node_relationship> node_relationship { get; set; }
         public virtual DbSet<user> user { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -67,6 +68,15 @@ namespace Mindmap.Models
                 entity.Property(e => e.title)
                     .IsRequired()
                     .HasMaxLength(512);
+            });
+
+            modelBuilder.Entity<node_relationship>(entity =>
+            {
+                entity.HasIndex(e => new { e.parent_node_id, e.child_node_id })
+                    .HasName("relationship_key")
+                    .IsUnique();
+
+                entity.Property(e => e.id).UseNpgsqlIdentityByDefaultColumn();
             });
 
             modelBuilder.Entity<user>(entity =>

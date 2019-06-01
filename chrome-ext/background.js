@@ -32,12 +32,12 @@ const controller = {
     post: function (request, sender, sendResponse) {
       // as sendResponse not wokring after await
       // so use traditional callback function 
-      chrome.storage.sync.get(['token'], function (data) {
-        if (data.token) {
-          postNode(data.token, request.title, request.description, function (response) {
+      chrome.storage.sync.get(['token', 'userInfo', 'selectedBoard', 'selectedNode'], function (data) {
+        if (data.token && data.userInfo.username) {
+          postNode(data.token, data.userInfo.username, data.selectedBoard, data.selectedNode, request.title, request.description, function (response) {
             appendNodeHistory(response.data)
             sendResponse('OK');
-          })
+          });
         } else {
           alert("un-auth please auth before");
         }
@@ -83,7 +83,7 @@ chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.msg === "auth") {
       controller.auth(request, sender, sendResponse);
-    } else if (request.msg === 'create_post') {
+    } else if (request.msg === 'post_node') {
       // as contrller.node.post will sendResposne, need to return true to content scripts
       return controller.node.post(request, sender, sendResponse);
     };
@@ -106,44 +106,43 @@ function getTextSelection(OKCallback, failCallback) {
   });
 }
 
-function postNode(token, title, description, callback) {
+function postNode(token, username, boardUniquename, parentNodeId, title, description, callback) {
+  let apiNode = API.ENDPOINT + API.CONTROLLER.NODES;
+  apiNode = apiNode.replace(/{username}/gi, username).replace(/{boardUniquename}/gi, boardUniquename);
   let postBody = {
     title,
     description
   };
 
-  chrome.storage.sync.get(['selectedNode'], function(storage){
-    if(storage.selectedNode){
-      postBody['relatedNodeId'] = storage.selectedNode.id;
-    }
-    let fetchOption = {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + token
-      },
-      body: JSON.stringify(postBody)
-    };
-    _fectch(API.ENDPOINT + API.CONTROLLER.NODES, fetchOption)
-      .then(function (response) {
-        if (response.status === 200) {
-          response.json().then(function(data){
-            callback({
-              status: RESPONSE_STATUS.OK,
-              data
-            });
-          });
-        } else {
+
+  if (parentNodeId) {
+    postBody['parent_node_id'] = parentNodeId
+  }
+  let fetchOption = {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer ' + token
+    },
+    body: JSON.stringify(postBody)
+  };
+  _fectch(API.ENDPOINT + API.CONTROLLER.NODES, fetchOption)
+    .then(function (response) {
+      if (response.status === 200) {
+        response.json().then(function (data) {
           callback({
-            status: RESPONSE_STATUS.FAILED,
-            data: {
-              errorMsg: 'create post failed'
-            }
+            status: RESPONSE_STATUS.OK,
+            data
           });
-        }
-      });
-  })
-
-
+        });
+      } else {
+        callback({
+          status: RESPONSE_STATUS.FAILED,
+          data: {
+            errorMsg: 'create post failed'
+          }
+        });
+      }
+    });
 }
 
 async function authAsync() {
@@ -154,14 +153,16 @@ async function authAsync() {
       // check token is validated
       let fetchOption = {
         method: 'POST',
-        body: JSON.stringify({code:code})
+        body: JSON.stringify({
+          code: code
+        })
       };
       const response = await _fectch(API.ENDPOINT + API.CONTROLLER.AUTH, fetchOption);
       let userInfo = await response.json();
 
       const token = userInfo.token;
       delete userInfo.token;
-      
+
       if (response.status === 200) {
         resolve({
           status: RESPONSE_STATUS.OK,

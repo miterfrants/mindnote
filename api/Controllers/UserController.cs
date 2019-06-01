@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System.Net.WebSockets;
 using System.Net.Http.Headers;
 using System.Net.Cache;
@@ -67,6 +68,21 @@ namespace Mindmap.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("{username}/boards/")]
+        public ActionResult<board> PostBoard([FromRoute] String username, [FromBody] dynamic body)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+            Int16 userId = _userService.GetUserId(token);
+
+            board newBoard = new board { title = body.title, uniquename = body.uniquename, owner_id = userId };
+            _context.board.Add(newBoard);
+            _context.SaveChanges();
+
+            return _context.board.SingleOrDefault(rec => rec.id == newBoard.id);
+        }
+
         [HttpGet]
         [Route("{username}/boards/{boardUniquename}/nodes/")]
         public ActionResult<List<node>> GetNodesInBoard([FromRoute] String username, [FromRoute] String boardUniquename)
@@ -84,6 +100,27 @@ namespace Mindmap.Controllers
 
             List<node> nodes = _context.node.Where(x => x.board_id == board.id).ToList();
             return nodes;
+        }
+
+        [HttpPost]
+        [Route("{username}/boards/{boardUniquename}/nodes/")]
+        public ActionResult<node> PostNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic node)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+
+            Int16 userId = _userService.GetUserId(token);
+            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+
+            node newNode = new node { title = node.title, description = node.description, owner_id = userId, board_id = board.id };
+            _context.node.Add(newNode);
+            _context.SaveChanges();
+
+            node_relationship nodeRelationship = new node_relationship { parent_node_id = node.parent_node_id, child_node_id = newNode.id };
+            _context.node_relationship.Add(nodeRelationship);
+            _context.SaveChanges();
+
+            return _context.node.SingleOrDefault(rec => rec.id == newNode.id);
         }
     }
 }
