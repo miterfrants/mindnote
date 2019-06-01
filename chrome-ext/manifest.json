@@ -1,0 +1,40 @@
+{
+  "name": "Mindmap Quickly Collect",
+  "version": "1.0",
+  "description": "A chrome extension which insert selected text to Mindmap.",
+  "manifest_version": 2,
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": ["activeTab", "declarativeContent", "storage","https://*/*", "identity"],
+  "web_accessible_resources": ["dialog.html"],
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "windows": "Ctrl+Shift+Y",
+        "mac": "Command+Shift+Y",
+        "chromeos": "Ctrl+Shift+Y",
+        "linux": "Ctrl+Shift+Y"
+      }
+    },
+    "dialog": {
+      "suggested_key": {
+        "windows": "Ctrl+Shift+P",
+        "mac": "Command+Shift+P",
+        "chromeos": "Ctrl+Shift+P",
+        "linux": "Ctrl+Shift+P"
+      },
+      "description": "popup dialog"
+    }
+  },
+  "oauth2": {
+    "client_id": "675953765772-iobng4mcdc45qnupc94vp51h7edtbq5p.apps.googleusercontent.com",
+    "scopes": [
+        "https://www.googleapis.com/auth/userinfo.email",
+        "https://www.googleapis.com/auth/userinfo.profile"
+   ]}
+}

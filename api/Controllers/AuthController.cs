@@ -50,13 +50,13 @@ namespace Mindmap.Controllers {
                 string sub = (string) userFromGoogle["sub"];
                 string email = (string) userFromGoogle["email"];
                 string name = (string) userFromGoogle["name"];
-                User currentUser;
-                if (_context.User.Where(rec => rec.Sub == sub).Count () == 0) {
-                    currentUser = new User { Email = email,  Provider= "GOOGLE", Sub= sub, FullName= name };
-                    _context.User.Add (currentUser);
+                user currentUser;
+                if (_context.user.Where(rec => rec.sub == sub).Count () == 0) {
+                    currentUser = new user { email = email,  provider= "GOOGLE", sub= sub, full_name= name };
+                    _context.user.Add (currentUser);
                     _context.SaveChanges ();
                 } else {
-                    currentUser = _context.User.SingleOrDefault(rec => rec.Sub == sub); 
+                    currentUser = _context.user.SingleOrDefault(rec => rec.sub == sub); 
                 }
 
                 // generate token

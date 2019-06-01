@@ -15,112 +15,107 @@ namespace Mindmap.Models
         {
         }
 
-        public virtual DbSet<Node> Node { get; set; }
-        public virtual DbSet<User> User { get; set; }
-        
+        public virtual DbSet<board> board { get; set; }
+        public virtual DbSet<node> node { get; set; }
+        public virtual DbSet<node_relationship> node_relationship { get; set; }
+        public virtual DbSet<user> user { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
 
-            modelBuilder.Entity<Node>(entity =>
+            modelBuilder.Entity<board>(entity =>
             {
-                entity.ToTable("node");
+                entity.HasIndex(e => e.uniquename)
+                    .HasName("uniquename")
+                    .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .UseNpgsqlIdentityByDefaultColumn();
+                entity.Property(e => e.id).UseNpgsqlIdentityByDefaultColumn();
 
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnName("created_at")
+                entity.Property(e => e.created_at)
                     .HasColumnType("timestamp(6) with time zone")
                     .HasDefaultValueSql("now()");
 
-                entity.Property(e => e.DeletedAt)
-                    .HasColumnName("deleted_at")
-                    .HasColumnType("timestamp(6) with time zone");
+                entity.Property(e => e.deleted_at).HasColumnType("timestamp(6) with time zone");
 
-                entity.Property(e => e.Description).HasColumnName("description");
-
-                entity.Property(e => e.Link)
-                    .HasColumnName("link")
-                    .HasMaxLength(512);
-
-                entity.Property(e => e.OwnerId).HasColumnName("owner_id");
-
-                entity.Property(e => e.RelatedNodeId).HasColumnName("related_node_id");
-
-                entity.Property(e => e.Title)
+                entity.Property(e => e.is_public)
                     .IsRequired()
-                    .HasColumnName("title")
+                    .HasDefaultValueSql("true");
+
+                entity.Property(e => e.title).HasMaxLength(128);
+
+                entity.Property(e => e.uniquename).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<node>(entity =>
+            {
+                entity.HasIndex(e => e.board_id)
+                    .HasName("node_board_id");
+
+                entity.HasIndex(e => e.owner_id)
+                    .HasName("node_owner");
+
+                entity.Property(e => e.id).UseNpgsqlIdentityByDefaultColumn();
+
+                entity.Property(e => e.created_at)
+                    .HasColumnType("timestamp(6) with time zone")
+                    .HasDefaultValueSql("now()");
+
+                entity.Property(e => e.deleted_at).HasColumnType("timestamp(6) with time zone");
+
+                entity.Property(e => e.link).HasMaxLength(512);
+
+                entity.Property(e => e.title)
+                    .IsRequired()
                     .HasMaxLength(512);
             });
 
-            modelBuilder.Entity<User>(entity =>
+            modelBuilder.Entity<node_relationship>(entity =>
             {
-                entity.ToTable("user");
+                entity.HasIndex(e => new { e.parent_node_id, e.child_node_id })
+                    .HasName("relationship_key")
+                    .IsUnique();
 
-                entity.HasIndex(e => e.Email)
+                entity.Property(e => e.id).UseNpgsqlIdentityByDefaultColumn();
+            });
+
+            modelBuilder.Entity<user>(entity =>
+            {
+                entity.HasIndex(e => e.email)
                     .HasName("email")
                     .IsUnique();
 
-                entity.HasIndex(e => new { e.Sub, e.Provider })
+                entity.HasIndex(e => new { e.sub, e.provider })
                     .HasName("social_account")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .HasColumnName("id")
-                    .UseNpgsqlIdentityByDefaultColumn();
+                entity.Property(e => e.id).UseNpgsqlIdentityByDefaultColumn();
 
-                entity.Property(e => e.Birthday)
-                    .HasColumnName("birthday")
-                    .HasColumnType("timestamp(6) with time zone");
+                entity.Property(e => e.birthday).HasColumnType("timestamp(6) with time zone");
 
-                entity.Property(e => e.CreatedAt)
-                    .HasColumnName("created_at")
-                    .HasColumnType("timestamp(6) with time zone");
+                entity.Property(e => e.created_at).HasColumnType("timestamp(6) with time zone");
 
-                entity.Property(e => e.DeletedAt)
-                    .HasColumnName("deleted_at")
-                    .HasColumnType("timestamp(6) with time zone");
+                entity.Property(e => e.deleted_at).HasColumnType("timestamp(6) with time zone");
 
-                entity.Property(e => e.Email)
+                entity.Property(e => e.email)
                     .IsRequired()
-                    .HasColumnName("email")
                     .HasMaxLength(512);
 
-                entity.Property(e => e.FullName)
-                    .HasColumnName("full_name")
-                    .HasMaxLength(64);
+                entity.Property(e => e.full_name).HasMaxLength(64);
 
-                entity.Property(e => e.Gender).HasColumnName("gender");
+                entity.Property(e => e.hashpwd).HasMaxLength(128);
 
-                entity.Property(e => e.Hashpwd)
-                    .HasColumnName("hashpwd")
-                    .HasMaxLength(128);
+                entity.Property(e => e.latest_login_ip).HasMaxLength(45);
 
-                entity.Property(e => e.LatestLoginIp)
-                    .HasColumnName("latest_login_ip")
-                    .HasMaxLength(45);
+                entity.Property(e => e.provider).HasMaxLength(16);
 
-                entity.Property(e => e.Provider)
-                    .HasColumnName("provider")
-                    .HasMaxLength(16);
+                entity.Property(e => e.salt).HasMaxLength(32);
 
-                entity.Property(e => e.Salt)
-                    .HasColumnName("salt")
-                    .HasMaxLength(32);
+                entity.Property(e => e.sub).HasMaxLength(128);
 
-                entity.Property(e => e.Sub)
-                    .HasColumnName("sub")
-                    .HasMaxLength(128);
+                entity.Property(e => e.username).HasMaxLength(128);
 
-                entity.Property(e => e.Username)
-                    .HasColumnName("username")
-                    .HasMaxLength(128);
-
-                entity.Property(e => e.Vocation)
-                    .HasColumnName("vocation")
-                    .HasMaxLength(64);
+                entity.Property(e => e.vocation).HasMaxLength(64);
             });
         }
     }

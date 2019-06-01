@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auth</title>
+</head>
+<style>
+    html,
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-size: 0.8em;
+    }
+
+    .text-sm {
+        font-size: 0.6em;
+        color: #666;
+    }
+
+    .auth .user-info {
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #ddd;
+        padding: 10px;
+    }
+
+    .auth .title {
+        font-size: 1em;
+        max-height: 15px;
+        overflow: hidden;
+    }
+
+    .auth .description {
+        font-size: 0.6em;
+        color: #666;
+        padding-top: 5px;
+        max-height: 100px;
+        overflow: hidden;
+    }
+
+    .auth .user-info .profile-container {
+        width: 40px;
+        height: 40px;
+        overflow: hidden;
+        display: block;
+        border-radius: 50%;
+        margin-right: 15px;
+    }
+
+    .auth .user-info .email {
+        margin-top: 5px;
+    }
+
+    .auth .profile-container img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .auth > .selected-section > .item {
+        background: #d0f1ff;
+    }
+
+    .auth > .history > .item,
+    .auth > .selected-section > .item {
+        padding: 6px 10px;
+        cursor: pointer;
+    }
+
+    .auth > .history > .item:hover {
+        background: #333;
+        color: white;
+    }
+
+    .auth > .history > .item:hover > .description {
+        color: #666;
+    }
+</style>
+
+<body>
+    <div class="auth">
+        <div class="user-info">
+            <div class="profile-container"></div>
+            <div>
+                <div class="name"></div>
+                <div class="email text-sm"></div>
+            </div>
+        </div>
+        <div class="selected-section"></div>
+        <div class="history"></div>
+        <button class="btn-logout">logout</button>
+    </div>
+
+    <div class="un-auth">
+        <h1>Google Auth</h1>
+        <button class="auth-google">auth</button>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>
