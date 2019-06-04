@@ -31,7 +31,7 @@ secrets.json
 }
 ```
 
-db schema
+# db schema
 ```
 CREATE TABLE public."user"
 (
