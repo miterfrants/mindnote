@@ -116,9 +116,12 @@ namespace Mindmap.Controllers
             _context.node.Add(newNode);
             _context.SaveChanges();
 
-            node_relationship nodeRelationship = new node_relationship { parent_node_id = node.parent_node_id, child_node_id = newNode.id };
-            _context.node_relationship.Add(nodeRelationship);
-            _context.SaveChanges();
+            if (node.parent_node_id != null)
+            {
+                node_relationship nodeRelationship = new node_relationship { parent_node_id = node.parent_node_id, child_node_id = newNode.id };
+                _context.node_relationship.Add(nodeRelationship);
+                _context.SaveChanges();
+            }
 
             return _context.node.SingleOrDefault(rec => rec.id == newNode.id);
         }

@@ -58,7 +58,8 @@ namespace Mindmap.Controllers {
                 } else {
                     currentUser = _context.user.SingleOrDefault(rec => rec.sub == sub); 
                 }
-
+                
+                userFromGoogle.Add("username", currentUser.username);
                 // generate token
                 userFromGoogle.Add("token", _userService.GenerateToken(currentUser));
                 return userFromGoogle;

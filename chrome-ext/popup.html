@@ -9,6 +9,7 @@
     body {
         margin: 0;
         padding: 0;
+        width: 500px;
     }
 
     body {
@@ -20,25 +21,64 @@
         color: #666;
     }
 
-    .auth .user-info {
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px solid #ddd;
-        padding: 10px;
-    }
-
-    .auth .title {
+    .title {
         font-size: 1em;
         max-height: 15px;
         overflow: hidden;
     }
 
-    .auth .description {
+    .description,
+    .content {
         font-size: 0.6em;
         color: #666;
         padding-top: 5px;
         max-height: 100px;
         overflow: hidden;
+    }
+
+    .selected-node,
+    .selected-board {
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .auth .top {
+        border-bottom: 1px solid #ddd;
+        position: relative;
+        min-height: 60px;
+    }
+
+    .auth .top .user-info .profile-container {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .auth .top .user-info .profile-container::after {
+        content: 'logout';
+        display: block;
+        background: rgba(0, 0, 0, 0.6);
+        width: 40px;
+        height: 40px;
+        position: absolute;
+        top: 0;
+        color: white;
+        padding-top: 12px;
+        text-align: center;
+        font-size: 10px;
+        opacity: 0;
+        transition: opacity 0.4s;
+    }
+
+    .auth .top .user-info .profile-container:hover::after {
+        opacity: 1;
+    }
+
+    .auth .user-info {
+        display: flex;
+        justify-content: flex-end;
+        padding: 10px;
+        position: absolute;
+        right: 0;
     }
 
     .auth .user-info .profile-container {
@@ -59,38 +99,88 @@
         height: 40px;
     }
 
-    .auth > .selected-section > .item {
-        background: #d0f1ff;
-    }
-
-    .auth > .history > .item,
-    .auth > .selected-section > .item {
+    .auth .item {
         padding: 6px 10px;
         cursor: pointer;
     }
 
-    .auth > .history > .item:hover {
+    .auth .board .item {
+        min-height: 30px;
+        line-height: 30px;
+    }
+
+    .auth .history {
+        display: none;
+    }
+
+    .auth .item:hover {
         background: #333;
         color: white;
     }
 
-    .auth > .history > .item:hover > .description {
+    .auth .item:hover .description {
         color: #666;
+    }
+
+    .tab ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        background: #666;
+        color: white;
+    }
+
+    .tab ul li {
+        min-height: 40px;
+        line-height: 40px;
+        flex: 1 1 100%;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .tab ul li.selected {
+        border-bottom: 4px solid rgb(57, 206, 96);
     }
 </style>
 
 <body>
     <div class="auth">
-        <div class="user-info">
-            <div class="profile-container"></div>
-            <div>
-                <div class="name"></div>
-                <div class="email text-sm"></div>
+        <div class="top">
+            <div class="user-info">
+                <div class="profile-container btn-logout"></div>
+                <div>
+                    <div class="name"></div>
+                    <div class="email text-sm"></div>
+                </div>
+            </div>
+            <div class="selected-board">
+                <div class="title">Current Board</div>
+                <div class="content"></div>
+            </div>
+            <div class="selected-node">
+                <div class="title">Parent Node</div>
+                <div class="content"></div>
             </div>
         </div>
-        <div class="selected-section"></div>
-        <div class="history"></div>
-        <button class="btn-logout">logout</button>
+
+        <div class="tab">
+            <ul>
+                <li class="tab-board">
+                    Boards
+                </li>
+                <li class="tab-history">
+                    Nodes History
+                </li>
+            </ul>
+        </div>
+        <div class="body">
+            <div class="history">
+            </div>
+
+            <div class="board">
+            </div>
+        </div>
     </div>
 
     <div class="un-auth">

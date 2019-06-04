@@ -2,10 +2,11 @@
  * Constant
  */
 const API = {
-  ENDPOINT: 'https://sapiens.tools/mindmap/api/v1/',
+  ENDPOINT: 'https://dev.sapiens.tools:8082/mindmap/api/v1/',
   CONTROLLER: {
-    NODES: 'nodes/',
-    USERS: 'users/',
+    USER: 'users/',
+    BOARD: 'users/{username}/boards/',
+    NODE: 'users/{username}/boards/{boardUniquename}/nodes/',
     AUTH: 'auth/'
   }
 };
@@ -13,52 +14,15 @@ const API = {
 const RESPONSE_STATUS = {
   OK: 'OK',
   FAILED: 'FAILED',
-}
+};
 
 const ERROR = {
   AUTH: {
 
   }
-}
+};
 
 const NODE_HISTORY_LIMIT = 5;
-
-/**
- * Controller
- */
-
-const controller = {
-  node: {
-    post: function (request, sender, sendResponse) {
-      // as sendResponse not wokring after await
-      // so use traditional callback function 
-      chrome.storage.sync.get(['token', 'userInfo', 'selectedBoard', 'selectedNode'], function (data) {
-        if (data.token && data.userInfo.username) {
-          postNode(data.token, data.userInfo.username, data.selectedBoard, data.selectedNode, request.title, request.description, function (response) {
-            appendNodeHistory(response.data)
-            sendResponse('OK');
-          });
-        } else {
-          alert("un-auth please auth before");
-        }
-      });
-      return true;
-    }
-  },
-  auth: async function (request, sender, sendResponse) {
-    var authResult = await authAsync();
-    if (authResult.status === RESPONSE_STATUS.OK) {
-      setToken(authResult.data.token, authResult.data.userInfo);
-      var popup = chrome.extension.getViews({
-        type: "popup"
-      })[0];
-      popup.init();
-    } else {
-      alert(authResult.data.errorMsg);
-    }
-  }
-}
-
 
 /**
  * Event Listner
@@ -76,25 +40,122 @@ chrome.commands.onCommand.addListener(function (command) {
     }, function () {
       alert('empty text selection!');
     });
-  };
+  }
 });
 
-chrome.runtime.onMessage.addListener(
-  function (request, sender, sendResponse) {
-    if (request.msg === "auth") {
-      controller.auth(request, sender, sendResponse);
-    } else if (request.msg === 'post_node') {
-      // as contrller.node.post will sendResposne, need to return true to content scripts
-      return controller.node.post(request, sender, sendResponse);
-    };
+chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
+  chrome.storage.sync.get(['token', 'userInfo', 'selectedBoard', 'selectedNode'], function (storage) {
+    let data = {
+      username: storage.userInfo ? storage.userInfo.username : null,
+      token: storage.token || null,
+      selectedBoard: storage.selectedBoard ? storage.selectedBoard : null,
+      selectedNode: storage.selectedNode ? storage.selectedNode : null
+    }
+    if (req.action) {
+      controller[req.controller][req.action]({
+        title: req.title,
+        description: req.description,
+        ...data
+      }, sendResponse);
+    } else {
+      controller[req.controller](data, sendResponse);
+    }
+  });
+  return true;
+});
+
+/**
+ * Controller
+ */
+const controller = {
+  board: {
+    get: async (data, sendResponse) => {
+      let api = API.ENDPOINT + API.CONTROLLER.BOARD;
+      api = api.bind(data);
+      let fetchOption = {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + data.token
+        }
+      };
+      const resp = await _fetch(api, fetchOption);
+
+      if (resp.status === 200) {
+        const boards = await resp.json();
+        sendResponse({
+          status: RESPONSE_STATUS.OK,
+          data: {
+            boards,
+          }
+        });
+      } else {
+        sendResponse({
+          status: RESPONSE_STATUS.FAILED,
+          data: {
+            errorMsg: 'get board failed:' + JSON.stringify(resp)
+          }
+        });
+      }
+    },
+    post: async(data, sendResponse) => {
+      
+    }
+  },
+  node: {
+    post: async (data, sendResponse) => {
+      // validation 
+      if (!data.selectedBoard) {
+        alert('Please select a board');
+      }
+
+      let apiNode = API.ENDPOINT + API.CONTROLLER.NODE;
+      apiNode = apiNode.bind(data).replace(/{boardUniquename}/gi, data.selectedBoard.uniquename);
+      let postBody = {
+        title: data.title,
+        description: data.description
+      };
+
+      if (data.selectedNode) {
+        postBody['parent_node_id'] = data.selectedNode.id
+      }
+
+      let fetchOption = {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + data.token
+        },
+        body: JSON.stringify(postBody)
+      };
+      const resp = await _fetch(apiNode, fetchOption)
+
+      if (resp.status === 200) {
+        const data = await resp.json();
+        appendNodeHistory(data);
+        sendResponse({
+          status: RESPONSE_STATUS.OK,
+          data
+        });
+      } else {
+        sendResponse({
+          status: RESPONSE_STATUS.FAILED,
+          data: {
+            errorMsg: 'create post failed'
+          }
+        });
+      }
+    }
+  },
+  auth: async (data, sendResponse) => {
+    const resp = await authAsync();
+    setToken(resp.data.token, resp.data.userInfo);
+    sendResponse(resp);
   }
-);
+}
 
 /**
  * Private function
  */
-
-function getTextSelection(OKCallback, failCallback) {
+getTextSelection = (OKCallback, failCallback) => {
   chrome.tabs.executeScript({
     code: 'window.getSelection().toString();'
   }, function (result) {
@@ -106,64 +167,33 @@ function getTextSelection(OKCallback, failCallback) {
   });
 }
 
-function postNode(token, username, boardUniquename, parentNodeId, title, description, callback) {
-  let apiNode = API.ENDPOINT + API.CONTROLLER.NODES;
-  apiNode = apiNode.replace(/{username}/gi, username).replace(/{boardUniquename}/gi, boardUniquename);
-  let postBody = {
-    title,
-    description
-  };
-
-
-  if (parentNodeId) {
-    postBody['parent_node_id'] = parentNodeId
+String.prototype.bind = function (variable) {
+  var result = this.toString();
+  for (var key in variable) {
+    var reg = new RegExp('{' + key + '}', 'gi');
+    result = result.replace(reg, variable[key]);
   }
-  let fetchOption = {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + token
-    },
-    body: JSON.stringify(postBody)
-  };
-  _fectch(API.ENDPOINT + API.CONTROLLER.NODES, fetchOption)
-    .then(function (response) {
-      if (response.status === 200) {
-        response.json().then(function (data) {
-          callback({
-            status: RESPONSE_STATUS.OK,
-            data
-          });
-        });
-      } else {
-        callback({
-          status: RESPONSE_STATUS.FAILED,
-          data: {
-            errorMsg: 'create post failed'
-          }
-        });
-      }
-    });
+  return result;
 }
 
-async function authAsync() {
+authAsync = async () => {
   return new Promise(function (resolve, reject) {
     chrome.identity.getAuthToken({
       'interactive': true
-    }, async function (code) {
+    }, async (code) => {
       // check token is validated
-      let fetchOption = {
+      const fetchOption = {
         method: 'POST',
         body: JSON.stringify({
           code: code
         })
       };
-      const response = await _fectch(API.ENDPOINT + API.CONTROLLER.AUTH, fetchOption);
-      let userInfo = await response.json();
+      const resp = await _fetch(API.ENDPOINT + API.CONTROLLER.AUTH, fetchOption)
 
-      const token = userInfo.token;
-      delete userInfo.token;
-
-      if (response.status === 200) {
+      if (resp.status === 200) {
+        const userInfo = await resp.json();
+        const token = userInfo.token;
+        delete userInfo.token;
         resolve({
           status: RESPONSE_STATUS.OK,
           data: {
@@ -190,7 +220,7 @@ function setToken(token, userInfo) {
   });
 }
 
-function _fectch(url, option, withCatch) {
+function _fetch(url, option, withCatch) {
   if (option.cache) {
     console.warn('Cound not declate cache in option params');
   }
@@ -219,46 +249,6 @@ function appendNodeHistory(node, callback) {
     history.splice(NODE_HISTORY_LIMIT);
     chrome.storage.sync.set({
       history
-    }, function () {
-      if (callback && typeof callback === 'function') {
-        callback();
-      }
-    })
+    });
   })
-}
-
-/**
- * Not Support
- * When Chrome exension support async sendResponse 
- */
-async function getStorageAsync(key) {
-  return new Promise(function (resolve, reject) {
-    chrome.storage.sync.get([key], function (data) {
-      if (data) {
-        resolve(data[key]);
-      } else {
-        reject(data[key]);
-      }
-    });
-  });
-}
-
-async function appendHistoryAsync(data) {
-  return new Promise(async function (resolve, reject) {
-    let history = await getStorageAsync('history');
-    if (!history || !Array.isArray(history)) {
-      history = [];
-    }
-    history.push(data);
-    chrome.storage.sync.set({
-      history
-    }, function () {
-      resolve({
-        status: RESPONSE_STATUS.OK,
-        data: {
-          history
-        }
-      });
-    });
-  });
 }

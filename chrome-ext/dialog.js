@@ -24,7 +24,6 @@ document['chrome-ext-padlet-quickly-collect'] = {
                     div.innerHTML = body.trim();
                     document.body.appendChild(div.firstChild);
                     self.initialize(textSelection);
-
                 });
         }
     },
@@ -43,7 +42,7 @@ document['chrome-ext-padlet-quickly-collect'] = {
 
         // binding create button handler
         document.querySelector('.' + this.CHROME_EXTENSION_CLASS_PREFIX + '-' + this.CLASSNAME.CREATE_BUTTON).addEventListener('click', function () {
-            self.createPost();
+            self.postNode();
         });
 
         document.querySelector('.' + this.CHROME_EXTENSION_CLASS_PREFIX + '-' + this.CLASSNAME.CONTAINER).addEventListener('keydown', function (event) {
@@ -52,37 +51,23 @@ document['chrome-ext-padlet-quickly-collect'] = {
             }
         })
     },
-    createPost: function () {
+    postNode: function () {
         var title = document.querySelector('.' + this.CHROME_EXTENSION_CLASS_PREFIX + '-' + this.CLASSNAME.TITLE + ' input').value,
             description = document.querySelector('.' + this.CHROME_EXTENSION_CLASS_PREFIX + '-' + this.CLASSNAME.DESCRIPTION + ' textarea').value;
         var self = this;
         chrome.runtime.sendMessage({
-            msg: 'post_node',
-            title: title,
-            description: description
-        }, function (response) {
-            if (response === 'OK') {
+            controller: 'node',
+            action: 'post',
+            title,
+            description
+        }, (resp) => {
+            if (resp.status === 'OK') {
                 self.removeDialog();
             } else {
-                alert('Request failed.');
+                alert(resp.data.errorMsg);
             }
         });
 
-    },
-    sendMessageAsync: function (option) {
-        return new Promise(function (resolve, reject) {
-            chrome.tabs.sendMessage(option, response => {
-                if(response === 'OK') {
-                    resolve({
-                        status: 'OK'
-                    });
-                } else {
-                    reject({
-                        status: 'FAILED'
-                    });
-                }
-            });
-        })
     },
     removeDialog: function () {
         var dialogContainer = this.CHROME_EXTENSION_CLASS_PREFIX + '-' + this.CLASSNAME.CONTAINER
