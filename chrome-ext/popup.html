@@ -127,7 +127,7 @@
         padding: 0;
         margin: 0;
         display: flex;
-        background: #666;
+        background: #2b2d3a;
         color: white;
     }
 
@@ -137,10 +137,24 @@
         flex: 1 1 100%;
         text-align: center;
         cursor: pointer;
+        position: relative;
+    }
+
+    .tab ul li::after {
+        width: 1px;
+        height: 30px;
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+    }
+
+    .tab ul li:hover {
+        background: rgb(44, 79, 106);
     }
 
     .tab ul li.selected {
-        border-bottom: 4px solid rgb(57, 206, 96);
+        border-bottom: 4px solid rgb(35, 124, 193);
     }
 </style>
 
