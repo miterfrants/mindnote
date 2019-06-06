@@ -5,7 +5,8 @@ const API = {
   ENDPOINT: 'https://dev.sapiens.tools:8082/mindmap/api/v1/',
   CONTROLLER: {
     USER: 'users/',
-    BOARD: 'users/{username}/boards/',
+    BOARDS: 'users/{username}/boards/',
+    BOARD: 'users/{username}/boards/{uniquename}/',
     NODE: 'users/{username}/boards/{boardUniquename}/nodes/',
     AUTH: 'auth/'
   }
@@ -69,7 +70,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
 const controller = {
   board: {
     get: async (data, sendResponse) => {
-      let api = API.ENDPOINT + API.CONTROLLER.BOARD;
+      let api = API.ENDPOINT + API.CONTROLLER.BOARDS;
       api = api.bind(data);
       let fetchOption = {
         method: 'GET',
@@ -97,7 +98,7 @@ const controller = {
       }
     },
     post: async(data, sendResponse) => {
-      let api = API.ENDPOINT + API.CONTROLLER.BOARD;
+      let api = API.ENDPOINT + API.CONTROLLER.BOARDS;
       api = api.bind(data);
       const postBody = {
         title: data.title,
@@ -124,6 +125,29 @@ const controller = {
           status: RESPONSE_STATUS.FAILED,
           data: {
             errorMsg: 'get board failed:' + JSON.stringify(resp)
+          }
+        });
+      }
+    },
+    delete: async(data, sendResponse) => {
+      let api = API.ENDPOINT + API.CONTROLLER.BOARD;
+      api = api.bind(data);
+      const fetchOption = {
+        method: 'DELETE',
+        headers: {
+          'Authorization': 'Bearer ' + data.token
+        }
+      };
+      const resp = await _fetch(api, fetchOption);
+      if (resp.status === 200) {
+        sendResponse({
+          status: RESPONSE_STATUS.OK
+        });
+      } else {
+        sendResponse({
+          status: RESPONSE_STATUS.FAILED,
+          data: {
+            errorMsg: 'delete board failed:' + JSON.stringify(resp)
           }
         });
       }

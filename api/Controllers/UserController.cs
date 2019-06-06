@@ -56,7 +56,7 @@ namespace Mindmap.Controllers
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
 
-            List<board> boards = _context.board.Where(x => x.owner_id == userId).OrderByDescending(x => x.created_at).Take(5).ToList();
+            List<board> boards = _context.board.Where(x => x.owner_id == userId && x.deleted_at == null).OrderByDescending(x => x.created_at).Take(5).ToList();
             if (boards == null)
             {
                 HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
@@ -81,6 +81,21 @@ namespace Mindmap.Controllers
             _context.SaveChanges();
 
             return _context.board.SingleOrDefault(rec => rec.id == newBoard.id);
+        }
+
+
+        [HttpDelete]
+        [Route("{username}/boards/{boardUniquename}")]
+        public void DeleteBoard([FromRoute] String username, [FromRoute] String boardUniquename)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+            Int16 userId = _userService.GetUserId(token);
+
+            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+            board.deleted_at = DateTime.Now;
+            
+            _context.SaveChanges();
         }
 
         [HttpGet]
