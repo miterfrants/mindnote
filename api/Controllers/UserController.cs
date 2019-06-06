@@ -56,7 +56,7 @@ namespace Mindmap.Controllers
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
 
-            List<board> boards = _context.board.Where(x => x.owner_id == userId).ToList();
+            List<board> boards = _context.board.Where(x => x.owner_id == userId).OrderByDescending(x => x.created_at).Take(5).ToList();
             if (boards == null)
             {
                 HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();

@@ -2,7 +2,7 @@
  * Constant
  */
 const API = {
-  ENDPOINT: 'https://sapiens.tools/mindmap/api/v1/',
+  ENDPOINT: 'https://dev.sapiens.tools:8082/mindmap/api/v1/',
   CONTROLLER: {
     USER: 'users/',
     BOARD: 'users/{username}/boards/',
@@ -53,8 +53,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     }
     if (req.action) {
       controller[req.controller][req.action]({
-        title: req.title,
-        description: req.description,
+        ...req.data,
         ...data
       }, sendResponse);
     } else {
@@ -98,7 +97,36 @@ const controller = {
       }
     },
     post: async(data, sendResponse) => {
-      
+      let api = API.ENDPOINT + API.CONTROLLER.BOARD;
+      api = api.bind(data);
+      const postBody = {
+        title: data.title,
+        uniquename: data.uniquename
+      }
+      const fetchOption = {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + data.token
+        },
+        body: JSON.stringify(postBody)
+      };
+      const resp = await _fetch(api, fetchOption);
+      if (resp.status === 200) {
+        const board = await resp.json();
+        sendResponse({
+          status: RESPONSE_STATUS.OK,
+          data: {
+            ...board,
+          }
+        });
+      } else {
+        sendResponse({
+          status: RESPONSE_STATUS.FAILED,
+          data: {
+            errorMsg: 'get board failed:' + JSON.stringify(resp)
+          }
+        });
+      }
     }
   },
   node: {
