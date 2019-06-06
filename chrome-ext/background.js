@@ -2,7 +2,7 @@
  * Constant
  */
 const API = {
-  ENDPOINT: 'https://dev.sapiens.tools:8082/mindmap/api/v1/',
+  ENDPOINT: 'https://sapiens.tools/mindmap/api/v1/',
   CONTROLLER: {
     USER: 'users/',
     BOARDS: 'users/{username}/boards/',
@@ -97,7 +97,7 @@ const controller = {
         });
       }
     },
-    post: async(data, sendResponse) => {
+    post: async (data, sendResponse) => {
       let api = API.ENDPOINT + API.CONTROLLER.BOARDS;
       api = api.bind(data);
       const postBody = {
@@ -129,7 +129,7 @@ const controller = {
         });
       }
     },
-    delete: async(data, sendResponse) => {
+    delete: async (data, sendResponse) => {
       let api = API.ENDPOINT + API.CONTROLLER.BOARD;
       api = api.bind(data);
       const fetchOption = {
@@ -148,6 +148,36 @@ const controller = {
           status: RESPONSE_STATUS.FAILED,
           data: {
             errorMsg: 'delete board failed:' + JSON.stringify(resp)
+          }
+        });
+      }
+    },
+    patch: async (data, sendResponse) => {
+      let api = API.ENDPOINT + API.CONTROLLER.BOARD;
+      api = api.bind(data);
+      const fetchOption = {
+        method: 'PATCH',
+        headers: {
+          'Authorization': 'Bearer ' + data.token
+        },
+        body: JSON.stringify({
+          title: data.title,
+          uniquename: data.uniquename,
+          is_public: data.is_public
+        }) 
+      };
+      const resp = await _fetch(api, fetchOption);
+      if (resp.status === 200) {
+        const board = await resp.json();
+        sendResponse({
+          status: RESPONSE_STATUS.OK,
+          data: board
+        });
+      } else {
+        sendResponse({
+          status: RESPONSE_STATUS.FAILED,
+          data: {
+            errorMsg: 'public board failed:' + JSON.stringify(resp)
           }
         });
       }

@@ -94,9 +94,32 @@ namespace Mindmap.Controllers
 
             board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
             board.deleted_at = DateTime.Now;
-            
+
             _context.SaveChanges();
         }
+
+        [HttpPatch]
+        [Route("{username}/boards/{boardUniquename}")]
+        public ActionResult<board> PatchBoard([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic requestBody)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+            Int16 userId = _userService.GetUserId(token);
+
+            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+            board.is_public = requestBody.is_public;
+            if (requestBody.title != null)
+            {
+                board.title = requestBody.title;
+            }
+            if (requestBody.uniquename != null)
+            {
+                board.uniquename = requestBody.uniquename;
+            }
+            _context.SaveChanges();
+            return board;
+        }
+
 
         [HttpGet]
         [Route("{username}/boards/{boardUniquename}/nodes/")]

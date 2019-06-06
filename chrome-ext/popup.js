@@ -1,12 +1,16 @@
 (async () => {
+
     const src = chrome.extension.getURL('util/extended-prototype.js');
     const injectScript = await import(src);
     injectScript.extendHTMLElementProtoType();
     injectScript.extendStringProtoType();
 
     const srcBoard = chrome.extension.getURL('components/board.js');
-    boardModuleBuilder = await import(srcBoard);
+    const boardModuleBuilder = await import(srcBoard);
     const Board = boardModuleBuilder.Board;
+
+    const debounceSrc = chrome.extension.getURL('util/debounce.js');
+    const debounceScript = await import(debounceSrc);
 
     let HISTORY_ITEM_TEMPLATE = '<div class="title">{title}</div><div class="description">{description}</div>';
     const RESPONSE_STATUS = {
@@ -101,6 +105,26 @@
         }
     }
 
+    createBoardItem = (data) => {
+        const board  = new Board(data, (e) => {
+            selectBoard(e.currentTarget.dataset);
+        }, (e) => {
+            const boardElement = e.currentTarget.parentElement.parentElement;
+            removeBoard({
+                uniquename: boardElement.dataset.uniquename
+            }, board);
+        }, (e) => {
+            const boardElement = e.currentTarget.parentElement.parentElement.parentElement;
+            const isPublic = !(boardElement.dataset.is_public === 'true');
+            boardElement.dataset.is_public = isPublic;
+            changeBoardPermissionDebounce({
+                ...boardElement.dataset,
+                is_public: isPublic,
+            }, board);
+        });
+        return board;
+    }
+
     generateBoards = () => {
         chrome.runtime.sendMessage({
             controller: 'board',
@@ -109,13 +133,7 @@
             if (resp.status === RESPONSE_STATUS.OK) {
                 let boardDom = document.querySelector('.board');
                 for (let i = 0; i < resp.data.boards.length; i++) {
-                    const board = new Board(resp.data.boards[i], (e) => {
-                        selectBoard(e.currentTarget.dataset);
-                    }, (e) => {
-                        removeBoard({
-                            uniquename: e.currentTarget.parentElement.dataset.uniquename
-                        }, e.currentTarget.parentElement);
-                    });
+                    const board = createBoardItem(resp.data.boards[i]);
                     boardDom.appendChild(board.element);
                 }
             } else {
@@ -177,19 +195,34 @@
         }, function (resp) {
             if (resp.status === RESPONSE_STATUS.OK) {
                 document.querySelector('.board-form').clearForm();
-                const board = new Board(resp.data, (e) => {
-                    selectBoard(e.currentTarget.dataset);
-                }, (e) => {
-                    removeBoard({
-                        uniquename: e.currentTarget.parentElement.dataset.uniquename
-                    }, e.currentTarget.parentElement);
-                });
+                const board = createBoardItem(resp.data);
                 document.querySelector('.board').prepend(board.element);
             } else {
                 alert(resp.errorMsg);
             }
         });
     }
+
+    changeBoardPermissionDebounce = debounceScript.debounce((formData, boardItem) => {
+        changeBoardPermission(formData, boardItem);    
+    }, 1500);
+
+    changeBoardPermission = (formData, boardItem) => {
+        chrome.runtime.sendMessage({
+            controller: 'board',
+            action: 'patch',
+            data: {
+                ...formData,
+                is_public: formData.is_public
+            }
+        }, async (resp) => {
+            if (resp.status === RESPONSE_STATUS.OK) {
+                boardItem.update(resp.data)
+            } else {
+                alert(resp.errorMsg);
+            }
+        });
+    };
 
     removeBoard = (formData, boardItem) => {
         chrome.runtime.sendMessage({
@@ -198,7 +231,7 @@
             data: formData
         }, function (resp) {
             if (resp.status === RESPONSE_STATUS.OK) {
-                boardItem.parentElement.removeChild(boardItem);
+                boardItem.element.parentElement.removeChild(boardItem.element);
             } else {
                 alert(resp.errorMsg);
             }

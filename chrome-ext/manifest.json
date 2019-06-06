@@ -15,6 +15,7 @@
     "dialog.html",
     "fontawesome-free-5.9.0-web/css/all.css",
     "util/extended-prototype.js",
+    "util/debounce.js",
     "components/board.js"
   ],
   "commands": {

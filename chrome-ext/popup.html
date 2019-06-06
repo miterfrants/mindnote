@@ -203,15 +203,68 @@
     .marg-l-5 {
         margin-left: 5px;
     }
+
     .board .item {
         position: relative;
     }
+
     .board .item .remove {
         font-size: 20px;
         position: absolute;
         right: 10px;
         top: 10px;
         color: #e8844b;
+    }
+
+    .toggle-button {
+        width: 40px;
+        height: 24px;
+        border: 1px solid rgb(36, 192, 193);
+        overflow: hidden;
+        border-radius: 24px;
+        position: relative;
+        transition: border-color 0.26s;
+    }
+
+    .toggle-button:after {
+        content: '';
+        display: block;
+        width: 20px;
+        height: 20px;
+        background: #24c0c1;
+        border-radius: 50%;
+        transform: translateX(1px);
+        transition: background 0.26s, transform 0.26s;
+    }
+
+    .toggle-button.private {
+        border: 1px solid #6a6b71;
+    }
+
+    .toggle-button.private:after {
+        background: #6a6b71;
+        transform: translateX(17px);
+    }
+
+    .board .item {
+        display: flex;
+    }
+
+    .board .item .content-section {
+        width: 75%;
+    }
+
+    .board .item .function-section {
+        display: flex;
+    }
+
+    .board .item .function-section .toggle-section {
+        display: flex;
+        align-items: center;
+    }
+
+    .board .item .function-section .toggle-section .permission {
+        margin-left: 10px;
     }
 </style>
 

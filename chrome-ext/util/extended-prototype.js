@@ -47,7 +47,7 @@ const extendHTMLElementProtoType = () => {
 
     if (!HTMLElement.prototype.classExists) {
         HTMLElement.prototype.classExists = function (className) {
-            return this.className.indexOf(className) !== -1
+            return this.className.split(' ').indexOf(className) !== -1
         }
     }
 
