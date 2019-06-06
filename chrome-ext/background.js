@@ -2,7 +2,7 @@
  * Constant
  */
 const API = {
-  ENDPOINT: 'https://dev.sapiens.tools:8082/mindmap/api/v1/',
+  ENDPOINT: 'https://sapiens.tools/mindmap/api/v1/',
   CONTROLLER: {
     USER: 'users/',
     BOARD: 'users/{username}/boards/',
