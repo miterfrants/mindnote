@@ -3,6 +3,7 @@
 
 <head>
     <title>Auth</title>
+    <link href="/fontawesome-free-5.9.0-web/css/all.css" rel="stylesheet">
 </head>
 <style>
     html,
@@ -25,6 +26,19 @@
         font-size: 1em;
         max-height: 15px;
         overflow: hidden;
+    }
+
+    input {
+        font-size: 14px;
+        border: 1px solid #237cc1;
+        border-radius: 6px;
+        padding: 5px;
+    }
+
+    button {
+        border: none;
+        background: none;
+        padding: 0;
     }
 
     .description,
@@ -127,7 +141,7 @@
         padding: 0;
         margin: 0;
         display: flex;
-        background: #666;
+        background: #2b2d3a;
         color: white;
     }
 
@@ -137,10 +151,120 @@
         flex: 1 1 100%;
         text-align: center;
         cursor: pointer;
+        position: relative;
+    }
+
+    .tab ul li::after {
+        width: 1px;
+        height: 30px;
+        content: '';
+        display: block;
+        position: absolute;
+        top: 0;
+    }
+
+    .tab ul li:hover {
+        background: rgb(44, 79, 106);
     }
 
     .tab ul li.selected {
-        border-bottom: 4px solid rgb(57, 206, 96);
+        border-bottom: 4px solid rgb(35, 124, 193);
+    }
+
+    .tab ul li .expand {
+        background: none;
+        border: none;
+        color: rgb(35, 192, 193);
+        font-size: 20px;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        padding: 0;
+        width: 20px;
+    }
+
+    .hide {
+        display: none !important;
+    }
+
+    .board-form {
+        background: #d9d9d9;
+    }
+
+    .board-form .add {
+        font-size: 20px;
+        color: rgb(35, 192, 193);
+    }
+
+    .pad-10 {
+        padding: 10px;
+    }
+
+    .marg-l-5 {
+        margin-left: 5px;
+    }
+
+    .board .item {
+        position: relative;
+    }
+
+    .board .item .remove {
+        font-size: 20px;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        color: #e8844b;
+    }
+
+    .toggle-button {
+        width: 40px;
+        height: 24px;
+        border: 1px solid rgb(36, 192, 193);
+        overflow: hidden;
+        border-radius: 24px;
+        position: relative;
+        transition: border-color 0.26s;
+    }
+
+    .toggle-button:after {
+        content: '';
+        display: block;
+        width: 20px;
+        height: 20px;
+        background: #24c0c1;
+        border-radius: 50%;
+        transform: translateX(1px);
+        transition: background 0.26s, transform 0.26s;
+    }
+
+    .toggle-button.private {
+        border: 1px solid #6a6b71;
+    }
+
+    .toggle-button.private:after {
+        background: #6a6b71;
+        transform: translateX(17px);
+    }
+
+    .board .item {
+        display: flex;
+    }
+
+    .board .item .content-section {
+        width: 75%;
+    }
+
+    .board .item .function-section {
+        display: flex;
+    }
+
+    .board .item .function-section .toggle-section {
+        display: flex;
+        align-items: center;
+    }
+
+    .board .item .function-section .toggle-section .permission {
+        margin-left: 10px;
     }
 </style>
 
@@ -168,16 +292,28 @@
             <ul>
                 <li class="tab-board">
                     Boards
+                    <button class="expand fas fa-arrows-alt-v"></button>
                 </li>
                 <li class="tab-history">
                     Nodes History
                 </li>
             </ul>
         </div>
+        <div class="form">
+            <div class="board-form hide pad-10">
+                <label for="board-title">
+                    <input type="text" id="board-title" data-field="title" placeholder="title" />
+                </label>
+                <label for="board-uniquename" class="marg-l-5">
+                    <input type="text" class="board-uniquename" data-field="uniquename"
+                        placeholder="uniquename for url" />
+                </label>
+                <button class="fa fa-icon fa-plus-circle add marg-l-5"></button>
+            </div>
+        </div>
         <div class="body">
             <div class="history">
             </div>
-
             <div class="board">
             </div>
         </div>

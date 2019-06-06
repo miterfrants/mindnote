@@ -10,8 +10,14 @@
   "browser_action": {
     "default_popup": "popup.html"
   },
-  "permissions": ["activeTab", "declarativeContent", "storage","https://*/*", "identity"],
-  "web_accessible_resources": ["dialog.html"],
+  "permissions": ["activeTab", "declarativeContent", "storage", "https://*/*", "identity"],
+  "web_accessible_resources": [
+    "dialog.html",
+    "fontawesome-free-5.9.0-web/css/all.css",
+    "util/extended-prototype.js",
+    "util/debounce.js",
+    "components/board.js"
+  ],
   "commands": {
     "_execute_browser_action": {
       "suggested_key": {
@@ -34,7 +40,8 @@
   "oauth2": {
     "client_id": "675953765772-iobng4mcdc45qnupc94vp51h7edtbq5p.apps.googleusercontent.com",
     "scopes": [
-        "https://www.googleapis.com/auth/userinfo.email",
-        "https://www.googleapis.com/auth/userinfo.profile"
-   ]}
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile"
+    ]
+  }
 }

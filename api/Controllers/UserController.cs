@@ -56,7 +56,7 @@ namespace Mindmap.Controllers
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
 
-            List<board> boards = _context.board.Where(x => x.owner_id == userId).ToList();
+            List<board> boards = _context.board.Where(x => x.owner_id == userId && x.deleted_at == null).OrderByDescending(x => x.created_at).Take(5).ToList();
             if (boards == null)
             {
                 HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
@@ -82,6 +82,44 @@ namespace Mindmap.Controllers
 
             return _context.board.SingleOrDefault(rec => rec.id == newBoard.id);
         }
+
+
+        [HttpDelete]
+        [Route("{username}/boards/{boardUniquename}")]
+        public void DeleteBoard([FromRoute] String username, [FromRoute] String boardUniquename)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+            Int16 userId = _userService.GetUserId(token);
+
+            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+            board.deleted_at = DateTime.Now;
+
+            _context.SaveChanges();
+        }
+
+        [HttpPatch]
+        [Route("{username}/boards/{boardUniquename}")]
+        public ActionResult<board> PatchBoard([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic requestBody)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+            Int16 userId = _userService.GetUserId(token);
+
+            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+            board.is_public = requestBody.is_public;
+            if (requestBody.title != null)
+            {
+                board.title = requestBody.title;
+            }
+            if (requestBody.uniquename != null)
+            {
+                board.uniquename = requestBody.uniquename;
+            }
+            _context.SaveChanges();
+            return board;
+        }
+
 
         [HttpGet]
         [Route("{username}/boards/{boardUniquename}/nodes/")]

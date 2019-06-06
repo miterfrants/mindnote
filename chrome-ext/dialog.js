@@ -58,8 +58,10 @@ document['chrome-ext-padlet-quickly-collect'] = {
         chrome.runtime.sendMessage({
             controller: 'node',
             action: 'post',
-            title,
-            description
+            data: {
+                title,
+                description
+            }
         }, (resp) => {
             if (resp.status === 'OK') {
                 self.removeDialog();
