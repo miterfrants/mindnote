@@ -21,10 +21,12 @@ namespace Mindmap.Controllers
     public class UserController : ControllerBase
     {
         private readonly MindmapContext _context;
+        private readonly MindmapContextForView _contextForView;
         private readonly UserService _userService;
-        public UserController(MindmapContext context, UserService userService)
+        public UserController(MindmapContext context, MindmapContextForView contextForView, UserService userService)
         {
             _context = context;
+            _contextForView = contextForView;
             _userService = userService;
         }
 
@@ -123,7 +125,7 @@ namespace Mindmap.Controllers
 
         [HttpGet]
         [Route("{username}/boards/{boardUniquename}/nodes/")]
-        public ActionResult<List<node>> GetNodesInBoard([FromRoute] String username, [FromRoute] String boardUniquename)
+        public ActionResult<List<view_node>> GetNodesInBoard([FromRoute] String username, [FromRoute] String boardUniquename)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
@@ -136,13 +138,13 @@ namespace Mindmap.Controllers
                 return null;
             }
 
-            List<node> nodes = _context.node.Where(x => x.board_id == board.id).ToList();
+            List<view_node> nodes = _contextForView.view_node.Where(x => x.board_id == board.id).ToList();
             return nodes;
         }
 
         [HttpPost]
         [Route("{username}/boards/{boardUniquename}/nodes/")]
-        public ActionResult<node> PostNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic node)
+        public ActionResult<view_node> PostNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic node)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
@@ -160,8 +162,8 @@ namespace Mindmap.Controllers
                 _context.node_relationship.Add(nodeRelationship);
                 _context.SaveChanges();
             }
-
-            return _context.node.SingleOrDefault(rec => rec.id == newNode.id);
+            
+            return _contextForView.view_node.SingleOrDefault(rec => rec.id == newNode.id);
         }
     }
 }
