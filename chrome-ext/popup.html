@@ -39,6 +39,7 @@
         border: none;
         background: none;
         padding: 0;
+        cursor: pointer;
     }
 
     .description,
@@ -116,6 +117,7 @@
     .auth .item {
         padding: 6px 10px;
         cursor: pointer;
+        transition: background 0.26s, color 0.26s;
     }
 
     .auth .board .item {
@@ -184,7 +186,7 @@
     }
 
     .hide {
-        display: none !important;
+        display: none;
     }
 
     .board-form {
@@ -266,6 +268,17 @@
     .board .item .function-section .toggle-section .permission {
         margin-left: 10px;
     }
+
+    .un-auth .auth-google {
+        padding: 15px;
+        margin: 20px;
+        font-size: 20px;
+        border: 1px solid #cdcdcd;
+        border-radius: 10px;
+    }
+    .un-auth {
+        text-align: center;
+    }
 </style>
 
 <body>
@@ -320,8 +333,10 @@
     </div>
 
     <div class="un-auth">
-        <h1>Google Auth</h1>
-        <button class="auth-google">auth</button>
+        <button class="auth-google">
+            <i class="fab fa-google"></i>
+            Sign in with Google
+        </button>
     </div>
 
     <script src="popup.js"></script>
