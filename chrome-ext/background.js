@@ -1,8 +1,13 @@
+(async () => {
+  (await import(chrome.extension.getURL('/util/extended-prototype.js'))).extendStringProtoType();
+})();
+
+
 /**
  * Constant
  */
 const API = {
-  ENDPOINT: 'https://sapiens.tools/mindmap/api/v1/',
+  ENDPOINT: 'https://dev.sapiens.tools:8082/mindmap/api/v1/',
   CONTROLLER: {
     USER: 'users/',
     BOARDS: 'users/{username}/boards/',
@@ -68,7 +73,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
  * Controller
  */
 const controller = {
-  board: {
+  boards: {
     get: async (data, sendResponse) => {
       let api = API.ENDPOINT + API.CONTROLLER.BOARDS;
       api = api.bind(data);
@@ -84,9 +89,9 @@ const controller = {
         const boards = await resp.json();
         sendResponse({
           status: RESPONSE_STATUS.OK,
-          data: {
-            boards,
-          }
+          data: [
+            ...boards,
+          ]
         });
       } else {
         sendResponse({
@@ -96,7 +101,9 @@ const controller = {
           }
         });
       }
-    },
+    }
+  },
+  board: {
     post: async (data, sendResponse) => {
       let api = API.ENDPOINT + API.CONTROLLER.BOARDS;
       api = api.bind(data);
@@ -164,7 +171,7 @@ const controller = {
           title: data.title,
           uniquename: data.uniquename,
           is_public: data.is_public
-        }) 
+        })
       };
       const resp = await _fetch(api, fetchOption);
       if (resp.status === 200) {
@@ -249,15 +256,6 @@ getTextSelection = (OKCallback, failCallback) => {
   });
 }
 
-String.prototype.bind = function (variable) {
-  var result = this.toString();
-  for (var key in variable) {
-    var reg = new RegExp('{' + key + '}', 'gi');
-    result = result.replace(reg, variable[key]);
-  }
-  return result;
-}
-
 authAsync = async () => {
   return new Promise(function (resolve, reject) {
     chrome.identity.getAuthToken({
@@ -284,7 +282,7 @@ authAsync = async () => {
           }
         });
       } else {
-        reject({
+        resolve({
           status: RESPONSE_STATUS.FAILED,
           data: {
             errorMsg: 'auth fail'

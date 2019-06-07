@@ -120,7 +120,7 @@
         transition: background 0.26s, color 0.26s;
     }
 
-    .auth .board .item {
+    .auth .boards .item {
         min-height: 30px;
         line-height: 30px;
     }
@@ -206,16 +206,16 @@
         margin-left: 5px;
     }
 
-    .board .item {
-        position: relative;
+    .un-auth .auth-google {
+        padding: 15px;
+        margin: 20px;
+        font-size: 20px;
+        border: 1px solid #cdcdcd;
+        border-radius: 10px;
     }
 
-    .board .item .remove {
-        font-size: 20px;
-        position: absolute;
-        right: 10px;
-        top: 10px;
-        color: #e8844b;
+    .un-auth {
+        text-align: center;
     }
 
     .toggle-button {
@@ -247,38 +247,6 @@
         background: #6a6b71;
         transform: translateX(17px);
     }
-
-    .board .item {
-        display: flex;
-    }
-
-    .board .item .content-section {
-        width: 75%;
-    }
-
-    .board .item .function-section {
-        display: flex;
-    }
-
-    .board .item .function-section .toggle-section {
-        display: flex;
-        align-items: center;
-    }
-
-    .board .item .function-section .toggle-section .permission {
-        margin-left: 10px;
-    }
-
-    .un-auth .auth-google {
-        padding: 15px;
-        margin: 20px;
-        font-size: 20px;
-        border: 1px solid #cdcdcd;
-        border-radius: 10px;
-    }
-    .un-auth {
-        text-align: center;
-    }
 </style>
 
 <body>
@@ -303,7 +271,7 @@
 
         <div class="tab">
             <ul>
-                <li class="tab-board">
+                <li class="tab-boards">
                     Boards
                     <button class="expand fas fa-arrows-alt-v"></button>
                 </li>
@@ -327,7 +295,7 @@
         <div class="body">
             <div class="history">
             </div>
-            <div class="board">
+            <div class="boards">
             </div>
         </div>
     </div>
