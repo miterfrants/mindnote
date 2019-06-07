@@ -16,7 +16,8 @@
     "fontawesome-free-5.9.0-web/css/all.css",
     "util/extended-prototype.js",
     "util/debounce.js",
-    "components/board.js"
+    "components/board.js",
+    "components/node.js"
   ],
   "commands": {
     "_execute_browser_action": {

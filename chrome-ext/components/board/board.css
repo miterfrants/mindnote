@@ -1,0 +1,28 @@
+.board {
+    display: flex;
+}
+
+.board .remove {
+    font-size: 20px;
+    color: #e8844b;
+    margin-left: 40px;
+}
+
+.board .content-section {
+    width: 70%;
+}
+
+.board .function-section {
+    display: flex;
+    width: 15%;
+}
+
+.board .function-section .toggle-section {
+    display: flex;
+    align-items: center;
+}
+
+.board .function-section .toggle-section .permission {
+    margin-left: 10px;
+}
+

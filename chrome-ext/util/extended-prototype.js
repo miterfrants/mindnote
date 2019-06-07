@@ -14,6 +14,9 @@ const extendStringProtoType = () => {
         String.prototype.toDom = function () {
             let tempContainer = document.createElement('div');
             tempContainer.innerHTML = this.toString();
+            if (tempContainer.childNodes.length > 1) {
+                console.warn('please make sure your html string only one root html element;')
+            }
             return tempContainer.childNodes[0];
         }
     }
