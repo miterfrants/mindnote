@@ -238,7 +238,7 @@ const UI = {
         document.querySelector('.auth').style.display = 'none';
     },
     clear: () => {
-        document.querySelector('.board').innerHTML = '';
+        document.querySelector('.boards').innerHTML = '';
         document.querySelector('.history').innerHTML = '';
     },
     setupProfile: (userInfo) => {
