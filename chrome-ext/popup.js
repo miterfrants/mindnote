@@ -46,6 +46,14 @@
         document.querySelector('.auth').style.display = 'none';
     }
 
+    function clearBoards() {
+        document.querySelector('.board').innerHTML = '';
+    }
+
+    function clearHistory() {
+        document.querySelector('.history').innerHTML = '';
+    }
+
     function setupProfile(userInfo) {
         document.querySelector('.profile-container').innerHTML = '<img src="' + userInfo.picture + '" />'
         document.querySelector('.name').innerHTML = userInfo.name;
@@ -106,7 +114,7 @@
     }
 
     createBoardItem = (data) => {
-        const board  = new Board(data, (e) => {
+        const board = new Board(data, (e) => {
             selectBoard(e.currentTarget.dataset);
         }, (e) => {
             const boardElement = e.currentTarget.parentElement.parentElement;
@@ -204,7 +212,7 @@
     }
 
     changeBoardPermissionDebounce = debounceScript.debounce((formData, boardItem) => {
-        changeBoardPermission(formData, boardItem);    
+        changeBoardPermission(formData, boardItem);
     }, 1500);
 
     changeBoardPermission = (formData, boardItem) => {
@@ -264,6 +272,8 @@
             selectedNode: null
         }, () => {
             hideAuthSection();
+            clearHistory();
+            clearBoards();
         });
     });
 
