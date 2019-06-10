@@ -46,6 +46,27 @@ chrome.commands.onCommand.addListener(function (command) {
     }, function () {
       alert('empty text selection!');
     });
+  } else if (command === 'switch_to_board') {
+    var popups = chrome.extension.getViews({
+      type: "popup"
+    });
+    if (popups.length > 0) {
+      popups[0].document.querySelector('.tab-boards').click();
+    }
+  } else if (command === 'switch_to_history') {
+    var popups = chrome.extension.getViews({
+      type: "popup"
+    });
+    if (popups.length > 0) {
+      popups[0].document.querySelector('.tab-history').click();
+    }
+  } else if (command === 'toggle_board_form') {
+    var popups = chrome.extension.getViews({
+      type: "popup"
+    });
+    if (popups.length > 0) {
+      document.querySelector('.tab-boards .expand').click();
+    }
   }
 });
 

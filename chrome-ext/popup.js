@@ -14,9 +14,9 @@ const RESPONSE_STATUS = {
 
     const debounceSrc = chrome.extension.getURL('util/debounce.js');
     const debounceScript = await import(debounceSrc);
-    const boards = await DATA.getBoardsAsync();
+    
 
-    UI.init(boards, Node);
+    UI.init(Node);
 
     selectRelation = (node, board) => {
         chrome.storage.sync.set({
@@ -206,9 +206,10 @@ const UI = {
             boardForm.addClass('hide');
         }
     },
-    init: (boards, Node) => {
+    init: async (Node) => {
         chrome.storage.sync.get(['token', 'userInfo', 'history', 'selectedNode', 'selectedBoard', 'selectedTab'], async (storage) => {
             if (storage.token) {
+                const boards = await DATA.getBoardsAsync();
                 UI.setupProfile(storage.userInfo);
                 UI.hideUnauthSection();
                 UI.generateRelation(storage.selectedNode, storage.selectedBoard);
