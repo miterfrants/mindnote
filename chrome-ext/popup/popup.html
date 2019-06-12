@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Auth</title>
+    <link href="/fontawesome-free-5.9.0-web/css/all.css" rel="stylesheet">
+    <link href="/common.css" rel="stylesheet">
+    <link href="/popup/popup.css" rel="stylesheet">
+    <link href="/components/toggle-button.css" rel="stylesheet">
+    <link href="/components/tab.css" rel="stylesheet">
+    <link href="/components/auto-complete.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="auth hide">
+        <div class="top">
+            <div class="user-info">
+                <div class="profile-container btn-logout"></div>
+                <div>
+                    <div class="name"></div>
+                    <div class="email text-sm"></div>
+                </div>
+            </div>
+            <div class="selected-board">
+                <div class="title">Current Board</div>
+                <div class="content"></div>
+            </div>
+            <div class="selected-node">
+                <div class="title">Parent Node</div>
+                <div class="content"></div>
+            </div>
+        </div>
+
+        <div class="tab">
+            <ul>
+                <li class="tab-nodeform">
+                    Node Form
+                </li>
+                <li class="tab-boards">
+                    Boards
+                    <button class="expand fas fa-arrows-alt-v"></button>
+                </li>
+                <li class="tab-history">
+                    Nodes History
+                </li>
+            </ul>
+        </div>
+        <div class="form">
+            <div class="board-form hide pad-10">
+                <label for="board-title">
+                    <input type="text" id="board-title" data-field="title" placeholder="title" />
+                </label>
+                <label for="board-uniquename" class="marg-l-5">
+                    <input type="text" class="board-uniquename" data-field="uniquename"
+                        placeholder="uniquename for url" />
+                </label>
+                <button class="fa fa-icon fa-plus-circle add marg-l-5"></button>
+            </div>
+        </div>
+        <div class="body">
+            <div class="nodeform hide">
+                <label class="title" for="title-input" style="padding-top: 0">
+                    <span>title:</span>
+                    <input class="marg-t-10 pad-10" id="title-input" type="text" value="">
+                </label>
+                <label class="desc pad-t-20" for="description-input">
+                    <span>description:</span>
+                    <textarea class="marg-t-10 pad-10" id="description-input"></textarea>
+                </label>
+                <button class="btn-create">Create</button>
+            </div>
+            <div class="history">
+            </div>
+            <div class="boards">
+            </div>
+        </div>
+    </div>
+
+    <div class="unauth hide">
+        <button class="auth-google">
+            <i class="fab fa-google"></i>
+            Sign in with Google
+        </button>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

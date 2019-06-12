@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <link href="/fontawesome-free-5.9.0-web/css/all.css" rel="stylesheet">
+    <link href="/common.css" rel="stylesheet">
+    <script src="/page/dialog.js"></script>
+    <style>
+        html,
+        body {
+
+            margin: 0;
+        }
+
+        .auth label {
+            display: flex;
+            padding-top: 20px;
+        }
+
+        .description span,
+        .title span {
+            width: 90px;
+            text-align: right;
+        }
+
+        #description-input,
+        #title-input {
+            width: calc(100% - 90px);
+        }
+
+        #description-input {
+            height: 200px;
+        }
+
+        .un-auth .auth-google {
+            padding: 15px;
+            margin: 20px;
+            font-size: 20px;
+            border: 1px solid #cdcdcd;
+            border-radius: 10px;
+        }
+
+        .un-auth {
+            text-align: center;
+        }
+        .top {
+            display: flex;
+            padding: 10px;
+            background: #ededed;
+        }
+
+        .top .relation {
+            width: 50%;
+        }
+        .top .clipboard {
+            width: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="auth">
+            <div class="top">
+                <div class="relation">
+                    <div class="selected-board">
+                        <div class="title">Current Board</div>
+                        <div class="content"></div>
+                    </div>
+                    <div class="selected-node pad-t-10">
+                        <div class="title">Parent Node</div>
+                        <div class="content"></div>
+                    </div>
+                    <div class="warning">
+                        Please, select a board or parent node.
+                    </div>
+                </div>
+                <div class="clipbaord">
+                    <div class="title">Clipboard</div>
+                    <div class="content"></div>
+                </div>
+            </div>
+
+            <label class="title" for="title-input" style="padding-top: 0">
+                <span>title:</span>
+                <input id="title-input" type="text" value="">
+            </label>
+            <label class="description" for="description-input">
+                <span>description:</span>
+                <textarea id="description-input"></textarea>
+            </label>
+            <button class="btn-create">create</button>
+            <button class="btn-close">close</button>
+        </div>
+
+        <div class="unauth">
+            <button class="auth-google">
+                <i class="fab fa-google"></i>
+                Sign in with Google
+            </button>
+        </div>
+
+    </div>
+</body>
