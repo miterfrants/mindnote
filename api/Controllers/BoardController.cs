@@ -51,7 +51,7 @@ namespace Mindmap.Controllers
 
         [HttpGet]
         [Route("{boardUniqueName}/nodes/")]
-        public ActionResult<List<ViewRelatedNode>> GetNodes([FromRoute] string boardUniqueName)
+        public ActionResult<List<node>> GetNodes([FromRoute] string boardUniqueName)
         {
             board board = _context.board.FirstOrDefault(x => 
                 x.uniquename.Equals(boardUniqueName));
@@ -62,7 +62,24 @@ namespace Mindmap.Controllers
                 HttpContext.Response.StatusCode = HttpStatusCode.Unauthorized.GetHashCode();
                 return null;
             } else {
-                return _contextForView.ViewRelatedNode.Where(x => x.board_id == board.id).ToList();
+                return _context.node.Where(x => x.board_id == board.id).ToList();
+            }
+        }
+
+        [HttpGet]
+        [Route("{boardUniqueName}/relationship/")]
+        public ActionResult<List<view_node_relationship>> GetRelationship([FromRoute] string boardUniqueName)
+        {
+            board board = _context.board.FirstOrDefault(x => 
+                x.uniquename.Equals(boardUniqueName));
+            if(board == null) {
+                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
+                return null;
+            } else if (!board.is_public) { 
+                HttpContext.Response.StatusCode = HttpStatusCode.Unauthorized.GetHashCode();
+                return null;
+            } else {
+                return _contextForView.view_node_relationship.Where(x => x.board_id == board.id).ToList();
             }
         }
 
