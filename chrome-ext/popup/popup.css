@@ -1,0 +1,158 @@
+.selected-node,
+.selected-board {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.auth .top {
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    min-height: 60px;
+}
+
+.auth .top .user-info .profile-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.auth .top .user-info .profile-container::after {
+    content: 'logout';
+    display: block;
+    background: rgba(0, 0, 0, 0.6);
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 0;
+    color: white;
+    padding-top: 12px;
+    text-align: center;
+    font-size: 10px;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.auth .top .user-info .profile-container:hover::after {
+    opacity: 1;
+}
+
+.auth .user-info {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+    position: absolute;
+    right: 0;
+}
+
+.auth .user-info .profile-container {
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    display: block;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.auth .user-info .email {
+    margin-top: 5px;
+}
+
+.auth .profile-container img {
+    width: 40px;
+    height: 40px;
+}
+
+.auth .item {
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background 0.26s, color 0.26s;
+}
+
+.auth .boards .item {
+    min-height: 30px;
+    line-height: 30px;
+}
+
+.auth .history {
+    display: none;
+}
+
+.auth .item:hover {
+    background: #333;
+    color: white;
+}
+
+.auth .item:hover .description {
+    color: #666;
+}
+
+.hide {
+    display: none;
+}
+
+.board-form {
+    background: #d9d9d9;
+}
+
+.board-form .add {
+    font-size: 20px;
+    color: rgb(35, 192, 193);
+}
+
+.unauth .auth-google {
+    padding: 15px;
+    margin: 20px;
+    font-size: 20px;
+    border: 1px solid #cdcdcd;
+    border-radius: 10px;
+}
+
+.unauth {
+    text-align: center;
+}
+
+.nodeform {
+    padding: 10px;
+}
+
+.nodeform label {
+    display: block;
+    overflow: inherit;
+    max-height: initial;
+    position: relative;
+}
+
+.nodeform .btn-create {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 44px;
+    left: 0;
+    background: rgb(35, 192, 193);
+}
+
+.nodeform label span {
+    width: 100px;
+    display: block;
+}
+
+.nodeform label input,
+.nodeform label textarea {
+    width: calc(100% - 20px);
+    position: relative;
+}
+
+.autocomplete {
+    width: 100%;
+    position: absolute;
+    background: #CCC;
+    margin-top: -10px;
+    padding-top: 20px;
+}
+
+.autocomplete .item {
+    padding: 10px;
+}
+
+.nodeform label textarea {
+    height: 200px;
+}

@@ -1,72 +1,34 @@
+let RESPONSE_STATUS, API, NODE_HISTORY_LIMIT, CLIPBOARD_LIMIT, controller;
 (async () => {
   (await import(chrome.extension.getURL('/util/extended-prototype.js'))).extendStringProtoType();
+  const constantModule = (await import(chrome.extension.getURL('/constant.js')))
+  RESPONSE_STATUS = constantModule.RESPONSE_STATUS;
+  API = constantModule.API;
+  NODE_HISTORY_LIMIT = constantModule.NODE_HISTORY_LIMIT;
+  CLIPBOARD_LIMIT = constantModule.CLIPBOARD_LIMIT;
+  controller = (await import(chrome.extension.getURL('/controller.js'))).controller;
 })();
 
-
-/**
- * Constant
- */
-const API = {
-  ENDPOINT: 'https://sapiens.tools/mindmap/api/v1/',
-  CONTROLLER: {
-    USER: 'users/',
-    BOARDS: 'users/{username}/boards/',
-    BOARD: 'users/{username}/boards/{uniquename}/',
-    NODE: 'users/{username}/boards/{boardUniquename}/nodes/',
-    AUTH: 'auth/'
-  }
-};
-
-const RESPONSE_STATUS = {
-  OK: 'OK',
-  FAILED: 'FAILED',
-};
-
-const ERROR = {
-  AUTH: {
-
-  }
-};
-
-const NODE_HISTORY_LIMIT = 5;
+let tabId;
 
 /**
  * Event Listner
  */
 chrome.commands.onCommand.addListener(function (command) {
   if (command === 'dialog') {
-    getTextSelection(function (text) {
-      chrome.tabs.executeScript(null, {
-        code: 'var textSelection = "' + text.replace(/(\r\n|\n|\r)/gm, ' ').replace(/"/gm, "\"").replace(/"/gm, "\"") + '";'
-      }, function () {
-        chrome.tabs.executeScript(null, {
-          file: "dialog.js"
-        });
+    getTextSelection((text) => {
+      chrome.storage.sync.set({
+        textSelection: text
+      }, () => {
+        openPopup();
       });
-    }, function () {
-      alert('empty text selection!');
     });
-  } else if (command === 'switch_to_board') {
-    var popups = chrome.extension.getViews({
-      type: "popup"
+  } else if (command === 'unshift_to_clipboard') {
+    getTextSelection((text) => {
+      controller.clipboard.unshift({
+        text
+      });
     });
-    if (popups.length > 0) {
-      popups[0].document.querySelector('.tab-boards').click();
-    }
-  } else if (command === 'switch_to_history') {
-    var popups = chrome.extension.getViews({
-      type: "popup"
-    });
-    if (popups.length > 0) {
-      popups[0].document.querySelector('.tab-history').click();
-    }
-  } else if (command === 'toggle_board_form') {
-    var popups = chrome.extension.getViews({
-      type: "popup"
-    });
-    if (popups.length > 0) {
-      document.querySelector('.tab-boards .expand').click();
-    }
   }
 });
 
@@ -91,265 +53,43 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
 });
 
 /**
- * Controller
- */
-const controller = {
-  boards: {
-    get: async (data, sendResponse) => {
-      let api = API.ENDPOINT + API.CONTROLLER.BOARDS;
-      api = api.bind(data);
-      let fetchOption = {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + data.token
-        }
-      };
-      const resp = await _fetch(api, fetchOption);
-
-      if (resp.status === 200) {
-        const boards = await resp.json();
-        sendResponse({
-          status: RESPONSE_STATUS.OK,
-          data: [
-            ...boards,
-          ]
-        });
-      } else {
-        sendResponse({
-          status: RESPONSE_STATUS.FAILED,
-          data: {
-            errorMsg: 'get board failed:' + JSON.stringify(resp)
-          }
-        });
-      }
-    }
-  },
-  board: {
-    post: async (data, sendResponse) => {
-      let api = API.ENDPOINT + API.CONTROLLER.BOARDS;
-      api = api.bind(data);
-      const postBody = {
-        title: data.title,
-        uniquename: data.uniquename
-      }
-      const fetchOption = {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + data.token
-        },
-        body: JSON.stringify(postBody)
-      };
-      const resp = await _fetch(api, fetchOption);
-      if (resp.status === 200) {
-        const board = await resp.json();
-        sendResponse({
-          status: RESPONSE_STATUS.OK,
-          data: {
-            ...board,
-          }
-        });
-      } else {
-        sendResponse({
-          status: RESPONSE_STATUS.FAILED,
-          data: {
-            errorMsg: 'get board failed:' + JSON.stringify(resp)
-          }
-        });
-      }
-    },
-    delete: async (data, sendResponse) => {
-      let api = API.ENDPOINT + API.CONTROLLER.BOARD;
-      api = api.bind(data);
-      const fetchOption = {
-        method: 'DELETE',
-        headers: {
-          'Authorization': 'Bearer ' + data.token
-        }
-      };
-      const resp = await _fetch(api, fetchOption);
-      if (resp.status === 200) {
-        sendResponse({
-          status: RESPONSE_STATUS.OK
-        });
-      } else {
-        sendResponse({
-          status: RESPONSE_STATUS.FAILED,
-          data: {
-            errorMsg: 'delete board failed:' + JSON.stringify(resp)
-          }
-        });
-      }
-    },
-    patch: async (data, sendResponse) => {
-      let api = API.ENDPOINT + API.CONTROLLER.BOARD;
-      api = api.bind(data);
-      const fetchOption = {
-        method: 'PATCH',
-        headers: {
-          'Authorization': 'Bearer ' + data.token
-        },
-        body: JSON.stringify({
-          title: data.title,
-          uniquename: data.uniquename,
-          is_public: data.is_public
-        })
-      };
-      const resp = await _fetch(api, fetchOption);
-      if (resp.status === 200) {
-        const board = await resp.json();
-        sendResponse({
-          status: RESPONSE_STATUS.OK,
-          data: board
-        });
-      } else {
-        sendResponse({
-          status: RESPONSE_STATUS.FAILED,
-          data: {
-            errorMsg: 'public board failed:' + JSON.stringify(resp)
-          }
-        });
-      }
-    }
-  },
-  node: {
-    post: async (data, sendResponse) => {
-      // validation 
-      if (!data.selectedBoard) {
-        alert('Please select a board');
-      }
-
-      let apiNode = API.ENDPOINT + API.CONTROLLER.NODE;
-      apiNode = apiNode.bind(data).replace(/{boardUniquename}/gi, data.selectedBoard.uniquename);
-      let postBody = {
-        title: data.title,
-        description: data.description
-      };
-
-      if (data.selectedNode) {
-        postBody['parent_node_id'] = data.selectedNode.id
-      }
-
-      let fetchOption = {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + data.token
-        },
-        body: JSON.stringify(postBody)
-      };
-      const resp = await _fetch(apiNode, fetchOption)
-
-      if (resp.status === 200) {
-        const data = await resp.json();
-        appendNodeHistory(data);
-        sendResponse({
-          status: RESPONSE_STATUS.OK,
-          data
-        });
-      } else {
-        sendResponse({
-          status: RESPONSE_STATUS.FAILED,
-          data: {
-            errorMsg: 'create post failed'
-          }
-        });
-      }
-    }
-  },
-  auth: async (data, sendResponse) => {
-    const resp = await authAsync();
-    setToken(resp.data.token, resp.data.userInfo);
-    sendResponse(resp);
-  }
-}
-
-/**
  * Private function
  */
+openPopup = () => {
+  const w = 600;
+  const h = 800;
+  const left = (screen.width / 2) - (w / 2);
+  const top = (screen.height / 2) - (h / 2);
+  getTextSelection((text) => {
+    let url = chrome.runtime.getURL("popup/popup.html");
+    url += '?action=create-node&text=' + encodeURIComponent(text);
+    chrome.windows.create({
+      type: 'popup',
+      width: w,
+      height: h,
+      top,
+      left,
+      url
+    });
+  });
+}
+
 getTextSelection = (OKCallback, failCallback) => {
-  chrome.tabs.executeScript({
-    code: 'window.getSelection().toString();'
-  }, function (result) {
-    if (result[0]) {
-      OKCallback(result[0])
-    } else {
-      failCallback();
-    }
+  chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  }, (tabs) => {
+    var currTab = tabs[0];
+    if (currTab.url.indexOf('chrome://') === -1) {
+      chrome.tabs.executeScript({
+        code: 'window.getSelection().toString();'
+      }, function (result) {
+        if (result !== null && result !== undefined && result.length > 0) {
+          OKCallback(result[0]);
+        } else {
+          OKCallback();
+        }
+      });
+    };
   });
-}
-
-authAsync = async () => {
-  return new Promise(function (resolve, reject) {
-    chrome.identity.getAuthToken({
-      'interactive': true
-    }, async (code) => {
-      // check token is validated
-      const fetchOption = {
-        method: 'POST',
-        body: JSON.stringify({
-          code: code
-        })
-      };
-      const resp = await _fetch(API.ENDPOINT + API.CONTROLLER.AUTH, fetchOption)
-
-      if (resp.status === 200) {
-        const userInfo = await resp.json();
-        const token = userInfo.token;
-        delete userInfo.token;
-        resolve({
-          status: RESPONSE_STATUS.OK,
-          data: {
-            token: token,
-            userInfo: userInfo
-          }
-        });
-      } else {
-        resolve({
-          status: RESPONSE_STATUS.FAILED,
-          data: {
-            errorMsg: 'auth fail'
-          }
-        });
-      }
-    });
-  });
-}
-
-function setToken(token, userInfo) {
-  chrome.storage.sync.set({
-    token: token,
-    userInfo: userInfo
-  });
-}
-
-function _fetch(url, option, withCatch) {
-  if (option.cache) {
-    console.warn('Cound not declate cache in option params');
-  }
-  const newOption = {
-    ...option,
-    headers: {
-      ...option.headers,
-      'Content-Type': 'application/json'
-    }
-  }
-  if (!withCatch) {
-    newOption['cache'] = 'no-cache';
-  } else {
-    newOption['cache'] = 'cache';
-  }
-  return fetch(url, newOption);
-}
-
-function appendNodeHistory(node, callback) {
-  chrome.storage.sync.get(['history'], function (data) {
-    let history = data.history
-    if (!history || !Array.isArray(history)) {
-      history = [];
-    }
-    history.unshift(node);
-    history.splice(NODE_HISTORY_LIMIT);
-    chrome.storage.sync.set({
-      history
-    });
-  })
 }
