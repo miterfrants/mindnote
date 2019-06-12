@@ -16,13 +16,13 @@ namespace Mindmap.Models
         {
         }
 
-        public virtual DbQuery<ViewRelatedNode> ViewRelatedNode { get; set; }
+        public virtual DbQuery<view_node_relationship> view_node_relationship { get; set; }
         public virtual DbQuery<view_node> view_node { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
-            modelBuilder.Query<ViewRelatedNode>().ToView("view_related_node");
+            modelBuilder.Query<view_node_relationship>().ToView("view_related_node");
             modelBuilder.Query<view_node>().ToView("view_node");
         }
     }
