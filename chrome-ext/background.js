@@ -1,12 +1,14 @@
-let RESPONSE_STATUS, API, NODE_HISTORY_LIMIT, CLIPBOARD_LIMIT, controller;
+let RESPONSE_STATUS, API, controller, extController, apiController, authApiController;
 (async () => {
   (await import(chrome.extension.getURL('/util/extended-prototype.js'))).extendStringProtoType();
-  const constantModule = (await import(chrome.extension.getURL('/constant.js')))
-  RESPONSE_STATUS = constantModule.RESPONSE_STATUS;
-  API = constantModule.API;
-  NODE_HISTORY_LIMIT = constantModule.NODE_HISTORY_LIMIT;
-  CLIPBOARD_LIMIT = constantModule.CLIPBOARD_LIMIT;
-  controller = (await import(chrome.extension.getURL('/controller.js'))).controller;
+  const configModule = (await import(chrome.extension.getURL('/config.js')))
+  RESPONSE_STATUS = configModule.RESPONSE_STATUS;
+  API = configModule.API;
+  extService = (await import(chrome.extension.getURL('/service/ext.js'))).extService;
+  extService.init(configModule.CLIPBOARD_LIMIT, API.ENDPOINT, API.AUTHORIZED_CONTROLLER.AUTH);
+
+  authApiService = (await import('https://sapiens.tools/mindmap/service/api.js')).authApiService;
+  authApiService.init(API, RESPONSE_STATUS);
 })();
 
 let tabId;
@@ -25,7 +27,7 @@ chrome.commands.onCommand.addListener(function (command) {
     });
   } else if (command === 'unshift_to_clipboard') {
     getTextSelection((text) => {
-      controller.clipboard.unshift({
+      extService.clipboard.unshift({
         text
       });
     });
@@ -40,14 +42,10 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
       selectedBoard: storage.selectedBoard ? storage.selectedBoard : null,
       selectedNode: storage.selectedNode ? storage.selectedNode : null
     }
-    if (req.action) {
-      controller[req.controller][req.action]({
-        ...req.data,
-        ...data
-      }, sendResponse);
-    } else {
-      controller[req.controller](data, sendResponse);
-    }
+    window[req.service][req.module][req.action]({
+      ...req.data,
+      ...data
+    }, sendResponse);
   });
   return true;
 });

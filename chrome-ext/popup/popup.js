@@ -15,6 +15,8 @@ const RESPONSE_STATUS = {
     const Node = (await import(chrome.extension.getURL('components/node/node.js'))).Node
     const DATA = (await import(chrome.extension.getURL('popup/data.js'))).DATA;
     const UI = (await import(chrome.extension.getURL('popup/ui.js'))).UI;
+    const configModule = (await import(chrome.extension.getURL('/config.js')))
+    NODE_HISTORY_LIMIT = configModule.NODE_HISTORY_LIMIT;
 
     const arrayQueryString = location.search.substring(1).split('&');
     let showNodeForm = false;
@@ -25,45 +27,12 @@ const RESPONSE_STATUS = {
     }
 
     chrome.storage.sync.get(['token', 'userInfo', 'history', 'selectedNode', 'selectedBoard', 'selectedTab', 'textSelection'], async (storage) => {
-        const boards = await DATA.getBoardsAsync();
+        let boards = []
+        if (storage.token) {
+            boards = await DATA.getBoardsAsync();
+        }
         UI.init(storage, boards, Node, showNodeForm);
     });
-
-    selectRelation = (node, board) => {
-        chrome.storage.sync.set({
-            selectedNode: node,
-            selectedBoard: node ? {
-                uniquename: node.board_uniquename,
-                title: node.board_title,
-                is_public: node.board_is_public
-            } : board
-        });
-        UI.generateRelation(node, board);
-    }
-
-    buildBoardInstantAsync = (data) => {
-        const board = new Board(data, (e) => {
-            selectRelation(null, board.data);
-        }, async (e) => {
-            await DATA.removeBoard({
-                uniquename: board.data.uniquename
-            });
-            UI.removeBoard(board.element);
-        }, (e) => {
-            const isPublic = !(board.data.is_public === 'true');
-            board.data.is_public = isPublic;
-            changeBoardPermissionDebounce({
-                ...board.data,
-                is_public: isPublic,
-            }, board);
-        });
-        return board;
-    }
-
-    changeBoardPermissionDebounce = debounce(async (formData, boardItem) => {
-        const board = await DATA.changeBoardPermission(formData);
-        boardItem.update(board);
-    }, 1500);
 
     /**
      * Event Listener
@@ -109,11 +78,17 @@ const RESPONSE_STATUS = {
     document.querySelector('.selected-node').addEventListener('click', UI.clearSelectedNode);
     document.querySelector('.selected-board').addEventListener('click', UI.clearSelectedBoard);
     document.querySelector('.auth-google').addEventListener('click', async () => {
-        await DATA.auth();
-        chrome.storage.sync.get(['token', 'userInfo', 'history', 'selectedNode', 'selectedBoard', 'selectedTab', 'textSelection'], async (storage) => {
-            const boards = await DATA.getBoardsAsync();
-            UI.init(storage, boards, Node, showNodeForm);
-        });
+        try {
+            const resp = await DATA.authAsync();
+            chrome.storage.sync.set({
+                token: resp.data.token,
+                userInfo: resp.data.userInfo
+            });
+            chrome.storage.sync.get(['token', 'userInfo', 'history', 'selectedNode', 'selectedBoard', 'selectedTab', 'textSelection'], async (storage) => {
+                const boards = await DATA.getBoardsAsync();
+                UI.init(storage, boards, Node, showNodeForm);
+            });
+        } catch (error) {}
     });
 
     document.body.addEventListener('keyup', (e) => {
@@ -167,21 +142,90 @@ const RESPONSE_STATUS = {
         el.addEventListener('keyup', async (e) => {
             if (e.keyCode === 13) {
                 const formData = document.querySelector('.board-form').collectFormData();
-                const board = await DATA.postBoard(formData);
-                UI.postBoardFinish(board.element);
+                try {
+                    const resp = await DATA.postBoardAsync(formData);
+                    const board = await buildBoardInstantAsync(resp.data);
+                    UI.postBoardFinish(board.element);
+                } catch (error) {}
             }
         });
     })
 
     document.querySelector('.board-form .add').addEventListener('click', async (e) => {
         const formData = document.querySelector('.board-form').collectFormData();
-        const board = await DATA.postBoard(formData);
-        UI.postBoardFinish(board.element);
+        try {
+            const resp = await DATA.postBoardAsync(formData);
+            const board = await buildBoardInstantAsync(resp.data);
+            UI.postBoardFinish(board.element);
+        } catch (error) {}
     });
 
-    document.querySelector('.btn-create').addEventListener('click', (e) => {
+    document.querySelector('.btn-create').addEventListener('click', async (e) => {
         var title = document.querySelector('.nodeform .title input').value,
             description = document.querySelector('.nodeform .desc textarea').value;
-        DATA.postNode(title, description);
+        try {
+            const resp = await DATA.postNodeAsync(title, description);
+            appendNodeHistory(resp.data, () => {
+                window.close();
+            });
+        } catch (error) {}
     });
+
+    /**
+     * Private Function
+     */
+
+    selectRelation = (node, board) => {
+        chrome.storage.sync.set({
+            selectedNode: node,
+            selectedBoard: node ? {
+                uniquename: node.board_uniquename,
+                title: node.board_title,
+                is_public: node.board_is_public
+            } : board
+        });
+        UI.generateRelation(node, board);
+    }
+
+    buildBoardInstantAsync = (data) => {
+        const board = new Board(data, (e) => {
+            selectRelation(null, board.data);
+        }, async (e) => {
+            try {
+                await DATA.removeBoardAsync({
+                    uniquename: board.data.uniquename
+                });
+                UI.removeBoard(board.element);
+            } catch (error) {}
+        }, (e) => {
+            const isPublic = !board.data.is_public;
+            board.data.is_public = isPublic;
+            changeBoardPermissionDebounce({
+                ...board.data,
+                is_public: isPublic,
+            }, board);
+        });
+        return board;
+    }
+
+    changeBoardPermissionDebounce = debounce(async (formData, boardItem) => {
+        try {
+            const board = await DATA.changeBoardPermissionAsync(formData);
+            boardItem.update(board);
+        } catch (error) {}
+    }, 1500);
+
+    appendNodeHistory = (node, callback) => {
+        chrome.storage.sync.get(['history'], function (data) {
+            let history = data.history
+            if (!history || !Array.isArray(history)) {
+                history = [];
+            }
+            history.unshift(node);
+            history.splice(NODE_HISTORY_LIMIT);
+            chrome.storage.sync.set({
+                history
+            }, callback);
+        })
+    }
 })();
