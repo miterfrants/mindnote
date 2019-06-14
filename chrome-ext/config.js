@@ -5,7 +5,7 @@ export const RESPONSE_STATUS = {
 
 export const API = {
     ENDPOINT: 'https://sapiens.tools/mindmap/api/v1/',
-    CONTROLLER: {
+    AUTHORIZED_CONTROLLER: {
         USER: 'users/',
         BOARDS: 'users/{username}/boards/',
         BOARD: 'users/{username}/boards/{uniquename}/',

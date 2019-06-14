@@ -172,10 +172,10 @@ CREATE VIEW public.view_node AS
 ALTER TABLE public.view_node OWNER TO webservice;
 
 --
--- Name: view_node_relationshiop; Type: VIEW; Schema: public; Owner: webservice
+-- Name: view_node_relationship; Type: VIEW; Schema: public; Owner: webservice
 --
 
-CREATE VIEW public.view_node_relationshiop AS
+CREATE VIEW public.view_node_relationship AS
  SELECT node_relationship.parent_node_id,
     node_relationship.child_node_id,
     node_relationship.id,
@@ -184,7 +184,7 @@ CREATE VIEW public.view_node_relationshiop AS
      LEFT JOIN public.node parent_node ON ((parent_node.id = node_relationship.parent_node_id)));
 
 
-ALTER TABLE public.view_node_relationshiop OWNER TO webservice;
+ALTER TABLE public.view_node_relationship OWNER TO webservice;
 
 --
 -- Name: board boardpkey; Type: CONSTRAINT; Schema: public; Owner: webservice

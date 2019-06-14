@@ -17,7 +17,8 @@
     "util/debounce.js",
     "components/board.js",
     "components/node.js",
-    "page/dialog.html"
+    "page/dialog.html",
+    "https://sapiens.tools/mindmap/controller.js"
   ],
   "commands": {
     "dialog": {
@@ -63,5 +64,6 @@
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile"
     ]
-  }
+  },
+  "content_security_policy": "script-src 'self' https://sapiens.tools; object-src 'self'"
 }

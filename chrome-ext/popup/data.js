@@ -2,7 +2,8 @@ export const DATA = {
     getBoardsAsync: () => {
         return new Promise(function (resolve) {
             chrome.runtime.sendMessage({
-                controller: 'boards',
+                service: 'authApiService',
+                module: 'boards',
                 action: 'get'
             }, (resp) => {
                 if (resp.status === RESPONSE_STATUS.OK) {
@@ -14,43 +15,45 @@ export const DATA = {
             });
         })
     },
-    postBoard: (formData) => {
+    postBoardAsync: (formData) => {
         return new Promise(function (resolve) {
             chrome.runtime.sendMessage({
-                controller: 'board',
+                service: 'authApiService',
+                module: 'boards',
                 action: 'post',
                 data: formData
             }, async (resp) => {
                 if (resp.status === RESPONSE_STATUS.OK) {
-                    const board = await buildBoardInstantAsync(resp.data);
-                    resolve(board);
+                    resolve(resp);
                 } else {
-                    alert(resp.errorMsg);
-                    resolve(null);
+                    alert(resp.data.errorMsg);
+                    reject();
                 }
             });
         });
     },
-    removeBoard: (formData, board) => {
+    removeBoardAsync: (formData, board) => {
         return new Promise(function (resolve, reject) {
             chrome.runtime.sendMessage({
-                controller: 'board',
+                service: 'authApiService',
+                module: 'board',
                 action: 'delete',
                 data: formData
             }, function (resp) {
                 if (resp.status === RESPONSE_STATUS.OK) {
-                    resolve();
+                    resolve(resp);
                 } else {
-                    alert(resp.errorMsg);
+                    alert(resp.data.errorMsg);
                     reject();
                 }
             })
         })
     },
-    changeBoardPermission: (formData) => {
+    changeBoardPermissionAsync: (formData) => {
         return new Promise(function (resolve, reject) {
             chrome.runtime.sendMessage({
-                controller: 'board',
+                service: 'authApiService',
+                module: 'board',
                 action: 'patch',
                 data: {
                     ...formData,
@@ -60,20 +63,21 @@ export const DATA = {
                 if (resp.status === RESPONSE_STATUS.OK) {
                     resolve(resp.data);
                 } else {
-                    alert(resp.errorMsg);
+                    alert(resp.data.errorMsg);
                     reject();
                 }
             });
         })
     },
-    auth: () => {
+    authAsync: () => {
         return new Promise(function (resolve, reject) {
             chrome.runtime.sendMessage({
-                controller: 'auth',
+                service: 'extService',
+                module: 'auth',
                 action: 'post'
             }, (resp) => {
                 if (resp.status === RESPONSE_STATUS.OK) {
-                    resolve();
+                    resolve(resp);
                 } else {
                     alert(resp.data.errorMsg);
                     reject();
@@ -81,20 +85,24 @@ export const DATA = {
             });
         });
     },
-    postNode: (title, description) => {
-        chrome.runtime.sendMessage({
-            controller: 'node',
-            action: 'post',
-            data: {
-                title,
-                description
-            }
-        }, (resp) => {
-            if (resp.status === 'OK') {
-                window.close();
-            } else {
-                alert(resp.data.errorMsg);
-            }
+    postNodeAsync: (title, description) => {
+        return new Promise(function (resolve, reject) {
+            chrome.runtime.sendMessage({
+                service: 'authApiService',
+                module: 'nodes',
+                action: 'post',
+                data: {
+                    title,
+                    description
+                }
+            }, (resp) => {
+                if (resp.status === 'OK') {
+                    resolve(resp);
+                } else {
+                    alert(resp.data.errorMsg);
+                    reject();
+                }
+            });
         });
     }
 }

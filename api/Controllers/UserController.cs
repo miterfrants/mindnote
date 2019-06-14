@@ -142,6 +142,23 @@ namespace Mindmap.Controllers
             return nodes;
         }
 
+        [HttpGet]
+        [Route("{username}/boards/{boardUniquename}/relationship/")]
+        public ActionResult<List<view_node_relationship>> GetRelationshipInBoard([FromRoute] String username, [FromRoute] String boardUniquename)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+            Int16 userId = _userService.GetUserId(token);
+            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+
+            if (board == null)
+            {
+                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
+                return null;
+            }
+            return _contextForView.view_node_relationship.Where(x => x.board_id == board.id).ToList();
+        }
+
         [HttpPost]
         [Route("{username}/boards/{boardUniquename}/nodes/")]
         public ActionResult<view_node> PostNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic node)
@@ -162,7 +179,7 @@ namespace Mindmap.Controllers
                 _context.node_relationship.Add(nodeRelationship);
                 _context.SaveChanges();
             }
-            
+
             return _contextForView.view_node.SingleOrDefault(rec => rec.id == newNode.id);
         }
     }
