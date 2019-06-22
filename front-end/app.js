@@ -129,10 +129,15 @@ export const APP = {
     saveNodeDoneHandler: (e, data) => {
         const node = APP._createNode;
         const style = UI.getStyle(node.data().description);
-        node.data('id', node.data().id);
         for (let key in style) {
             node.data(key, style[key]);
         }
+        const nodeConstructData = node.json();
+        nodeConstructData.data.id = data.id;
+        APP.cy.add([
+            nodeConstructData
+        ]);
+        APP.cy.remove(node);
         APP._isCreating = false;
         APP._createNode = null;
     },

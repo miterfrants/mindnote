@@ -83,7 +83,7 @@ export const UI = {
     },
     updatePreviewEdge: (cy, sourceNodeId, position)=>{
         cy.$('#preview_edge').move({ source: sourceNodeId });
-        cy.$('#preview_node').position({ x: position.x - 5, y: position.y - 5 });
+        cy.$('#preview_node').position({ x: position.x - 10, y: position.y - 10 });
     },
     addPreviewEdge: (cy) => {
         cy.add([{
