@@ -1732,6 +1732,11 @@ function LNode(gm, loc, size, vNode) {
   this.edges = [];
   this.graphManager = gm;
 
+  if (size !== null && size !== undefined) {
+    size.width += 20;
+    size.height += 20;
+  }
+
   if (size != null && loc != null) this.rect = new RectangleD(loc.x, loc.y, size.width, size.height);else this.rect = new RectangleD();
 }
 
@@ -2322,7 +2327,6 @@ Layout.prototype.transform = function (newLeftTop) {
 
       var nodes = this.getAllNodes();
       var node;
-
       for (var i = 0; i < nodes.length; i++) {
         node = nodes[i];
         node.transform(trans);
@@ -3338,7 +3342,6 @@ FDLayout.prototype.calcRepulsionForces = function () {
     }
 
     processedNodeSet = new Set();
-
     // calculate repulsion forces between each nodes and its surrounding
     for (i = 0; i < lNodes.length; i++) {
       nodeA = lNodes[i];
@@ -3376,7 +3379,6 @@ FDLayout.prototype.calcGravitationalForces = function () {
 FDLayout.prototype.moveNodes = function () {
   var lNodes = this.getAllNodes();
   var node;
-
   for (var i = 0; i < lNodes.length; i++) {
     node = lNodes[i];
     node.move();
@@ -4597,8 +4599,8 @@ CoSELayout.prototype.calculateNodesToApplyGravitationTo = function () {
 CoSELayout.prototype.calcNoOfChildrenForAllNodes = function () {
   var node;
   var allNodes = this.graphManager.getAllNodes();
-
   for (var i = 0; i < allNodes.length; i++) {
+    
     node = allNodes[i];
     node.noOfChildren = node.getNoOfChildren();
   }
@@ -4655,7 +4657,6 @@ CoSELayout.prototype.positionNodesRadially = function (forest) {
   var currentY = 0;
   var currentX = 0;
   var point = new PointD(0, 0);
-
   for (var i = 0; i < forest.length; i++) {
     if (i % numberOfColumns == 0) {
       // Start of a new row, make the x coordinate 0, increment the
@@ -4702,7 +4703,6 @@ CoSELayout.radialLayout = function (tree, centerNode, startingPoint) {
   transform.setDeviceOrgY(bounds.getMinY());
   transform.setWorldOrgX(startingPoint.x);
   transform.setWorldOrgY(startingPoint.y);
-
   for (var i = 0; i < tree.length; i++) {
     var node = tree[i];
     node.transform(transform);

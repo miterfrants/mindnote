@@ -164,14 +164,18 @@ export const authApiService = {
         },
         post: async (data, sendResponse) => {
             // validation 
+            let result;
             if (!data.selectedBoard) {
-                sendResponse({
+                result = {
                     status: _RESPONSE_STATUS.FAILED,
                     data: {
                         errorMsg: 'Please select a board'
                     }
-                });
-                return;
+                };
+                if(sendResponse){
+                    sendResponse(result);
+                }
+                return result;
             }
 
             let apiNode = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.NODES;
@@ -196,17 +200,25 @@ export const authApiService = {
 
             if (resp.status === 200) {
                 const data = await resp.json();
-                sendResponse({
+                result = {
                     status: _RESPONSE_STATUS.OK,
                     data
-                });
+                };
+                if(sendResponse){
+                sendResponse(result);
+                }
+                return result;
             } else {
-                sendResponse({
+                result = {
                     status: _RESPONSE_STATUS.FAILED,
                     data: {
                         errorMsg: 'create post failed'
                     }
-                });
+                }
+                if(sendResponse){
+                    sendResponse(result);
+                }
+                return result;
             }
         }
     },
@@ -219,6 +231,39 @@ export const authApiService = {
                 headers: {
                     'Authorization': 'Bearer ' + data.token
                 }
+            };
+            const resp = await _fetch(apiNode, fetchOption)
+
+            if (resp.status === 200) {
+                const data = await resp.json();
+                return {
+                    status: _RESPONSE_STATUS.OK,
+                    data
+                };
+            } else {
+                return {
+                    status: _RESPONSE_STATUS.FAILED,
+                    data: {
+                        errorMsg: 'get relationship of node failed'
+                    }
+                };
+            }
+        },
+        post: async (data, sendResponse) => {
+            let apiNode = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.RELATIONSHIP;
+            apiNode = apiNode.bind(data);
+
+            let postBody = {
+                parent_node_id: data.parent_node_id,
+                child_node_id: data.child_node_id
+            };
+
+            let fetchOption = {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + data.token
+                },
+                body: JSON.stringify(postBody)
             };
             const resp = await _fetch(apiNode, fetchOption)
 
