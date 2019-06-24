@@ -296,7 +296,7 @@ export const apiService = {
                 }),
             };
 
-            const resp = await _fetch(API_ENDPOINT + API_AUTH, fetchOption)
+            const resp = await _fetch(_API.ENDPOINT + _API.CONTROLLER.AUTH, fetchOption)
             let result;
             if (resp.status === 200) {
                 const board = await resp.json();
