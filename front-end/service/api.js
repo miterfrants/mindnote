@@ -174,7 +174,7 @@ export const authApiService = {
                         errorMsg: 'Please select a board'
                     }
                 };
-                if(sendResponse){
+                if (sendResponse) {
                     sendResponse(result);
                 }
                 return result;
@@ -206,8 +206,8 @@ export const authApiService = {
                     status: _RESPONSE_STATUS.OK,
                     data
                 };
-                if(sendResponse){
-                sendResponse(result);
+                if (sendResponse) {
+                    sendResponse(result);
                 }
                 return result;
             } else {
@@ -217,7 +217,7 @@ export const authApiService = {
                         errorMsg: 'create post failed'
                     }
                 }
-                if(sendResponse){
+                if (sendResponse) {
                     sendResponse(result);
                 }
                 return result;
@@ -332,37 +332,40 @@ export const apiService = {
     },
     auth: {
         post: async (data, sendResponse) => {
-
-            // check token is validated
-            const fetchOption = {
-                method: 'POST',
-                body: JSON.stringify({
-                    code: data.code
-                }),
-            };
-
-            const resp = await _fetch(_API.ENDPOINT + _API.CONTROLLER.AUTH, fetchOption)
-            let result;
-            if (resp.status === 200) {
-                const board = await resp.json();
-                result = {
-                    status: _RESPONSE_STATUS.OK,
-                    data: {
-                        ...board,
-                    }
+            return new Promise(function (resolve, reject) {
+                // check token is validated
+                const fetchOption = {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        code: data.code
+                    }),
                 };
 
-            } else {
-                result = {
-                    status: _RESPONSE_STATUS.FAILED,
-                    data: {
-                        errorMsg: 'get board failed:' + JSON.stringify(resp)
-                    }
-                };
-            }
-            sendResponse(result);
-            return result;
-        },
+                const resp = await _fetch(_API.ENDPOINT + _API.CONTROLLER.AUTH, fetchOption)
+                let result;
+                if (resp.status === 200) {
+                    const board = await resp.json();
+                    result = {
+                        status: _RESPONSE_STATUS.OK,
+                        data: {
+                            ...board,
+                        }
+                    };
+
+                } else {
+                    result = {
+                        status: _RESPONSE_STATUS.FAILED,
+                        data: {
+                            errorMsg: 'get board failed:' + JSON.stringify(resp)
+                        }
+                    };
+                }
+                if (sendResponse) {
+                    sendResponse(result);
+                }
+                resolve(result);
+            });
+        }
     }
 }
 
