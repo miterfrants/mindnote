@@ -192,6 +192,8 @@ export const APP = {
                 APP._createNodePositionX = e.position.x;
                 APP._createNodePositionY = e.position.y;
                 // refactor: use event listener
+                document.querySelector('.title').value = '';
+                document.querySelector('.description').value = '';
                 document.querySelector('.title').focus();
             }
         } else if (APP.isNode(e)) {
