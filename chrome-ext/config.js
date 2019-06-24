@@ -9,7 +9,7 @@ export const API = {
         USER: 'users/',
         BOARDS: 'users/{username}/boards/',
         BOARD: 'users/{username}/boards/{uniquename}/',
-        NODE: 'users/{username}/boards/{boardUniquename}/nodes/',
+        NODES: 'users/{username}/boards/{boardUniquename}/nodes/',
         AUTH: 'auth/'
     }
 };

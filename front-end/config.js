@@ -9,11 +9,11 @@ export const API = {
         BOARDS: 'users/{username}/boards/',
         BOARD: 'users/{username}/boards/{uniquename}/',
         NODES: 'users/{username}/boards/{boardUniquename}/nodes/',
-        RELATIONSHIP: 'users/{username}/boards/{boardUniquename}/relationship/',
-        AUTH: 'auth/'
+        RELATIONSHIP: 'users/{username}/boards/{boardUniquename}/relationship/'
     },
     CONTROLLER: {
         NODES: 'boards/{boardUniquename}/nodes/',
-        RELATIONSHIP: 'boards/{boardUniquename}/relationship/'
+        RELATIONSHIP: 'boards/{boardUniquename}/relationship/',
+        AUTH: 'auth/'
     }
 };

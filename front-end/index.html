@@ -6,6 +6,18 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
     <script src="/mindmap/cytoscape.js"></script>
     <script src="/mindmap/cytoscape-cose-bilkent.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+    </script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+    </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="/mindmap/third-party/fontawesome-free-5.9.0-web/css/all.css" rel="stylesheet">
     <style>
         html,
         body {
@@ -20,17 +32,13 @@
 
         #cy {
             width: 100%;
-            height: 100%;
+            height: calc(100% - 52px);
             z-index: 1;
         }
 
         h1 {
             opacity: 0.5;
             font-size: 1em;
-        }
-
-        button {
-            margin-right: 10px;
         }
 
         .hide {
@@ -40,38 +48,146 @@
         .btn-layout {
             position: fixed;
             left: 15px;
-            top: 15px;
+            top: 105px;
             z-index: 2;
         }
 
         .node-form {
-            position: fixed;
-            right: 0;
+            display: none;
+        }
+
+        .pad-tb-10 {
+            padding: 10px 0;
+        }
+
+        .vert-mid {
+            align-items: center;
+            display: flex;
+        }
+
+        .header {
+            border-bottom: 1px solid #ddd;
+            height: 52px;
+            background: #1d415c;
+        }
+
+        .header .right {
+            margin-left: auto;
+        }
+
+        .header .logo-container {
+            overflow: hidden;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            box-shadow: 0px 0px 3px #666;
+        }
+
+        .header .logo-container img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .header .profile {
+            background: transparent;
+            border: none;
+        }
+
+        .header .profile .profile-img {
+            width: 30px;
+            height: 30px;
+            overflow: hidden;
+            border-radius: 50%;
+        }
+
+        .header .profile .profile-img img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .header .profile .name {
+            color: #b3b3b3;
+            padding-left: 10px;
+            font-size: 10px;
+        }
+
+        .header .unauth .auth-google {
+            background: none;
+            border-radius: 20px;
+            padding: 5px 20px;
+            color: white;
+        }
+
+        .dropdown-toggle::after {
+            border-top-color: white;
+            margin-left: 12px;
+        }
+
+        .dropdown-menu {
+            margin-top: 20px;
         }
     </style>
 </head>
 
 <body>
-    <div class="node-form hide">
-        title: <input class="title" type="text" />
-        description: <textarea class="description"></textarea>
-        <button class="btn-add">add</button>
-        <button class="btn-update">update</button>
+    <div class="header pad-tb-10">
+        <div class="container vert-mid">
+            <div class="logo-container left">
+                <img class="logo" src="/mindmap/imgs/apple-icon-120x120.png" alt="logo" />
+            </div>
+            <div class="unauth hide right">
+                <button class="auth-google">
+                    <i class="fab fa-google"></i>
+                    Sign in with Google
+                </button>
+            </div>
+            <div class="auth hide right">
+                <button class="profile vert-mid dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <div class="profile-img">
+                        <img alt="profile-image" />
+                    </div>
+                    <span class="name">
+                    </span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#">Boards</a>
+                    <a class="dropdown-item" href="#">Boards</a>
+                    <a class="dropdown-item" href="#">Boards</a>
+                    <a class="dropdown-item" href="#">Boards</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item logout" href="#">Logout</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div id="cy"></div>
-    <button class="btn-layout" type="button">re-arrange</button>
+    <div class="auth">
+        <div class="node-form hide">
+            title: <input class="title" type="text" />
+            description: <textarea class="description"></textarea>
+            <button class="btn-add">add</button>
+            <button class="btn-update">update</button>
+        </div>
+
+        <div id="cy"></div>
+        <button class="btn-layout" type="button">re-arrange</button>
+    </div>
 
     <script type="module">
+
         import { API, RESPONSE_STATUS } from '/mindmap/config.js';
 
         import { apiService, authApiService } from '/mindmap/service/api.js';
         authApiService.init(API, RESPONSE_STATUS);
+        window.apiService = apiService;
+        window.RESPONSE_STATUS = RESPONSE_STATUS;
 
         import { extendHTMLElementProtoType } from '/mindmap/util/extended-prototype.js';
         extendHTMLElementProtoType();
 
         import { APP } from '/mindmap/app.js';
+
 
         const pathArray = location.pathname.substring(9, location.pathname.length - 1).split('/')
         const moduleName = pathArray[0];
@@ -195,6 +311,62 @@
             const container = document.getElementById('cy');
             cy = APP.init(container, nodes, relationship, isEditMode);
         })();
+
+    </script>
+
+    <!-- oAuth -->
+    <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()"
+        onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+
+    <script>
+        const handleClientLoad = () => {
+            gapi.load('client:auth2', initClient);
+        };
+        // oAuth 
+        const SCOPE = 'https://www.googleapis.com/auth/userinfo.email';
+        let GoogleAuth;
+
+        const initClient = () => {
+            gapi.client.init({
+                'apiKey': 'AIzaSyAP9bT6sbku3mvWDwf3nr7I7E835ahtMwc',
+                'clientId': '675953765772-8q0eqscbosdo7uh1crc00rjjvv6v6o43.apps.googleusercontent.com',
+                'scope': SCOPE
+            }).then(function () {
+                GoogleAuth = gapi.auth2.getAuthInstance();
+                GoogleAuth.isSignedIn.listen(updateSigninStatus);
+                const user = GoogleAuth.currentUser.get();
+                updateSigninStatus();
+                document.querySelector('.logout').addEventListener('click', GoogleAuth.signOut);
+                document.querySelector('.auth-google').addEventListener('click', GoogleAuth.signIn);
+            });
+        };
+
+        const updateSigninStatus = async (isSignedIn) => {
+            const user = GoogleAuth.currentUser.get();
+            const isAuthorized = user.hasGrantedScopes(SCOPE);
+
+            if (isAuthorized) {
+                const result = await apiService.auth.post({
+                    code: user.getAuthResponse().access_token
+                });
+
+                if (result.status === RESPONSE_STATUS.OK) {
+                    localStorage.setItem('token', result.data.token);
+                    document.querySelector('.profile img').setAttribute('src', user.getBasicProfile()
+                        .getImageUrl());
+                    document.querySelector('.profile .name').innerHTML = user.getBasicProfile().getName();
+                    document.querySelector('.unauth').addClass('hide');
+                    document.querySelector('.auth').removeClass('hide');
+                } else {
+                    console.warn('error');
+                }
+
+            } else {
+                document.querySelector('.auth').addClass('hide');
+                document.querySelector('.unauth').removeClass('hide');
+            }
+        };
     </script>
 </body>
 

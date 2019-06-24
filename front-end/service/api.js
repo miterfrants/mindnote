@@ -1,5 +1,7 @@
 let _API, _RESPONSE_STATUS;
-import { extendStringProtoType } from 'https://sapiens.tools/mindmap/util/extended-prototype.js';
+import {
+    extendStringProtoType
+} from 'https://sapiens.tools/mindmap/util/extended-prototype.js';
 extendStringProtoType();
 
 export const authApiService = {
@@ -327,6 +329,40 @@ export const apiService = {
                 };
             }
         }
+    },
+    auth: {
+        post: async (data, sendResponse) => {
+
+            // check token is validated
+            const fetchOption = {
+                method: 'POST',
+                body: JSON.stringify({
+                    code: data.code
+                }),
+            };
+
+            const resp = await _fetch(_API.ENDPOINT + _API.CONTROLLER.AUTH, fetchOption)
+            let result;
+            if (resp.status === 200) {
+                const board = await resp.json();
+                result = {
+                    status: _RESPONSE_STATUS.OK,
+                    data: {
+                        ...board,
+                    }
+                };
+
+            } else {
+                result = {
+                    status: _RESPONSE_STATUS.FAILED,
+                    data: {
+                        errorMsg: 'get board failed:' + JSON.stringify(resp)
+                    }
+                };
+            }
+            sendResponse(result);
+            return result;
+        },
     }
 }
 

@@ -9,46 +9,46 @@ let RESPONSE_STATUS, API, controller, extController, apiController, authApiContr
 
   authApiService = (await import('https://sapiens.tools/mindmap/service/api.js')).authApiService;
   authApiService.init(API, RESPONSE_STATUS);
-})();
 
-let tabId;
+  let tabId;
 
-/**
- * Event Listner
- */
-chrome.commands.onCommand.addListener(function (command) {
-  if (command === 'dialog') {
-    getTextSelection((text) => {
-      chrome.storage.sync.set({
-        textSelection: text
-      }, () => {
-        openPopup();
+  /**
+   * Event Listner
+   */
+  chrome.commands.onCommand.addListener(function (command) {
+    if (command === 'dialog') {
+      getTextSelection((text) => {
+        chrome.storage.sync.set({
+          textSelection: text
+        }, () => {
+          openPopup();
+        });
       });
-    });
-  } else if (command === 'unshift_to_clipboard') {
-    getTextSelection((text) => {
-      extService.clipboard.unshift({
-        text
+    } else if (command === 'unshift_to_clipboard') {
+      getTextSelection((text) => {
+        extService.clipboard.unshift({
+          text
+        });
       });
-    });
-  }
-});
-
-chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
-  chrome.storage.sync.get(['token', 'userInfo', 'selectedBoard', 'selectedNode'], function (storage) {
-    let data = {
-      username: storage.userInfo ? storage.userInfo.username : null,
-      token: storage.token || null,
-      selectedBoard: storage.selectedBoard ? storage.selectedBoard : null,
-      selectedNode: storage.selectedNode ? storage.selectedNode : null
     }
-    window[req.service][req.module][req.action]({
-      ...req.data,
-      ...data
-    }, sendResponse);
   });
-  return true;
-});
+
+  chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
+    chrome.storage.sync.get(['token', 'userInfo', 'selectedBoard', 'selectedNode'], function (storage) {
+      let data = {
+        username: storage.userInfo ? storage.userInfo.username : null,
+        token: storage.token || null,
+        selectedBoard: storage.selectedBoard ? storage.selectedBoard : null,
+        selectedNode: storage.selectedNode ? storage.selectedNode : null
+      }
+      window[req.service][req.module][req.action]({
+        ...req.data,
+        ...data
+      }, sendResponse);
+    });
+    return true;
+  });
+})();
 
 /**
  * Private function
