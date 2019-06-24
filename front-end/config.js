@@ -9,6 +9,7 @@ export const API = {
         BOARDS: 'users/{username}/boards/',
         BOARD: 'users/{username}/boards/{uniquename}/',
         NODES: 'users/{username}/boards/{boardUniquename}/nodes/',
+        NODE: 'users/{username}/boards/{boardUniquename}/nodes/{nodeId}/',
         RELATIONSHIP: 'users/{username}/boards/{boardUniquename}/relationship/'
     },
     CONTROLLER: {
