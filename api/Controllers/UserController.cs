@@ -160,6 +160,27 @@ namespace Mindmap.Controllers
         }
 
         [HttpPost]
+        [Route("{username}/boards/{boardUniquename}/relationship/")]
+        public ActionResult<node_relationship> PostRelationshipInBoard([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic body)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+            Int16 userId = _userService.GetUserId(token);
+            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+
+            if (board == null)
+            {
+                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
+                return null;
+            }
+
+            node_relationship nodeRelationship = new node_relationship { parent_node_id = body.parent_node_id, child_node_id = body.child_node_id };
+            _context.node_relationship.Add(nodeRelationship);
+            _context.SaveChanges();
+            return nodeRelationship;
+        }
+
+        [HttpPost]
         [Route("{username}/boards/{boardUniquename}/nodes/")]
         public ActionResult<view_node> PostNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic node)
         {
