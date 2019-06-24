@@ -53,9 +53,12 @@ const RESPONSE_STATUS = {
                 term = term.toLowerCase();
                 var choices = clipboard;
                 var matches = [];
-                for (i = 0; i < choices.length; i++) {
-                    if (choices[i] !== null && choices[i].length > 0 && ~choices[i].toLowerCase().indexOf(term)) matches.push(choices[i]);
+                if (choices) {
+                    for (i = 0; i < choices.length; i++) {
+                        if (choices[i] !== null && choices[i].length > 0 && ~choices[i].toLowerCase().indexOf(term)) matches.push(choices[i]);
+                    }
                 }
+
                 suggest(matches);
             }
         });
