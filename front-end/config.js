@@ -14,6 +14,7 @@ export const API = {
     },
     CONTROLLER: {
         NODES: 'boards/{boardUniquename}/nodes/',
-        RELATIONSHIP: 'boards/{boardUniquename}/relationship/'
+        RELATIONSHIP: 'boards/{boardUniquename}/relationship/',
+        AUTH: 'auth/'
     }
 };
