@@ -52,9 +52,9 @@
             z-index: 2;
         }
 
-        .node-form {
+        /* .node-form {
             display: none;
-        }
+        } */
 
         .pad-tb-10 {
             padding: 10px 0;
@@ -164,6 +164,7 @@
 
     <div class="auth">
         <div class="node-form hide">
+            <input class="node-id" type="hidden" />
             title: <input class="title" type="text" />
             description: <textarea class="description"></textarea>
             <button class="btn-add">add</button>
@@ -203,6 +204,30 @@
             });
             layout.run();
         }
+
+        const updateNode = async (e) => {
+            const title = document.querySelector('.title').value;
+            const description = document.querySelector('.description').value;
+            const nodeId = document.querySelector('.node-id').value;
+            const token = localStorage.getItem('token');
+            const resp = await authApiService.node.patch({
+                title,
+                description,
+                token,
+                username,
+                boardUniquename,
+                nodeId
+            });
+
+            if (resp.status === RESPONSE_STATUS.OK) {
+                cy.trigger('updateNodeDone', [
+                    resp.data
+                ]);
+                document.querySelector('.title').value = '';
+                document.querySelector('.description').value = '';
+            }
+        }
+
         const saveNode = async (e) => {
             const title = document.querySelector('.title').value;
             const description = document.querySelector('.description').value;
@@ -275,6 +300,7 @@
         }
 
         document.querySelector('.btn-add').addEventListener('click', saveNode);
+        document.querySelector('.btn-update').addEventListener('click', updateNode);
         document.querySelector('.btn-layout').addEventListener('click', reArrange);
         document.addEventListener('double-tap-node', openNodeWindow);
         document.addEventListener('save-edge', saveEdge);

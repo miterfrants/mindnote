@@ -203,5 +203,27 @@ namespace Mindmap.Controllers
 
             return _contextForView.view_node.SingleOrDefault(rec => rec.id == newNode.id);
         }
+
+        [HttpPatch]
+        [Route("{username}/boards/{boardUniquename}/nodes/{nodeId}")]
+        public ActionResult<node> PatchNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromRoute] Int16 nodeId, [FromBody] dynamic requestBody)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+            Int16 userId = _userService.GetUserId(token);
+
+            node node = _context.node.FirstOrDefault(x => x.id == nodeId && x.owner_id == userId);
+
+            if (requestBody.title != null)
+            {
+                node.title = requestBody.title;
+            }
+            if (requestBody.description != null)
+            {
+                node.description = requestBody.description;
+            }
+            _context.SaveChanges();
+            return node;
+        }
     }
 }

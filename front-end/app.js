@@ -1,18 +1,22 @@
-import { UI } from '/mindmap/ui.js';
-import { DATA } from '/mindmap/data.js';
+import {
+    UI
+} from '/mindmap/ui.js';
+import {
+    DATA
+} from '/mindmap/data.js';
 
 // double tap node will trigger `double-tap-node` event
 export const APP = {
     _isEditMode: false,
-    _mousedown : false,
-    _edgeSourceNode : null,
-    _isConnecting : undefined,
+    _mousedown: false,
+    _edgeSourceNode: null,
+    _isConnecting: undefined,
     cy: null,
 
-    _tappedBefore: null, 
+    _tappedBefore: null,
     _tappedTimeout: null, // for manual implement double tap
     _editNode: null,
-    
+
     _createNode: null,
     _createNodePositionX: null,
     _createNodePositionY: null,
@@ -116,6 +120,7 @@ export const APP = {
         });
         APP.cy.on('saveNodeDone', APP.saveNodeDoneHandler);
         APP.cy.on('saveEdgeDone', APP.saveEdgeDoneHandler)
+        APP.cy.on('updateNodeDone', APP.updateNodeDoneHandler);
         return APP.cy;
     },
     saveEdgeDoneHandler: (e, data) => {
@@ -141,8 +146,17 @@ export const APP = {
         APP._isCreating = false;
         APP._createNode = null;
     },
+    updateNodeDoneHandler: (e, data) => {
+        const node = APP.cy.$('#' + data.id);
+        const style = UI.getStyle(node.data().description);
+        for (let key in style) {
+            node.data(key, style[key]);
+        }
+        node.data('title', data.title);
+        node.data('description', data.description);
+    },
     doubleTapHandler: (e) => {
-        if (e.target && e.target.data && e.target.data().id) {
+        if (APP.isNode(e)) {
             const data = e.target.data();
             var event = new CustomEvent('double-tap-node', {
                 bubbles: true,
@@ -165,7 +179,9 @@ export const APP = {
             e.target.trigger('doubleTap', e);
             APP._tappedBefore = null;
         } else {
-            APP._tappedTimeout = setTimeout(function () { APP._tappedBefore = null; }, 300);
+            APP._tappedTimeout = setTimeout(function () {
+                APP._tappedBefore = null;
+            }, 300);
             APP._tappedBefore = tappedNow;
         }
     },
@@ -177,15 +193,15 @@ export const APP = {
                 APP._createNodePositionY = e.position.y;
                 // refactor: use event listener
                 document.querySelector('.title').focus();
-                document.querySelector('.btn-add').innerHTML = 'add';
             }
-        } else {
+        } else if (APP.isNode(e)) {
             // APP._createNode = e.target;
             const data = e.target.data();
             // refactor: use event listener
-            document.querySelector('.title').value = data.title
-            document.querySelector('.description').value = data.description
-            document.querySelector('.btn-add').innerHTML = 'update';
+            document.querySelector('.title').value = data.title;
+            document.querySelector('.description').value = data.description;
+            document.querySelector('.node-id').value = data.id;
+            document.querySelector('.title').focus();
         }
     },
     mousedownInEditModeHandler: (e) => {
@@ -195,7 +211,10 @@ export const APP = {
             if (APP._isConnecting !== undefined) {
                 return;
             }
-            if (UI.isMouseInBorder(e.target, { x: e.position.x, y: e.position.y })) {
+            if (UI.isMouseInBorder(e.target, {
+                    x: e.position.x,
+                    y: e.position.y
+                })) {
                 APP._isConnecting = true;
             } else {
                 APP._isConnecting = false;
@@ -209,8 +228,12 @@ export const APP = {
         ) {
             const sourceId = APP._edgeSourceNode._private.data.id;
             const targetId = e.target._private.data.id;
+            // prevent self link
+            if (sourceId === targetId) {
+                return;
+            }
             const edgeInstance = UI.addEdge(APP.cy, sourceId, targetId);
-            
+
             // bubble event to html
             var event = new CustomEvent('save-edge', {
                 bubbles: true,
@@ -238,7 +261,10 @@ export const APP = {
         if (APP.isNode(e)) {
             UI.clearHoverNodeStyle(APP.cy);
             const node = e.target;
-            const isMouseInBorder = UI.isMouseInBorder(node, { x: e.position.x, y: e.position.y });
+            const isMouseInBorder = UI.isMouseInBorder(node, {
+                x: e.position.x,
+                y: e.position.y
+            });
             if (isMouseInBorder) {
                 UI.mouseInBorder(e.target);
             } else {
@@ -250,7 +276,7 @@ export const APP = {
     },
     isNode: (e) => {
         return (e.target &&
-        e.target.isNode &&
-        e.target.isNode());
-    }    
+            e.target.isNode &&
+            e.target.isNode());
+    }
 }
