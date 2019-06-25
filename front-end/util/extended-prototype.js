@@ -22,7 +22,6 @@ const extendStringProtoType = () => {
     }
 }
 
-
 const extendHTMLElementProtoType = () => {
     if (!HTMLElement.prototype.collectFormData) {
         HTMLElement.prototype.collectFormData = function () {

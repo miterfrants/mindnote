@@ -1,0 +1,66 @@
+/* Common */
+html,
+body {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: helvetica;
+    font-size: 14px;
+}
+
+h1 {
+    opacity: 0.5;
+    font-size: 1em;
+}
+
+.pad-tb-10 {
+    padding: 10px 0;
+}
+
+.marg-t-10 {
+    margin-top: 10px;
+}
+
+.vert-mid {
+    align-items: center;
+    display: flex;
+}
+
+.hide {
+    display: none;
+}
+
+.container {
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+    width: 100%;
+}
+
+@media (min-width: 480px) {
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        width: 750px;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        width: 970px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .container {
+        width: 1170px;
+    }
+}
