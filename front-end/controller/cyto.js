@@ -93,10 +93,7 @@ export const Cyto = {
         UI.Cyto.addPreviewEdge(Cyto.cy);
 
         Cyto.cy.on('tap', (e) => {
-            Cyto.tapHandler(e);
-            if (Cyto._isEditMode) {
-                Cyto.tapInEditModeHandler(e);
-            }
+            Cyto.tapHandler(e, Cyto._isEditMode);
         });
         if (Cyto._isEditMode) {
             Cyto.cy.on('mousedown', Cyto.mousedownInEditModeHandler);
@@ -123,7 +120,7 @@ export const Cyto = {
         for (let i = 0; i < nodes.length; i++) {
             elements.push({
                 data: {
-                    id: nodes[i].id,
+                    id: 'node-' + nodes[i].id,
                     title: nodes[i].title,
                     description: nodes[i].description,
                     background: nodes[i].style.background,
@@ -138,9 +135,9 @@ export const Cyto = {
         for (let i = 0; i < relationship.length; i++) {
             elements.push({
                 data: {
-                    id: relationship[i].id,
-                    source: relationship[i].parent_node_id,
-                    target: relationship[i].child_node_id,
+                    id: 'edge-' + relationship[i].id,
+                    source: 'node-' + relationship[i].parent_node_id,
+                    target: 'node-' + relationship[i].child_node_id,
                 },
                 group: "edges",
                 grabbable: true
@@ -207,7 +204,7 @@ export const Cyto = {
             Cyto.cy.container().dispatchEvent(event);
         }
     },
-    tapHandler: (e) => {
+    tapHandler: (e, isEditMode) => {
         let tappedNow = event.target;
         let originalTapEvent;
         if (Cyto._tappedTimeout && Cyto._tappedBefore) {
@@ -219,7 +216,10 @@ export const Cyto = {
         } else {
             Cyto._tappedTimeout = setTimeout(function () {
                 Cyto._tappedBefore = null;
-            }, 300);
+                if (isEditMode) {
+                    Cyto.tapInEditModeHandler(e);
+                }
+            }, 200);
             Cyto._tappedBefore = tappedNow;
         }
     },
