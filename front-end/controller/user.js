@@ -101,8 +101,8 @@ export const User = function (args) {
         document.addEventListener('save-edge', async (e) => {
             const token = localStorage.getItem('token');
             const resp = await authApiService.relationship.post({
-                parent_node_id: e.detail.parent_node_id,
-                child_node_id: e.detail.child_node_id,
+                parent_node_id: e.detail.parent_node_id.replace(/node\-/gi, ''),
+                child_node_id: e.detail.child_node_id.replace(/node\-/gi, ''),
                 token,
                 username,
                 boardUniquename
