@@ -186,17 +186,17 @@ export const UI = {
         const currPosition = cy.pan();
         if (estimateTop < 0) {
             targetTop = 0;
-            panX = currPosition.x - estimateTop;
+            panY = currPosition.y - estimateTop;
         } else {
             targetTop = estimateTop
-            panX = currPosition.x;
+            panY = currPosition.y;
         }
         if (estimateLeft < 0) {
             targetLeft = 0;
-            panY = currPosition.y - estimateLeft;
+            panX = currPosition.x - estimateLeft;
         } else {
             targetLeft = estimateLeft;
-            panY = currPosition.y;
+            panX = currPosition.x;
         }
 
         cy.animate({
