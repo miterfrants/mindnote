@@ -180,24 +180,36 @@ export const UI = {
             document.querySelector('.btn-add').removeClass('hide');
         }
 
-        const top = position.y - document.querySelector('.node-form').offsetHeight - 10;;
-        document.querySelector('.node-form').style.left = position.x - document.querySelector('.node-form').offsetWidth / 2;
-
-        if (top < 0) {
-            const currPosition = cy.pan();
-            cy.animate({
-                pan: {
-                    x: currPosition.x,
-                    y: currPosition.y - top
-                }
-            }, {
-                duration: 360,
-                easing: 'ease-in-out-cubic'
-            });
-            document.querySelector('.node-form').style.top = 0;
+        let estimateTop = position.y - document.querySelector('.node-form').offsetHeight - 10;;
+        let estimateLeft = position.x - document.querySelector('.node-form').offsetWidth / 2;
+        let targetTop, targetLeft, panX, panY;
+        const currPosition = cy.pan();
+        if (estimateTop < 0) {
+            targetTop = 0;
+            panX = currPosition.x - estimateTop;
         } else {
-            document.querySelector('.node-form').style.top = position.y - document.querySelector('.node-form').offsetHeight - 10;
+            targetTop = estimateTop
+            panX = currPosition.x;
         }
+        if (estimateLeft < 0) {
+            targetLeft = 0;
+            panY = currPosition.y - estimateLeft;
+        } else {
+            targetLeft = estimateLeft;
+            panY = currPosition.y;
+        }
+
+        cy.animate({
+            pan: {
+                x: panX,
+                y: panY
+            }
+        }, {
+            duration: 360,
+            easing: 'ease-in-out-cubic'
+        });
+        document.querySelector('.node-form').style.top = targetTop;
+        document.querySelector('.node-form').style.left = targetLeft;
 
         document.querySelector('.title').value = title;
         document.querySelector('.description').value = description;

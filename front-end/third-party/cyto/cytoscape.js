@@ -3757,14 +3757,10 @@
     };
     // peter mark check
     var checkInEllipse = function checkInEllipse(x, y, width, height, centerX, centerY, padding) {
-        console.log('checkInEllipse: ----------');
-        console.log(padding);
-        console.log(width);
         x -= centerX;
         y -= centerY;
         x /= width / 2 + padding;
         y /= height / 2 + padding;
-        console.log(x * x + y * y);
         return x * x + y * y <= 1;
     }; // Returns intersections of increasing distance from line's start point
 
