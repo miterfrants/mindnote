@@ -12,8 +12,15 @@
         .btn-layout {
             position: fixed;
             left: 15px;
-            top: 105px;
+            top: 65;
             z-index: 2;
+            border: none;
+            background: rgb(36, 192, 193);
+            color: white;
+            height: 40px;
+            border-radius: 30px;
+            width: 140px;
+            font-size: 15px;
         }
 
         .right {
@@ -144,7 +151,7 @@
             background: rgb(35, 192, 193);
             border-radius: 0 0 9px 9px;
             padding: 10px;
-            color: #373737;
+            color: white;
         }
 
         .mask {
@@ -198,7 +205,10 @@
 
     <div class="auth">
         <div class="mask hide"></div>
-        <button class="btn-layout" type="button">re-arrange</button>
+        <button class="btn-layout" type="button">
+            <i class="fab fa-hubspot"></i>
+            re-arrange
+        </button>
         <div class="node-form hide">
             <input class="node-id" type="hidden" />
             <label for="node-title" class="vert-mid">
