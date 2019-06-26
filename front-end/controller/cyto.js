@@ -59,15 +59,15 @@ export const Cyto = {
             }, {
                 selector: '.touch-border',
                 style: {
-                    'border-color': '#e8844b',
+                    'border-color': '#ffbc00',
                     'border-opacity': 0.25
                 }
             }, {
                 selector: '.touch-center',
                 style: {
-                    'border-color': '#e8844b',
+                    'border-color': '#ffbc00',
                     'border-opacity': 0.25,
-                    'background-color': '#e8844b',
+                    'background-color': '#ffbc00',
                 }
             }, {
                 selector: '.hide',
