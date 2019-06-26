@@ -67,6 +67,7 @@ export const UI = {
     },
     generateBoards: async (boards) => {
         let container = document.querySelector('.boards');
+
         for (let i = 0; i < boards.length; i++) {
             const board = await buildBoardInstantAsync(boards[i]);
             container.appendChild(board.element);

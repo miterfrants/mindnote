@@ -3,6 +3,14 @@ const RESPONSE_STATUS = {
     FAILED: 'FAILED',
 };
 
+const getStorageAsync = (keys) => {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(keys, (storage) => {
+            resolve(storage);
+        })
+    })
+}
+
 (async () => {
     const src = chrome.extension.getURL('util/extended-prototype.js');
     const injectScript = await import(src);
@@ -147,7 +155,9 @@ const RESPONSE_STATUS = {
                 const formData = document.querySelector('.board-form').collectFormData();
                 try {
                     const resp = await DATA.postBoardAsync(formData);
-                    const board = await buildBoardInstantAsync(resp.data);
+                    const board = await buildBoardInstantAsync({
+                        ...resp.data
+                    });
                     UI.postBoardFinish(board.element);
                 } catch (error) {}
             }
@@ -157,8 +167,11 @@ const RESPONSE_STATUS = {
     document.querySelector('.board-form .add').addEventListener('click', async (e) => {
         const formData = document.querySelector('.board-form').collectFormData();
         try {
+            // storage.userInfo.username
             const resp = await DATA.postBoardAsync(formData);
-            const board = await buildBoardInstantAsync(resp.data);
+            const board = await buildBoardInstantAsync({
+                ...resp.data
+            });
             UI.postBoardFinish(board.element);
         } catch (error) {}
     });
@@ -190,8 +203,12 @@ const RESPONSE_STATUS = {
         UI.generateRelation(node, board);
     }
 
-    buildBoardInstantAsync = (data) => {
-        const board = new Board(data, (e) => {
+    buildBoardInstantAsync = async (data) => {
+        const storage = await getStorageAsync(['userInfo']);
+        const board = new Board({
+            ...data,
+            username: storage.userInfo.username
+        }, (e) => {
             selectRelation(null, board.data);
         }, async (e) => {
             try {

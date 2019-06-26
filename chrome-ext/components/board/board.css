@@ -5,7 +5,7 @@
 .board .remove {
     font-size: 20px;
     color: #e8844b;
-    margin-left: 40px;
+    margin-left: 20px;
 }
 
 .board .content-section {
@@ -26,3 +26,8 @@
     margin-left: 10px;
 }
 
+.board .btn-link {
+    font-size: 20px;
+    color: rgb(36, 192, 193);
+    margin-left: 40px;
+}
