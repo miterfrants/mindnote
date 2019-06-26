@@ -12,10 +12,9 @@ let template = '';
 
 export function Board(data, clickHandler, removeButtonClickHandler, permissionButtonToggleHandler) {
     data.permission = data.is_public ? 'public' : 'private';
-
     this.data = data;
     this.element = null;
-
+    let self = this;
     this.element = template.bind(this.data).toDom();
     if (!this.data.is_public) {
         this.element.querySelector('.toggle-button').addClass('private');
@@ -31,6 +30,10 @@ export function Board(data, clickHandler, removeButtonClickHandler, permissionBu
             removeButtonClickHandler(e);
         }
     }, false);
+
+    this.element.querySelector('.btn-link').addEventListener('click', (e) => {
+        window.open(['https://sapiens.tools/mindmap/users/', self.data.username, '/boards/', self.data.uniquename, '/'].join(''));
+    });
 
     this.element.querySelector('.toggle-button').addEventListener('click', (e) => {
         e.stopPropagation();
