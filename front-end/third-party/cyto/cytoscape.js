@@ -3755,11 +3755,16 @@
         var lenProportion = newLength / len;
         return [(centerX - x) * lenProportion + x, (centerY - y) * lenProportion + y];
     };
+    // peter mark check
     var checkInEllipse = function checkInEllipse(x, y, width, height, centerX, centerY, padding) {
+        console.log('checkInEllipse: ----------');
+        console.log(padding);
+        console.log(width);
         x -= centerX;
         y -= centerY;
         x /= width / 2 + padding;
         y /= height / 2 + padding;
+        console.log(x * x + y * y);
         return x * x + y * y <= 1;
     }; // Returns intersections of increasing distance from line's start point
 
@@ -9844,6 +9849,8 @@
 
                 var _w = ele.outerWidth();
                 var _h = ele.outerHeight();
+
+                // peter add
                 if (ele.pstyle('border-alignment').value === 'outside') {
                     const borderWidth = ele.pstyle('border-width').value
                     _w += borderWidth*2;
@@ -21763,7 +21770,6 @@
         var r = this;
         var eles = r.getCachedZSortedEles();
         var near = []; // 1 node max, 1 edge max
-
         var zoom = r.cy.zoom();
         var hasCompounds = r.cy.hasCompoundNodes();
         var edgeThreshold = (isTouch ? 24 : 8) / zoom;
@@ -21812,6 +21818,14 @@
         function checkNode(node) {
             var width = node.outerWidth() + 2 * nodeThreshold;
             var height = node.outerHeight() + 2 * nodeThreshold;
+            
+            // peter add
+            if (ele.pstyle('border-alignment').value === 'outside') {
+                var borderWidth = node.pstyle('border-width').value || 0;
+                width += borderWidth;
+                height += borderWidth;
+            }
+
             var hw = width / 2;
             var hh = height / 2;
             var pos = node.position();
@@ -21821,7 +21835,6 @@
                 pos.y - hh <= y && y <= pos.y + hh // bb check y
             ) {
                 var shape = r.nodeShapes[self.getNodeShape(node)];
-
                 if (shape.checkPoint(x, y, 0, width, height, pos.x, pos.y)) {
                     addEle(node, 0);
                     return true;
@@ -24683,7 +24696,9 @@
             select[0] = select[2] = pos[0];
             select[1] = select[3] = pos[1];
         }, false);
+
         r.isTouchBorder = false;
+
         r.registerBinding(window, 'mousemove', function mousemoveHandler(e) {
             // eslint-disable-line no-undef
             var capture = r.hoverData.capture;
@@ -24701,6 +24716,7 @@
             var near = null;
 
             if (!r.hoverData.draggingEles && !r.hoverData.dragging && !r.hoverData.selecting) {
+                // peter mark
                 near = r.findNearestElement(pos[0], pos[1], true, false);
             }
             var last = r.hoverData.last;
@@ -24742,7 +24758,6 @@
                 x: pos[0],
                 y: pos[1]
             });
-
             var goIntoBoxMode = function goIntoBoxMode() {
                 r.data.bgActivePosistion = undefined;
 
@@ -24892,7 +24907,6 @@
                                 }
                             });
                         }
-
                         triggerEvents(near, ['mouseover', 'tapdragover'], e, {
                             x: pos[0],
                             y: pos[1]
@@ -29674,7 +29688,7 @@
                 }
             }
         };
-        // peter mark
+
         var drawBorder = function drawBorder() {
             if (borderWidth > 0) {
                 context.lineWidth = borderWidth;
@@ -29699,13 +29713,11 @@
                 }
 
                 if (usePaths) {
+                    // peter add
                     const scale = (nodeWidth+borderWidth)/nodeWidth;
                     const m = document.createElementNS("http://www.w3.org/2000/svg", "svg").createSVGMatrix()
                     const t = m.scale(scale)
                     const newPath = new Path2D();
-                    // path.clear()
-                    // path.add()
-                    // console.log(path);
                     newPath.addPath(path,t);
                     newPath.closePath();
                     context.stroke(newPath);
@@ -29805,7 +29817,7 @@
             }
 
             r.colorFillStyle(context, overlayColor[0], overlayColor[1], overlayColor[2], overlayOpacity);
-            //peter mark
+            //peter modify
             r.nodeShapes['ellipse'].draw(context, pos.x, pos.y, nodeWidth + overlayPadding * 2, nodeHeight + overlayPadding * 2);
             //r.nodeShapes['roundrectangle'].draw(context, pos.x, pos.y, nodeWidth + overlayPadding * 2, nodeHeight + overlayPadding * 2);
             context.fill();
