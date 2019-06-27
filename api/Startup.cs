@@ -34,20 +34,35 @@ namespace Mindmap
                 .AddJsonFile($"volume/secrets.json", optional: true)
                 .AddEnvironmentVariables();
 
-            // Configuration = configuration;
             Configuration = builder.Build();
         }
 
         public IConfiguration Configuration { get; }
-
+        readonly string MyAllowSpecificOrigins = "";
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            
+
             // inject variable to application layer from appsettings.json
             AppSettings appSettings = new AppSettings();
             Configuration.GetSection("Config").Bind(appSettings);
+
+            // setup CROS if config file includ CROS section
+            IConfigurationSection CROSSection = Configuration.GetSection("CROS");
+            string crossOrigin = Configuration.GetSection("CROS").GetValue<string>("Origin");
+            if (crossOrigin != null)
+            {
+                services.AddCors(options =>
+                {
+                    options.AddPolicy(MyAllowSpecificOrigins,
+                    builder =>
+                    {
+                        builder.WithOrigins(crossOrigin).AllowAnyHeader().AllowAnyMethod().SetPreflightMaxAge(TimeSpan.FromSeconds(600)); ;
+                    });
+                });
+            }
+
             services.Configure<AppSettings>(Configuration.GetSection("Config"));
 
             // setup db context
@@ -90,11 +105,12 @@ namespace Mindmap
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseMvc();
+
         }
     }
 }
