@@ -185,8 +185,8 @@ export const Cyto = {
         Cyto.cy.container().dispatchEvent(event);
     },
     updateNodeDoneHandler: (e, data) => {
-        const node = Cyto.cy.$('#' + data.id);
-        const style = UI.Cyto.getStyle(node.data().description);
+        const node = Cyto.cy.$('#node-' + data.id);
+        const style = UI.Cyto.getStyle(data.description);
         for (let key in style) {
             node.data(key, style[key]);
         }

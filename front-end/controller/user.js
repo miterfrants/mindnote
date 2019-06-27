@@ -11,44 +11,54 @@ import {
     API,
     RESPONSE_STATUS
 } from '/mindmap/config.js';
-export const User = function (args) {
-    // User
-    let cy = null;
-    const username = args.username;
-    const token = args.token;
-    const boardUniquename = args.boardUniquename;
-    const init = async () => {
-        if (token) {
+export class User {
+    constructor(args, context) {
+        this.init(args, context);
+        this.run(args, context);
+    }
+    async init(args, context) {
+        this.cy = null;
+        this._bindEvent();
+    }
+    async run(args, context) {
+        this.username = args.username;
+        this.token = args.token;
+        this.boardUniquename = args.boardUniquename;
+        this.args = args;
+        this.context = context;
+        if(this.token){
+            if(this.cy){
+                this.cy.destroy();
+            }
             authApiService.init(API, RESPONSE_STATUS);
             const nodes = (await authApiService.nodes.get({
-                username,
-                boardUniquename,
-                token
+                username: this.username,
+                boardUniquename: this.boardUniquename,
+                token: this.token
             })).data
             const relationship = (await authApiService.relationship.get({
-                username,
-                boardUniquename,
-                token
+                username: this.username,
+                boardUniquename: this.boardUniquename,
+                token: this.token
             })).data;
             const container = UI.getCytoContainer();
-            User.cy = Cyto.init(container, nodes, relationship, true);
-            _bindEvent();
+            this.cy = Cyto.init(container, nodes, relationship, true);
             UI.showAuth();
         } else {
             UI.hideAuth();
-            if (User.cy) {
-                User.cy.destroy();
+            if(this.cy){
+                this.cy.destroy();
             }
         }
     }
 
-    const _bindEvent = () => {
+    _bindEvent() {
         document.querySelector('.btn-add').addEventListener('click', async (e) => {
             const title = document.querySelector('.title').value;
             const description = document.querySelector('.description').value;
             const token = localStorage.getItem('token');
 
-            User.cy.trigger('createNode', [
+            this.cy.trigger('createNode', [
                 title,
                 description
             ]);
@@ -57,14 +67,14 @@ export const User = function (args) {
                 title,
                 description,
                 token,
-                username,
+                username: this.username,
                 selectedBoard: {
-                    uniquename: boardUniquename
+                    uniquename: this.boardUniquename
                 }
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
-                User.cy.trigger('createNodeDone', [
+                this.cy.trigger('createNodeDone', [
                     resp.data
                 ]);
                 UI.hideNodeForm();
@@ -73,26 +83,26 @@ export const User = function (args) {
         document.querySelector('.btn-update').addEventListener('click', async (e) => {
             const title = document.querySelector('.title').value;
             const description = document.querySelector('.description').value;
-            const nodeId = document.querySelector('.node-id').value;
+            const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
             const token = localStorage.getItem('token');
             const resp = await authApiService.node.patch({
                 title,
                 description,
-                token,
-                username,
-                boardUniquename,
+                token: this.token,
+                username: this.username,
+                boardUniquename: this.boardUniquename,
                 nodeId
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
-                User.cy.trigger('updateNodeDone', [
+                this.cy.trigger('updateNodeDone', [
                     resp.data
                 ]);
                 UI.hideNodeForm();
             }
         });
         document.querySelector('.btn-layout').addEventListener('click', () => {
-            UI.Cyto.reArrange(User.cy);
+            UI.Cyto.reArrange(this.cy);
         });
         document.querySelector('.btn-close').addEventListener('click', UI.hideNodeForm);
         document.querySelector('.mask').addEventListener('click', UI.hideNodeForm);
@@ -100,15 +110,15 @@ export const User = function (args) {
         document.addEventListener('save-edge', async (e) => {
             const token = localStorage.getItem('token');
             const resp = await authApiService.relationship.post({
-                parent_node_id: e.detail.parent_node_id.replace(/node\-/gi, ''),
-                child_node_id: e.detail.child_node_id.replace(/node\-/gi, ''),
-                token,
-                username,
-                boardUniquename
+                parent_node_id: e.detail.parent_node_id.replace(/node\-/gi,''),
+                child_node_id: e.detail.child_node_id.replace(/node\-/gi,''),
+                token: this.token,
+                username: this.username,
+                boardUniquename: this.boardUniquename
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
-                User.cy.trigger('saveEdgeDone', [{
+                this.cy.trigger('saveEdgeDone', [{
                     ...resp.data,
                     edgeInstance: e.detail.edgeInstance
                 }]);
@@ -121,7 +131,7 @@ export const User = function (args) {
                 x: e.detail.position.x,
                 y: e.detail.position.y
             }
-            UI.showNodeForm(User.cy, '', '', '', position);
+            UI.showNodeForm(this.cy, '', '', '', position);
         });
         document.addEventListener('double-tap-node', (e) => {
             const title = e.detail.title;
@@ -133,7 +143,7 @@ export const User = function (args) {
                 x: e.detail.position.x,
                 y: e.detail.position.y
             }
-            UI.showNodeForm(User.cy, e.detail.title, e.detail.description, e.detail.id, position);
+            UI.showNodeForm(this.cy, e.detail.title, e.detail.description, e.detail.id, position);
         });
         document.addEventListener('keyup', (e) => {
             // esc
@@ -145,5 +155,4 @@ export const User = function (args) {
             }
         });
     }
-    init();
 }

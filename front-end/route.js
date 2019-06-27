@@ -2,20 +2,17 @@ import {
     User
 } from '/mindmap/controller/user.js';
 import {
-    Board
-} from '/mindmap/controller/board.js';
-import {
-    Auth
-} from '/mindmap/controller/auth.js';
-import {
     Header
 } from '/mindmap/controller/header.js';
-
+import {
+    Board
+} from '/mindmap/controller/board.js';
 import {
     Loader
 } from '/mindmap/loader.js';
 
 window['MindMapRoutingLocation'] = [];
+window['MindMapController'] = [];
 export const Route = {
     _dicReg: [],
     init: (context) => {
@@ -77,7 +74,20 @@ export const Route = {
                         controller: routingTable[i].controller,
                         args: JSON.stringify(args)
                     });
-                    routingTable[i].controller(args, context);
+                    // 如果已經有 instance 了就不要在執行 init
+                    const controller = routingTable[i].controller;
+
+                    const instances = window.MindMapController.filter((instance) => {
+                        return instance instanceof routingTable[i].controller
+                    })
+
+                    if (instances.length === 0) {
+                        const controllerInstance = new routingTable[i].controller(args, context);
+                        window.MindMapController.push(controllerInstance);
+                    } else {
+                        // refactor data from route?
+                        instances[0].run(args, instances[0].context);
+                    }
                 }
 
                 // check is end
@@ -130,11 +140,8 @@ export const Route = {
             path: 'users/{username}/boards/{boardUniquename}/',
             controller: User,
             dependency: [{
-                url: "/mindmap/third-party/cyto/cytoscape-cose-bilkent.js",
-                dependency: [{
-                    url: "/mindmap/third-party/cyto/cytoscape.js",
-                    checkVariable: 'cytoscape'
-                }]
+                url: "/mindmap/third-party/cyto/cytoscape.min.js",
+                checkVariable: 'cytoscape'
             }],
         }, {
             path: 'boards/{boardUniquename}/',
