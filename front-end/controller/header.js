@@ -16,38 +16,58 @@ import {
     Route
 } from '/mindmap/route.js';
 
-export const Header = (data, context) => {
+export class Header {
+    constructor(args, context) {
+        this.init(args, context);
+        this.run(args, context);
+    }
     // Header
-    const init = async () => {
+    async init(args, context) {
         gapi.load('client:auth2', async () => {
             await gapi.client.init({
                 'apiKey': GOOGLE.AUTH.API_KEY,
                 'clientId': GOOGLE.AUTH.CLIENT_ID,
                 'scope': GOOGLE.AUTH.SCOPE
             });
-            context.GoogleAuth = gapi.auth2.getAuthInstance();
-            context.GoogleAuth.isSignedIn.listen(_updateSigninStatus);
-            _updateSigninStatus();
+            this.context.GoogleAuth = gapi.auth2.getAuthInstance();
+            this.context.GoogleAuth.isSignedIn.listen((context) => {
+                this._updateSigninStatus(context)
+            });
+            this._updateSigninStatus(context);
         });
         api.init(API, RESPONSE_STATUS);
-        _bindEvent();
+        this._bindEvent();
     }
 
-    const _bindEvent = () => {
+    async run(args, context) {
+        this.context = context;
+        this.self = this;
+    }
+
+    _bindEvent() {
         document.querySelector('.btn-logout').addEventListener('click', () => {
-            context.GoogleAuth.signOut()
+            this.context.GoogleAuth.signOut()
             localStorage.setItem('token', '');
             localStorage.setItem('username', '');
-            Route.runFromController(context, location.pathname, Header);
+            Route.runFromController(this.context, location.pathname, Header);
         });
 
         document.querySelector('.auth-google').addEventListener('click', () => {
-            context.GoogleAuth.signIn()
+            this.context.GoogleAuth.signIn()
+        });
+
+        document.querySelector('.profile').addEventListener('click', () => {
+            const menu = document.querySelector('.menu');
+            if (menu.classExists('hide')) {
+                menu.removeClass('hide')
+            } else {
+                menu.addClass('hide')
+            }
         });
     };
 
-    const _updateSigninStatus = async () => {
-        const user = context.GoogleAuth.currentUser.get();
+    async _updateSigninStatus() {
+        const user = this.context.GoogleAuth.currentUser.get();
         const isGoogleAuthorized = user.hasGrantedScopes(GOOGLE.AUTH.SCOPE);
 
         if (isGoogleAuthorized) {
@@ -62,7 +82,7 @@ export const Header = (data, context) => {
                     localStorage.setItem('username', result.data.username);
                     token = result.data.token;
                     username = result.data.username;
-                    Route.runFromController(context, location.pathname, Header);
+                    Route.runFromController(this.context, location.pathname, Header);
                 } else {
                     UI.header.hideAuth();
                     console.warn('error');
@@ -82,6 +102,4 @@ export const Header = (data, context) => {
             UI.header.hideAuth();
         }
     }
-
-    init();
 }
