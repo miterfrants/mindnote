@@ -1,16 +1,10 @@
-using System.Data.Common;
-using System.Net.WebSockets;
-using System.Net.Http.Headers;
-using System.Net.Cache;
-using System.Net;
 using System;
-using Microsoft.AspNetCore.Authorization;
+using System.Net;
 using System.Collections.Generic;
 using System.Linq;
-using Mindmap.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
-using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
+using Mindmap.Models;
 using Mindmap.Services;
 
 namespace Mindmap.Controllers
@@ -87,7 +81,7 @@ namespace Mindmap.Controllers
 
 
         [HttpDelete]
-        [Route("{username}/boards/{boardUniquename}")]
+        [Route("{username}/boards/{boardUniquename}/")]
         public void DeleteBoard([FromRoute] String username, [FromRoute] String boardUniquename)
         {
             string authorization = Request.Headers["Authorization"];
@@ -101,7 +95,7 @@ namespace Mindmap.Controllers
         }
 
         [HttpPatch]
-        [Route("{username}/boards/{boardUniquename}")]
+        [Route("{username}/boards/{boardUniquename}/")]
         public ActionResult<board> PatchBoard([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic requestBody)
         {
             string authorization = Request.Headers["Authorization"];
@@ -205,7 +199,7 @@ namespace Mindmap.Controllers
         }
 
         [HttpPatch]
-        [Route("{username}/boards/{boardUniquename}/nodes/{nodeId}")]
+        [Route("{username}/boards/{boardUniquename}/nodes/{nodeId}/")]
         public ActionResult<node> PatchNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromRoute] Int16 nodeId, [FromBody] dynamic requestBody)
         {
             string authorization = Request.Headers["Authorization"];
@@ -224,6 +218,31 @@ namespace Mindmap.Controllers
             }
             _context.SaveChanges();
             return node;
+        }
+
+        [HttpDelete]
+        [Route("{username}/boards/{boardUniquename}/nodes/{nodeId}/")]
+        public void DeleteNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromRoute] Int16 nodeId)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+
+            Int16 userId = _userService.GetUserId(token);
+            node node = _context.node.FirstOrDefault(x => x.id == nodeId && x.owner_id == userId && x.deleted_at == null);
+
+            if (node is null)
+            {
+                throw new MindMapException("Node not found", HttpStatusCode.NotFound);
+            }
+            else
+            {
+                node.deleted_at = DateTime.Now;
+                Int32 deleteResult = _context.SaveChanges();
+                if (deleteResult != 1)
+                {
+                    throw new MindMapException("Node not found", HttpStatusCode.ExpectationFailed);
+                }
+            }
         }
     }
 }

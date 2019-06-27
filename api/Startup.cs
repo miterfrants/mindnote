@@ -93,6 +93,7 @@ namespace Mindmap
 
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseMvc();
         }
     }
