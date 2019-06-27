@@ -90,7 +90,9 @@ export const Cyto = {
             elements
         })
 
-        UI.Cyto.addPreviewEdge(Cyto.cy);
+        if (Cyto.cy.nodes().length > 0) {
+            UI.Cyto.addPreviewEdge(Cyto.cy);
+        }
 
         Cyto.cy.on('tap', (e) => {
             Cyto.tapHandler(e, Cyto._isEditMode);
@@ -160,12 +162,19 @@ export const Cyto = {
         for (let key in style) {
             node.data(key, style[key]);
         }
+
+        // 複製一份新的 node 把綠色換成藍色
         const nodeConstructData = node.json();
         nodeConstructData.data.id = data.id;
         Cyto.cy.add([
             nodeConstructData
         ]);
         Cyto.cy.remove(node);
+
+        // 如果是第一個 node 加上 preview edge
+        if (Cyto.cy.nodes().length === 1) {
+            UI.Cyto.addPreviewEdge(Cyto.cy);
+        }
         Cyto._isCreating = false;
         Cyto._createNode = null;
 

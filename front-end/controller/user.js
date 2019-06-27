@@ -12,25 +12,34 @@ import {
     RESPONSE_STATUS
 } from '/mindmap/config.js';
 export const User = function (args) {
+    // User
     let cy = null;
     const username = args.username;
     const token = args.token;
     const boardUniquename = args.boardUniquename;
     const init = async () => {
-        authApiService.init(API, RESPONSE_STATUS);
-        const nodes = (await authApiService.nodes.get({
-            username,
-            boardUniquename,
-            token
-        })).data
-        const relationship = (await authApiService.relationship.get({
-            username,
-            boardUniquename,
-            token
-        })).data;
-        const container = UI.getCytoContainer();
-        User.cy = Cyto.init(container, nodes, relationship, true);
-        _bindEvent();
+        if (token) {
+            authApiService.init(API, RESPONSE_STATUS);
+            const nodes = (await authApiService.nodes.get({
+                username,
+                boardUniquename,
+                token
+            })).data
+            const relationship = (await authApiService.relationship.get({
+                username,
+                boardUniquename,
+                token
+            })).data;
+            const container = UI.getCytoContainer();
+            User.cy = Cyto.init(container, nodes, relationship, true);
+            _bindEvent();
+            UI.showAuth();
+        } else {
+            UI.hideAuth();
+            if (User.cy) {
+                User.cy.destroy();
+            }
+        }
     }
 
     const _bindEvent = () => {
@@ -87,16 +96,6 @@ export const User = function (args) {
         });
         document.querySelector('.btn-close').addEventListener('click', UI.hideNodeForm);
         document.querySelector('.mask').addEventListener('click', UI.hideNodeForm);
-        // document.querySelector('.logout').addEventListener('click', () => {
-        //     GoogleAuth.signOut()
-        //     localStorage.setItem('token', '');
-        //     var arrayPath = location.pathname.split('/');
-        //     arrayPath.splice(arrayPath.indexOf('users'), 2);
-        //     location.href = arrayPath.join('/');
-        // });
-        document.querySelector('.auth-google').addEventListener('click', () => {
-            GoogleAuth.signIn()
-        });
 
         document.addEventListener('save-edge', async (e) => {
             const token = localStorage.getItem('token');
@@ -145,8 +144,6 @@ export const User = function (args) {
                 UI.hideNodeForm();
             }
         });
-
     }
-
     init();
 }
