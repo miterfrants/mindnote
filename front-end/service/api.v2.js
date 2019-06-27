@@ -55,32 +55,38 @@ export const api = {
                 }
             },
             get: async (data, sendResponse) => {
-                let api = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.BOARDS;
-                api = api.bind(data);
-                let fetchOption = {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': 'Bearer ' + data.token
-                    }
-                };
-                const resp = await _fetch(api, fetchOption);
-
-                if (resp.status === 200) {
-                    const boards = await resp.json();
-                    sendResponse({
-                        status: _RESPONSE_STATUS.OK,
-                        data: [
-                            ...boards,
-                        ]
-                    });
-                } else {
-                    sendResponse({
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'get board failed:' + JSON.stringify(resp)
+                return new Promise(async (resolve, reject) => {
+                    let api = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.BOARDS;
+                    api = api.bind(data);
+                    let fetchOption = {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + data.token
                         }
-                    });
-                }
+                    };
+                    const resp = await _fetch(api, fetchOption);
+                    let result;
+                    if (resp.status === 200) {
+                        const boards = await resp.json();
+                        result = {
+                            status: _RESPONSE_STATUS.OK,
+                            data: [
+                                ...boards,
+                            ]
+                        };
+                    } else {
+                        result = {
+                            status: _RESPONSE_STATUS.FAILED,
+                            data: {
+                                errorMsg: 'get board failed:' + JSON.stringify(resp)
+                            }
+                        };
+                    }
+                    if (sendResponse) {
+                        sendResponse();
+                    }
+                    resolve(result);
+                });
             }
         },
         board: {

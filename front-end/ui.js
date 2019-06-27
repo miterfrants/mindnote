@@ -1,7 +1,9 @@
 import {
-    extendHTMLElementProtoType
+    extendHTMLElementProtoType,
+    extendStringProtoType
 } from '/mindmap/util/extended-prototype.js';
 extendHTMLElementProtoType();
+extendStringProtoType();
 
 export const UI = {
     Cyto: {
@@ -148,6 +150,40 @@ export const UI = {
                 randomize: true
             });
             layout.run();
+        }
+    },
+    header: {
+        showAuth: () => {
+            document.querySelectorAll('.header .auth').forEach((ele) => {
+                ele.removeClass('hide');
+            });
+            document.querySelectorAll('.header .unauth').forEach((ele) => {
+                ele.addClass('hide');
+            });
+        },
+        hideAuth: () => {
+            document.querySelectorAll('.header .auth').forEach((ele) => {
+                ele.addClass('hide');
+            });
+            document.querySelectorAll('.header .unauth').forEach((ele) => {
+                ele.removeClass('hide');
+            });
+        },
+        generateBoards: (username, boards) => {
+            const boardsContainer = document.querySelector('.header .boards');
+            document.querySelectorAll('.header .boards .menu-item').forEach((el) => {
+                if (el.className.split(' ').indexOf('template') === -1) {
+                    boardsContainer.removeChild(el);
+                }
+            })
+            const template = document.querySelector('.header .boards .menu-item.template').outerHTML;
+            const result = [];
+            for (let i = 0; i < boards.length; i++) {
+                boards[i]['link'] = ['/mindmap/users/', username, '/boards/', boards[i].uniquename, '/'].join('');
+                const el = template.bind(boards[i]).toDom()
+                el.removeClass('template');
+                boardsContainer.appendChild(el);
+            }
         }
     },
     showAuth: () => {
