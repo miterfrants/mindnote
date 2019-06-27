@@ -1,7 +1,7 @@
 let _API, _RESPONSE_STATUS;
 import {
     extendStringProtoType
-} from 'https://sapiens.tools/mindmap/util/extended-prototype.js';
+} from '/mindmap/util/extended-prototype.js';
 extendStringProtoType();
 
 export const authApiService = {
