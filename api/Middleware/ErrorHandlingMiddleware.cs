@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System;
 using System.Net;
-using Newtonsoft.Json;
+using Mindmap.Util;
 
 public class ErrorHandlingMiddleware
 {
@@ -18,22 +18,24 @@ public class ErrorHandlingMiddleware
         {
             await next(context);
         }
-        catch (MindMapException ex)
+        catch (Exception ex)
         {
             await HandleExceptionAsync(context, ex);
         }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, MindMapException ex)
+    private static Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
         var code = HttpStatusCode.InternalServerError;
-        if (ex.code != HttpStatusCode.OK)
+        var mindMapEx = (MindMapException)ex;
+        if (mindMapEx.code != HttpStatusCode.OK)
         {
-            code = ex.code;
+            code = mindMapEx.code;
         }
-        var result = JsonConvert.SerializeObject(new { error = ex.Message });
+        var result = new JSONResponse(JSONResponseStatus.FAILED, new { message = ex.Message });
+
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)code.GetHashCode();
-        return context.Response.WriteAsync(result);
+        return context.Response.WriteAsync(result.toString());
     }
 }

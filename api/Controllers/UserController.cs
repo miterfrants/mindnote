@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Mindmap.Models;
 using Mindmap.Services;
+using Mindmap.Util;
 
 namespace Mindmap.Controllers
 {
@@ -132,7 +133,7 @@ namespace Mindmap.Controllers
                 return null;
             }
 
-            List<view_node> nodes = _contextForView.view_node.Where(x => x.board_id == board.id).ToList();
+            List<view_node> nodes = _contextForView.view_node.Where(x => x.board_id == board.id && x.deleted_at == null).ToList();
             return nodes;
         }
 
@@ -222,7 +223,7 @@ namespace Mindmap.Controllers
 
         [HttpDelete]
         [Route("{username}/boards/{boardUniquename}/nodes/{nodeId}/")]
-        public void DeleteNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromRoute] Int16 nodeId)
+        public ActionResult<dynamic> DeleteNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromRoute] Int16 nodeId)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
@@ -243,6 +244,8 @@ namespace Mindmap.Controllers
                     throw new MindMapException("Node not found", HttpStatusCode.ExpectationFailed);
                 }
             }
+            JSONResponse result = new JSONResponse(JSONResponseStatus.OK, new { });
+            return result.toResponseObj();
         }
     }
 }

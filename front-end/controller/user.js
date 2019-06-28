@@ -5,8 +5,8 @@ import {
     Cyto
 } from '/mindmap/controller/cyto.js';
 import {
-    authApiService
-} from '/mindmap/service/api.js';
+    api
+} from '/mindmap/service/api.v2.js';
 import {
     API,
     RESPONSE_STATUS
@@ -26,17 +26,17 @@ export class User {
         this.boardUniquename = args.boardUniquename;
         this.args = args;
         this.context = context;
-        if(this.token){
-            if(this.cy){
+        if (this.token) {
+            if (this.cy) {
                 this.cy.destroy();
             }
-            authApiService.init(API, RESPONSE_STATUS);
-            const nodes = (await authApiService.nodes.get({
+            //authApiService.init(API, RESPONSE_STATUS);
+            const nodes = (await api.authApiService.nodes.get({
                 username: this.username,
                 boardUniquename: this.boardUniquename,
                 token: this.token
             })).data
-            const relationship = (await authApiService.relationship.get({
+            const relationship = (await api.authApiService.relationship.get({
                 username: this.username,
                 boardUniquename: this.boardUniquename,
                 token: this.token
@@ -46,7 +46,7 @@ export class User {
             UI.showAuth();
         } else {
             UI.hideAuth();
-            if(this.cy){
+            if (this.cy) {
                 this.cy.destroy();
             }
         }
@@ -63,7 +63,7 @@ export class User {
                 description
             ]);
 
-            const resp = await authApiService.nodes.post({
+            const resp = await api.authApiService.nodes.post({
                 title,
                 description,
                 token,
@@ -85,7 +85,7 @@ export class User {
             const description = document.querySelector('.description').value;
             const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
             const token = localStorage.getItem('token');
-            const resp = await authApiService.node.patch({
+            const resp = await api.authApiService.node.patch({
                 title,
                 description,
                 token: this.token,
@@ -101,6 +101,27 @@ export class User {
                 UI.hideNodeForm();
             }
         });
+        document.querySelector('.btn-delete').addEventListener('click', async (e) => {
+            var result = prompt('please type "DELETE"');
+            if (result === 'DELETE') {
+                const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
+                const resp = await api.authApiService.node.delete({
+                    token: this.token,
+                    username: this.username,
+                    boardUniquename: this.boardUniquename,
+                    nodeId
+                });
+
+                if (resp.status === RESPONSE_STATUS.OK) {
+                    this.cy.trigger('deleteNodeDone', [{
+                        id: nodeId
+                    }]);
+                    UI.hideNodeForm();
+                }
+            } else {
+                alert('Text not match');
+            }
+        });
         document.querySelector('.btn-layout').addEventListener('click', () => {
             UI.Cyto.reArrange(this.cy);
         });
@@ -109,9 +130,9 @@ export class User {
 
         document.addEventListener('save-edge', async (e) => {
             const token = localStorage.getItem('token');
-            const resp = await authApiService.relationship.post({
-                parent_node_id: e.detail.parent_node_id.replace(/node\-/gi,''),
-                child_node_id: e.detail.child_node_id.replace(/node\-/gi,''),
+            const resp = await api.authApiService.relationship.post({
+                parent_node_id: e.detail.parent_node_id.replace(/node\-/gi, ''),
+                child_node_id: e.detail.child_node_id.replace(/node\-/gi, ''),
                 token: this.token,
                 username: this.username,
                 boardUniquename: this.boardUniquename

@@ -9,6 +9,7 @@ secrets.json
 project.lock.json
 .DS_Store
 *.pyc
+*.zip
 nupkg/
 
 # Visual Studio Code

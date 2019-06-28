@@ -215,7 +215,7 @@ export const UI = {
             document.querySelector('.btn-update').addClass('hide');
             document.querySelector('.btn-add').removeClass('hide');
         }
-
+        document.querySelector('.btn-delete').removeClass('hide');
         let estimateTop = position.y - document.querySelector('.node-form').offsetHeight - 10;;
         let estimateLeft = position.x - document.querySelector('.node-form').offsetWidth / 2;
         let targetTop, targetLeft, panX, panY;
@@ -258,6 +258,7 @@ export const UI = {
     },
     hideNodeForm: () => {
         document.querySelector('.btn-add').addClass('hide');
+        document.querySelector('.btn-delete').addClass('hide');
         document.querySelector('.node-form').addClass('hide');
         document.querySelector('.btn-update').addClass('hide');
         document.querySelector('.title').value = '';
