@@ -8,13 +8,15 @@ import {
     api
 } from '/mindmap/service/api.v2.js';
 import {
-    API,
     RESPONSE_STATUS
 } from '/mindmap/config.js';
+
 export class User {
     constructor(args, context) {
         this.init(args, context);
         this.run(args, context);
+        this.continueDeleteCount = 0;
+        this.clearContinueDeleteCountTimer;
     }
     async init(args, context) {
         this.cy = null;
@@ -102,8 +104,19 @@ export class User {
             }
         });
         document.querySelector('.btn-delete').addEventListener('click', async (e) => {
-            var result = prompt('please type "DELETE"');
+            // 連續刪除超過三次，就不跳 prompt 請使用者輸入
+            var result = 'DELETE'
+            if (this.continueDeleteCount <= 2) {
+                result = prompt('please type "DELETE"');
+            }
+
+            this.continueDeleteCount += 1;
+            this.clearContinueDeleteCountTimer = setTimeout(() => {
+                this.continueDeleteCount = 0;
+            }, 120 * 1000);
+
             if (result === 'DELETE') {
+
                 const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
                 const resp = await api.authApiService.node.delete({
                     token: this.token,
