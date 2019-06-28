@@ -6,5 +6,6 @@ public class MindMapException : Exception
     public MindMapException(string message, HttpStatusCode code = HttpStatusCode.OK)
         : base(message)
     {
+        this.code = code;
     }
 }

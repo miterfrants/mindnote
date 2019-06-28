@@ -171,7 +171,7 @@ export const api = {
                         result = {
                             status: _RESPONSE_STATUS.FAILED,
                             data: {
-                                errorMsg: 'public board failed:' + JSON.stringify(resp)
+                                errorMsg: 'node patch failed:' + JSON.stringify(resp)
                             }
                         };
                     }
@@ -180,7 +180,39 @@ export const api = {
                     }
                     resolve(result);
                 });
-            }
+            },
+            delete: async (data, sendResponse) => {
+                return new Promise(async (resolve, reject) => {
+                    let api = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.NODE;
+                    api = api.bind(data);
+                    const fetchOption = {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': 'Bearer ' + data.token
+                        }
+                    };
+                    const resp = await _fetch(api, fetchOption);
+                    let result;
+                    if (resp.status === 200) {
+                        const board = await resp.json();
+                        result = {
+                            status: _RESPONSE_STATUS.OK,
+                            data: board
+                        };
+                    } else {
+                        result = {
+                            status: _RESPONSE_STATUS.FAILED,
+                            data: {
+                                errorMsg: 'node patch failed:' + JSON.stringify(resp)
+                            }
+                        };
+                    }
+                    if (sendResponse) {
+                        sendResponse(result);
+                    }
+                    resolve(result);
+                });
+            },
         },
         nodes: {
             get: async (data, sendResponse) => {

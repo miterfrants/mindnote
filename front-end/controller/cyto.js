@@ -115,7 +115,12 @@ export const Cyto = {
         Cyto.cy.on('createNodeDone', Cyto.createNodeDoneHandler);
         Cyto.cy.on('saveEdgeDone', Cyto.saveEdgeDoneHandler)
         Cyto.cy.on('updateNodeDone', Cyto.updateNodeDoneHandler);
+        Cyto.cy.on('deleteNodeDone', Cyto.deleteNodeDoneHandler)
         return Cyto.cy;
+    },
+    deleteNodeDoneHandler: (e, data) => {
+        const node = Cyto.cy.$('#node-' + data.id);
+        Cyto.cy.remove(node);
     },
     prepareData: (nodes, relationship, borderWidth) => {
         const elements = [];

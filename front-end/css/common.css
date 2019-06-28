@@ -15,6 +15,10 @@ h1 {
     font-size: 1em;
 }
 
+button {
+    font-size: 15px;
+}
+
 .pad-tb-10 {
     padding: 10px 0;
 }

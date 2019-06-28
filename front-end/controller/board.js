@@ -11,37 +11,49 @@ import {
 import {
     UI
 } from '/mindmap/ui.js';
-export const Board = (args) => {
-    let cy = null;
-    const username = args.username;
-    const token = args.token;
-    const boardUniquename = args.boardUniquename;
-    const init = async () => {
-        api.init(API, RESPONSE_STATUS);
-        const nodes = (await api.apiService.nodes.get({
-            username,
-            boardUniquename,
-            token
-        })).data
-        const relationship = (await api.apiService.relationship.get({
-            username,
-            boardUniquename,
-            token
-        })).data;
-        const container = UI.getCytoContainer();
-        Board.cy = Cyto.init(container, nodes, relationship, false);
-        _bindEvent();
+export class Board {
+    constructor(args, context) {
+        this.init(args, context);
+        this.run(args, context);
+    }
+    async init(args, context) {
+        this.cy = null;
+        this._bindEvent();
+    }
+    async run(args, context) {
+        this.username = args.username;
+        this.token = args.token;
+        this.boardUniquename = args.boardUniquename;
+        this.args = args;
+        this.context = context;
+        if (this.token) {
+            api.init(API, RESPONSE_STATUS);
+            const nodes = (await api.apiService.nodes.get({
+                boardUniquename: this.boardUniquename,
+                token: this.token
+            })).data
+            const relationship = (await api.apiService.relationship.get({
+                boardUniquename: this.boardUniquename,
+                token: this.token
+            })).data;
+            const container = UI.getCytoContainer();
+            this.cy = Cyto.init(container, nodes, relationship, false);
+        } else {
+            UI.hideAuth();
+            if (this.cy) {
+                this.cy.destroy();
+            }
+        }
     }
 
-    const _bindEvent = () => {
+    _bindEvent() {
         document.addEventListener('double-tap-node', (e) => {
             const title = e.detail.title;
             const desc = e.detail.description;
             UI.openNodeWindow(title, desc)
         });
         document.querySelector('.btn-layout').addEventListener('click', () => {
-            UI.Cyto.reArrange(Board.cy);
+            UI.Cyto.reArrange(this.cy);
         });
     }
-    init();
 }
