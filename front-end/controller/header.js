@@ -49,6 +49,7 @@ export class Header {
             this.context.GoogleAuth.signOut()
             localStorage.setItem('token', '');
             localStorage.setItem('username', '');
+            this.context.GoogleAuth.signOut();
             Route.runFromController(this.context, location.pathname, Header);
         });
 
@@ -84,6 +85,7 @@ export class Header {
                     username = result.data.username;
                     Route.runFromController(this.context, location.pathname, Header);
                 } else {
+                    UI.header.generateNavigation([])
                     UI.header.hideAuth();
                     console.warn('error');
                     return;
@@ -102,6 +104,7 @@ export class Header {
         } else {
             UI.header.hideAuth();
             UI.hideAuth();
+            UI.header.generateNavigation([]);
         }
     }
 }
