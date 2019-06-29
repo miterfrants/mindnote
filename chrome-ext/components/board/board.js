@@ -9,6 +9,7 @@ let template = '';
     const html = await resp.text();
     template = html;
 })();
+let continueDeleteCount = 0;
 
 export function Board(data, clickHandler, removeButtonClickHandler, permissionButtonToggleHandler) {
     data.permission = data.is_public ? 'public' : 'private';
@@ -26,13 +27,22 @@ export function Board(data, clickHandler, removeButtonClickHandler, permissionBu
     this.element.querySelector('.remove').addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
-        if (confirm('do you want to remove this data?')) {
+
+        if (continueDeleteCount < 2) {
+            result = prompt('please type "DELETE"');
+        }
+        continueDeleteCount += 1;
+        setTimeout(() => {
+            continueDeleteCount = 0;
+        }, 120 * 1000);
+
+        if (result === 'DELETE') {
             removeButtonClickHandler(e);
         }
     }, false);
 
     this.element.querySelector('.btn-link').addEventListener('click', (e) => {
-        window.open(['https://sapiens.tools/mindmap/users/', self.data.username, '/boards/', self.data.uniquename, '/'].join(''));
+        window.open(['https://sapiens.tools/mindmap/users/me/boards/', self.data.id, '/'].join(''));
     });
 
     this.element.querySelector('.toggle-button').addEventListener('click', (e) => {

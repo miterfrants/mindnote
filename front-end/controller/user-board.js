@@ -11,40 +11,48 @@ import {
     RESPONSE_STATUS
 } from '/mindmap/config.js';
 
-export class User {
+window['MindMapRoutingLocation'] = [];
+window['MindMapController'] = [];
+
+export class UserBoard {
     constructor(args, context) {
         this.init(args, context);
         this.run(args, context);
         this.continueDeleteCount = 0;
-        this.clearContinueDeleteCountTimer;
     }
     async init(args, context) {
         this.cy = null;
         this._bindEvent();
     }
     async run(args, context) {
-        this.username = args.username;
         this.token = args.token;
-        this.boardUniquename = args.boardUniquename;
-        this.args = args;
-        this.context = context;
+        this.boardId = args.boardId;
         if (this.token) {
             if (this.cy) {
                 this.cy.destroy();
             }
-            //authApiService.init(API, RESPONSE_STATUS);
+            const board = (await api.authApiService.board.get({
+                boardId: this.boardId,
+                token: this.token
+            })).data;
             const nodes = (await api.authApiService.nodes.get({
-                username: this.username,
-                boardUniquename: this.boardUniquename,
+                boardId: this.boardId,
                 token: this.token
             })).data
             const relationship = (await api.authApiService.relationship.get({
-                username: this.username,
-                boardUniquename: this.boardUniquename,
+                boardId: this.boardId,
                 token: this.token
             })).data;
+
             const container = UI.getCytoContainer();
             this.cy = Cyto.init(container, nodes, relationship, true);
+            // UI.header.showToggleButton();
+            UI.header.generateNavigation([{
+                title: 'Boards',
+                link: '/mindmap/users/me/boards/'
+            }, {
+                title: board.title,
+            }]);
             UI.showAuth();
         } else {
             UI.hideAuth();
@@ -69,10 +77,7 @@ export class User {
                 title,
                 description,
                 token,
-                username: this.username,
-                selectedBoard: {
-                    uniquename: this.boardUniquename
-                }
+                boardId: this.boardId
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
@@ -86,13 +91,11 @@ export class User {
             const title = document.querySelector('.title').value;
             const description = document.querySelector('.description').value;
             const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
-            const token = localStorage.getItem('token');
             const resp = await api.authApiService.node.patch({
                 title,
                 description,
                 token: this.token,
-                username: this.username,
-                boardUniquename: this.boardUniquename,
+                boardId: this.boardId,
                 nodeId
             });
 
@@ -104,14 +107,14 @@ export class User {
             }
         });
         document.querySelector('.btn-delete').addEventListener('click', async (e) => {
-            // 連續刪除超過三次，就不跳 prompt 請使用者輸入
+            // 連續刪除超過兩次，就不跳 prompt 請使用者輸入
             var result = 'DELETE'
-            if (this.continueDeleteCount <= 2) {
+            if (this.continueDeleteCount < 2) {
                 result = prompt('please type "DELETE"');
             }
 
             this.continueDeleteCount += 1;
-            this.clearContinueDeleteCountTimer = setTimeout(() => {
+            setTimeout(() => {
                 this.continueDeleteCount = 0;
             }, 120 * 1000);
 
@@ -120,8 +123,7 @@ export class User {
                 const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
                 const resp = await api.authApiService.node.delete({
                     token: this.token,
-                    username: this.username,
-                    boardUniquename: this.boardUniquename,
+                    boardId: this.boardId,
                     nodeId
                 });
 
@@ -147,8 +149,7 @@ export class User {
                 parent_node_id: e.detail.parent_node_id.replace(/node\-/gi, ''),
                 child_node_id: e.detail.child_node_id.replace(/node\-/gi, ''),
                 token: this.token,
-                username: this.username,
-                boardUniquename: this.boardUniquename
+                boardId: this.boardId
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {

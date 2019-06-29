@@ -177,12 +177,35 @@ export const UI = {
                 }
             })
             const template = document.querySelector('.header .boards .menu-item.template').outerHTML;
-            const result = [];
             for (let i = 0; i < boards.length; i++) {
                 boards[i]['link'] = ['/mindmap/users/', username, '/boards/', boards[i].uniquename, '/'].join('');
                 const el = template.bind(boards[i]).toDom()
                 el.removeClass('template');
                 boardsContainer.appendChild(el);
+            }
+        },
+        generateNavigation: (arrayNavigation) => {
+            const arrayString = [];
+            for (let i = 0; i < arrayNavigation.length; i++) {
+                if (arrayNavigation[i].link) {
+                    arrayString.push('<a target="_self" href="' + arrayNavigation[i].link + '">' + arrayNavigation[i].title + '</a>');
+                } else {
+                    arrayString.push(arrayNavigation[i].title);
+                }
+            }
+            document.querySelector('.navigation').innerHTML = arrayString.join(' > ');
+        },
+        showToggleButton: () => {
+            document.querySelector('.toggle-button').removeClass('hide');
+        },
+        hideToggleButton: () => {
+            document.querySelector('.toggle-button').addClass('hide');
+        },
+        setupToggleButtton: (isPublic) => {
+            if (isPublic) {
+                document.querySelector('.toggle-button').removeClass('private');
+            } else {
+                document.querySelector('.toggle-button').addClass('private');
             }
         }
     },
@@ -294,5 +317,50 @@ export const UI = {
     },
     getCytoContainer: () => {
         return document.getElementById('cy');
+    },
+    generateUserBoards: (boards) => {
+        const eles = [];
+        const boardsEle = document.querySelector('.router-user-boards')
+        const containerEle = boardsEle.querySelector('.container .row');
+        containerEle.querySelectorAll('.container .row > *:not(.template)').forEach((el) => {
+            containerEle.removeChild(el);
+        });
+        const template = containerEle.querySelector('.template').outerHTML;
+        for (let i = 0; i < boards.length; i++) {
+            boards[i].link = `/mindmap/users/me/boards/${boards[i].id}/`;
+            const newItem = template.bind(boards[i]).toDom();
+            newItem.removeClass('template');
+            containerEle.appendChild(newItem);
+            eles.push(newItem);
+        }
+        return eles;
+    },
+    addBoard: (board) => {
+        const boardsEle = document.querySelector('.router-user-boards')
+        const containerEle = boardsEle.querySelector('.container .row');
+        const template = containerEle.querySelector('.template').outerHTML;
+        board.link = `/mindmap/users/me/boards/${board.id}/`;
+        const newItem = template.bind(board).toDom();
+        newItem.removeClass('template');
+        containerEle.prepend(newItem);
+        return newItem;
+    },
+    updateBoard: (board) => {
+        const boardEl = document.querySelector(`div.board-card[data-id="${board.id}"]`);
+        boardEl.querySelector('.title').innerHTML = board.title;
+        boardEl.dataset['title'] = board.title;
+    },
+    removeBoard: (boardId) => {
+        const boardEl = document.querySelector(`div.board-card[data-id="${boardId}"]`);
+        boardEl.parentElement.removeChild(boardEl);
+    },
+    setBoardPublicPermission: (elBoardCard, isPublic) => {
+        if (isPublic) {
+            elBoardCard.querySelector('.btn-toggle').removeClass('private');
+            elBoardCard.querySelector('.permission').innerHTML = 'public';
+        } else {
+            elBoardCard.querySelector('.btn-toggle').addClass('private');
+            elBoardCard.querySelector('.permission').innerHTML = 'private';
+        }
     }
 }

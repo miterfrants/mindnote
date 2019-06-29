@@ -92,14 +92,17 @@ export class Header {
 
             UI.setupProfile(user.getBasicProfile().getImageUrl(), user.getBasicProfile().getName())
             UI.header.showAuth();
+            UI.showAuth();
             // generate boards
             const boards = await api.authApiService.boards.get({
                 username,
-                token
+                token,
+                limit: 5
             });
             UI.header.generateBoards(username, boards.data);
         } else {
             UI.header.hideAuth();
+            UI.hideAuth();
         }
     }
 }

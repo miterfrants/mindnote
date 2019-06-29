@@ -1,16 +1,7 @@
 export const UI = {
-    expandForm: () => {
-        const boardForm = document.querySelector('.board-form');
-        if (boardForm.classExists('hide')) {
-            boardForm.removeClass('hide');
-            boardForm.querySelectorAll('input')[0].focus();
-        } else {
-            boardForm.addClass('hide');
-        }
-    },
-    init: async (storage, boards, Node, showNodeForm) => {
+    init: async (storage, elBoards, Node, isShowNodeForm, nodeClickHandler) => {
         if (storage.token) {
-            if (showNodeForm) {
+            if (isShowNodeForm) {
                 UI.showNodeForm();
                 UI.showContentWithTab('nodeform');
                 UI.setNodeFormContent(storage.textSelection, storage.textSelection);
@@ -25,8 +16,8 @@ export const UI = {
             UI.hideUnauthSection();
             UI.generateRelation(storage.selectedNode, storage.selectedBoard);
 
-            UI.generateHistory(storage.history, Node);
-            UI.generateBoards(boards);
+            UI.generateHistory(storage.history, Node, nodeClickHandler);
+            UI.generateBoards(elBoards);
         } else {
             UI.hideAuthSection();
         }
@@ -65,12 +56,11 @@ export const UI = {
         document.querySelector('.name').innerHTML = userInfo.name;
         document.querySelector('.email').innerHTML = userInfo.email;
     },
-    generateBoards: async (boards) => {
+    generateBoards: async (elBoards) => {
         let container = document.querySelector('.boards');
 
-        for (let i = 0; i < boards.length; i++) {
-            const board = await buildBoardInstantAsync(boards[i]);
-            container.appendChild(board.element);
+        for (let i = 0; i < elBoards.length; i++) {
+            container.appendChild(elBoards[i]);
         }
     },
     showContentWithTab: (className) => {
@@ -107,13 +97,13 @@ export const UI = {
             selectedTab: className
         });
     },
-    generateHistory: (history, Node) => {
+    generateHistory: (history, Node, nodeClickHandler) => {
         if (!history) {
             return;
         }
         for (var i = 0; i < history.length; i++) {
             const node = new Node(history[i], (e) => {
-                selectRelation(node.data, null); // need fix
+                nodeClickHandler(node.data, null);
             });
             document.querySelector('.history').appendChild(node.element);
         }
@@ -132,9 +122,10 @@ export const UI = {
             selectedNode: null
         });
     },
-    postBoardFinish: (boardElement) => {
-        document.querySelector('.board-form').clearForm();
-        document.querySelector('.boards').prepend(boardElement);
+    postBoardFinish: (elBoard) => {
+        const elBoardsContainer = document.querySelector('.boards')
+        document.querySelector('.boards').insertBefore(elBoard, elBoardsContainer.childNodes[2]);
+        document.querySelector('.board-form .title input').value = '';
     },
     removeBoard: (boardElement) => {
         boardElement.parentElement.removeChild(boardElement);

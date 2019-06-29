@@ -27,11 +27,15 @@ public class ErrorHandlingMiddleware
     private static Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
         var code = HttpStatusCode.InternalServerError;
-        var mindMapEx = (MindMapException)ex;
-        if (mindMapEx.code != HttpStatusCode.OK)
+        if (ex.GetType() == typeof(MindMapException))
         {
-            code = mindMapEx.code;
+            var mindMapEx = (MindMapException)ex;
+            if (mindMapEx.code != HttpStatusCode.OK)
+            {
+                code = mindMapEx.code;
+            }
         }
+
         var result = new JSONResponse(JSONResponseStatus.FAILED, new { message = ex.Message });
 
         context.Response.ContentType = "application/json";

@@ -4,14 +4,16 @@ import {
 } from '/mindmap/util/extended-prototype.js';
 extendStringProtoType();
 
+window['MindMapApiCache'] = {};
+
 export const api = {
     /**
      * @param {object} API
      * @param {string} API.ENDPOINT
-     * @param {object} API.AUTHORIZED_CONTROLLER
-     * @param {string} API.AUTHORIZED_CONTROLLER.BOARDS
-     * @param {string} API.AUTHORIZED_CONTROLLER.BOARD
-     * @param {string} API.AUTHORIZED_CONTROLLER.NODES
+     * @param {object} API.AUTHORIZED
+     * @param {string} API.AUTHORIZED.BOARDS
+     * @param {string} API.AUTHORIZED.BOARD
+     * @param {string} API.AUTHORIZED.NODES
      * @param {object} RESPONSE_STATUS
      * @param {string} RESPONSE_STATUS.OK
      * @param {string} RESPONSE_STATUS.FAILED
@@ -23,7 +25,7 @@ export const api = {
     authApiService: {
         boards: {
             post: async (data, sendResponse) => {
-                let api = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.BOARDS;
+                let api = _API.ENDPOINT + _API.AUTHORIZED.BOARDS;
                 api = api.bind(data);
                 const postBody = {
                     title: data.title,
@@ -36,62 +38,39 @@ export const api = {
                     },
                     body: JSON.stringify(postBody)
                 };
-                const resp = await _fetch(api, fetchOption);
-                if (resp.status === 200) {
-                    const board = await resp.json();
-                    sendResponse({
-                        status: _RESPONSE_STATUS.OK,
-                        data: {
-                            ...board,
-                        }
-                    });
-                } else {
-                    sendResponse({
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'get board failed:' + JSON.stringify(resp)
-                        }
-                    });
-                }
+                return _handleRequest(api, fetchOption, sendResponse);
             },
             get: async (data, sendResponse) => {
-                return new Promise(async (resolve, reject) => {
-                    let api = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.BOARDS;
-                    api = api.bind(data);
-                    let fetchOption = {
-                        method: 'GET',
-                        headers: {
-                            'Authorization': 'Bearer ' + data.token
-                        }
-                    };
-                    const resp = await _fetch(api, fetchOption);
-                    let result;
-                    if (resp.status === 200) {
-                        const boards = await resp.json();
-                        result = {
-                            status: _RESPONSE_STATUS.OK,
-                            data: [
-                                ...boards,
-                            ]
-                        };
-                    } else {
-                        result = {
-                            status: _RESPONSE_STATUS.FAILED,
-                            data: {
-                                errorMsg: 'get board failed:' + JSON.stringify(resp)
-                            }
-                        };
+                let api = _API.ENDPOINT + _API.AUTHORIZED.BOARDS;
+                api = api.bind(data);
+
+                if (data.limit) {
+                    api += '?limit=' + data.limit;
+                }
+
+                let fetchOption = {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
                     }
-                    if (sendResponse) {
-                        sendResponse();
-                    }
-                    resolve(result);
-                });
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
             }
         },
         board: {
+            get: async (data, sendResponse) => {
+                let api = _API.ENDPOINT + _API.AUTHORIZED.BOARD;
+                api = api.bind(data);
+                const fetchOption = {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
+                    }
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
+            },
             delete: async (data, sendResponse) => {
-                let api = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.BOARD;
+                let api = _API.ENDPOINT + _API.AUTHORIZED.BOARD;
                 api = api.bind(data);
                 const fetchOption = {
                     method: 'DELETE',
@@ -99,22 +78,10 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                const resp = await _fetch(api, fetchOption);
-                if (resp.status === 200) {
-                    sendResponse({
-                        status: _RESPONSE_STATUS.OK
-                    });
-                } else {
-                    sendResponse({
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'delete board failed:' + JSON.stringify(resp)
-                        }
-                    });
-                }
+                return _handleRequest(api, fetchOption, sendResponse);
             },
             patch: async (data, sendResponse) => {
-                let api = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.BOARD;
+                let api = _API.ENDPOINT + _API.AUTHORIZED.BOARD;
                 api = api.bind(data);
                 const fetchOption = {
                     method: 'PATCH',
@@ -127,146 +94,56 @@ export const api = {
                         is_public: data.is_public
                     })
                 };
-                const resp = await _fetch(api, fetchOption);
-                if (resp.status === 200) {
-                    const board = await resp.json();
-                    sendResponse({
-                        status: _RESPONSE_STATUS.OK,
-                        data: board
-                    });
-                } else {
-                    sendResponse({
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'public board failed:' + JSON.stringify(resp)
-                        }
-                    });
-                }
+                return _handleRequest(api, fetchOption, sendResponse);
             }
         },
         node: {
             patch: async (data, sendResponse) => {
-                return new Promise(async (resolve, reject) => {
-                    let api = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.NODE;
-                    api = api.bind(data);
-                    const fetchOption = {
-                        method: 'PATCH',
-                        headers: {
-                            'Authorization': 'Bearer ' + data.token
-                        },
-                        body: JSON.stringify({
-                            title: data.title,
-                            description: data.description
-                        })
-                    };
-                    const resp = await _fetch(api, fetchOption);
-                    let result;
-                    if (resp.status === 200) {
-                        const board = await resp.json();
-                        result = {
-                            status: _RESPONSE_STATUS.OK,
-                            data: board
-                        };
-                    } else {
-                        result = {
-                            status: _RESPONSE_STATUS.FAILED,
-                            data: {
-                                errorMsg: 'node patch failed:' + JSON.stringify(resp)
-                            }
-                        };
-                    }
-                    if (sendResponse) {
-                        sendResponse(result);
-                    }
-                    resolve(result);
-                });
+                let api = _API.ENDPOINT + _API.AUTHORIZED.NODE;
+                api = api.bind(data);
+                const fetchOption = {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
+                    },
+                    body: JSON.stringify({
+                        title: data.title,
+                        description: data.description
+                    })
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
             },
             delete: async (data, sendResponse) => {
-                return new Promise(async (resolve, reject) => {
-                    let api = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.NODE;
-                    api = api.bind(data);
-                    const fetchOption = {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': 'Bearer ' + data.token
-                        }
-                    };
-                    const resp = await _fetch(api, fetchOption);
-                    let result;
-                    if (resp.status === 200) {
-                        const board = await resp.json();
-                        result = {
-                            status: _RESPONSE_STATUS.OK,
-                            data: board
-                        };
-                    } else {
-                        result = {
-                            status: _RESPONSE_STATUS.FAILED,
-                            data: {
-                                errorMsg: 'node patch failed:' + JSON.stringify(resp)
-                            }
-                        };
+                let api = _API.ENDPOINT + _API.AUTHORIZED.NODE;
+                api = api.bind(data);
+                const fetchOption = {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
                     }
-                    if (sendResponse) {
-                        sendResponse(result);
-                    }
-                    resolve(result);
-                });
-            },
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
+            }
         },
         nodes: {
             get: async (data, sendResponse) => {
-                let apiNode = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.NODES;
-                apiNode = apiNode.bind(data);
+                let api = _API.ENDPOINT + _API.AUTHORIZED.NODES;
+                api = api.bind(data);
                 let fetchOption = {
                     method: 'GET',
                     headers: {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                const resp = await _fetch(apiNode, fetchOption)
-
-                if (resp.status === 200) {
-                    const data = await resp.json();
-                    return {
-                        status: _RESPONSE_STATUS.OK,
-                        data
-                    };
-                } else {
-                    return {
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'get nodes failed'
-                        }
-                    };
-                }
+                return _handleRequest(api, fetchOption, sendResponse);
             },
             post: async (data, sendResponse) => {
-                // validation 
-                let result;
-                if (!data.selectedBoard) {
-                    result = {
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'Please select a board'
-                        }
-                    };
-                    if (sendResponse) {
-                        sendResponse(result);
-                    }
-                    return result;
-                }
-
-                let apiNode = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.NODES;
-                apiNode = apiNode.bind(data).replace(/{boardUniquename}/gi, data.selectedBoard.uniquename);
+                let api = _API.ENDPOINT + _API.AUTHORIZED.NODES;
+                api = api.bind(data);
                 let postBody = {
                     title: data.title,
                     description: data.description
                 };
-
-                if (data.selectedNode) {
-                    postBody['parent_node_id'] = data.selectedNode.id
-                }
 
                 let fetchOption = {
                     method: 'POST',
@@ -275,62 +152,24 @@ export const api = {
                     },
                     body: JSON.stringify(postBody)
                 };
-                const resp = await _fetch(apiNode, fetchOption)
-
-                if (resp.status === 200) {
-                    const data = await resp.json();
-                    result = {
-                        status: _RESPONSE_STATUS.OK,
-                        data
-                    };
-                    if (sendResponse) {
-                        sendResponse(result);
-                    }
-                    return result;
-                } else {
-                    result = {
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'create post failed'
-                        }
-                    }
-                    if (sendResponse) {
-                        sendResponse(result);
-                    }
-                    return result;
-                }
+                return _handleRequest(api, fetchOption, sendResponse);
             }
         },
         relationship: {
             get: async (data, sendResponse) => {
-                let apiNode = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.RELATIONSHIP;
-                apiNode = apiNode.bind(data);
+                let api = _API.ENDPOINT + _API.AUTHORIZED.RELATIONSHIP;
+                api = api.bind(data);
                 let fetchOption = {
                     method: 'GET',
                     headers: {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                const resp = await _fetch(apiNode, fetchOption)
-
-                if (resp.status === 200) {
-                    const data = await resp.json();
-                    return {
-                        status: _RESPONSE_STATUS.OK,
-                        data
-                    };
-                } else {
-                    return {
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'get relationship of node failed'
-                        }
-                    };
-                }
+                return _handleRequest(api, fetchOption, sendResponse);
             },
             post: async (data, sendResponse) => {
-                let apiNode = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.RELATIONSHIP;
-                apiNode = apiNode.bind(data);
+                let api = _API.ENDPOINT + _API.AUTHORIZED.RELATIONSHIP;
+                api = api.bind(data);
 
                 let postBody = {
                     parent_node_id: data.parent_node_id,
@@ -344,103 +183,36 @@ export const api = {
                     },
                     body: JSON.stringify(postBody)
                 };
-                const resp = await _fetch(apiNode, fetchOption)
-
-                if (resp.status === 200) {
-                    const data = await resp.json();
-                    return {
-                        status: _RESPONSE_STATUS.OK,
-                        data
-                    };
-                } else {
-                    return {
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'get relationship of node failed'
-                        }
-                    };
-                }
+                return _handleRequest(api, fetchOption, sendResponse);
             }
         }
     },
     apiService: {
         nodes: {
             get: async (data) => {
-                let url = _API.ENDPOINT + _API.CONTROLLER.NODES;
-                url = url.bind(data);
-                const resp = await fetch(url)
-                if (resp.status === 200) {
-                    const data = await resp.json();
-                    return {
-                        status: _RESPONSE_STATUS.OK,
-                        data
-                    };
-                } else {
-                    return {
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'get nodes failed'
-                        }
-                    };
-                }
+                let api = _API.ENDPOINT + _API.COMMON.NODES;
+                api = api.bind(data);
+                return _handleRequest(api, {});
             }
         },
         relationship: {
             get: async (data) => {
-                let url = _API.ENDPOINT + _API.CONTROLLER.RELATIONSHIP;
-                url = url.bind(data);
-                const resp = await fetch(url)
-                if (resp.status === 200) {
-                    const data = await resp.json();
-                    return {
-                        status: _RESPONSE_STATUS.OK,
-                        data
-                    };
-                } else {
-                    return {
-                        status: _RESPONSE_STATUS.FAILED,
-                        data: {
-                            errorMsg: 'get relationship of node failed'
-                        }
-                    };
-                }
+                let api = _API.ENDPOINT + _API.COMMON.RELATIONSHIP;
+                api = api.bind(data);
+                return _handleRequest(api, {});
             }
         },
         auth: {
-            post: async (data, sendResponse) => {
-                return new Promise(async (resolve, reject) => {
-                    // check token is validated
-                    const fetchOption = {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            code: data.code
-                        }),
-                    };
-
-                    const resp = await _fetch(_API.ENDPOINT + _API.CONTROLLER.AUTH, fetchOption)
-                    let result;
-                    if (resp.status === 200) {
-                        const board = await resp.json();
-                        result = {
-                            status: _RESPONSE_STATUS.OK,
-                            data: {
-                                ...board,
-                            }
-                        };
-
-                    } else {
-                        result = {
-                            status: _RESPONSE_STATUS.FAILED,
-                            data: {
-                                errorMsg: 'get board failed:' + JSON.stringify(resp)
-                            }
-                        };
-                    }
-                    if (sendResponse) {
-                        sendResponse(result);
-                    }
-                    resolve(result);
-                });
+            post: async (data) => {
+                // check token is validated
+                const fetchOption = {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        code: data.code
+                    }),
+                };
+                const api = _API.ENDPOINT + _API.AUTHORIZE;
+                return _handleRequest(api, fetchOption);
             }
         }
     }
@@ -462,5 +234,62 @@ const _fetch = (url, option, withCatch) => {
     } else {
         newOption['cache'] = 'cache';
     }
+
     return fetch(url, newOption);
+};
+
+const test = {
+    'a': '1'
+}
+
+const _handleRequest = (api, fetchOption, sendResponse) => {
+    return new Promise(async (resolve, reject) => {
+        let result;
+        if (
+            fetchOption.method === 'GET' &&
+            MindMapApiCache[api] !== undefined &&
+            MindMapApiCache[api][JSON.stringify(fetchOption)] !== undefined
+        ) {
+            result = MindMapApiCache[api][JSON.stringify(fetchOption)];
+            if (sendResponse) {
+                sendResponse(result);
+            }
+            resolve(result);
+            return;
+        }
+
+        if (
+            fetchOption.method !== 'GET'
+        ) {
+            for (let cacheKey in MindMapApiCache) {
+                if (api.indexOf(cacheKey) === 0) {
+                    delete MindMapApiCache[cacheKey];
+                }
+            }
+        }
+
+        const resp = await _fetch(api, fetchOption);
+        if (resp.status === 200) {
+            const jsonData = await resp.json();
+            result = {
+                status: _RESPONSE_STATUS.OK,
+                data: jsonData
+            };
+            if (fetchOption.method === 'GET') {
+                MindMapApiCache[api] = MindMapApiCache[api] || {};
+                MindMapApiCache[api][JSON.stringify(fetchOption)] = result;
+            }
+        } else {
+            result = {
+                status: _RESPONSE_STATUS.FAILED,
+                data: {
+                    errorMsg: 'get board failed:' + JSON.stringify(resp)
+                }
+            };
+        }
+        if (sendResponse) {
+            sendResponse(result);
+        }
+        resolve(result);
+    });
 };

@@ -26,8 +26,8 @@ namespace Mindmap.Controllers
         }
 
         [HttpGet]
-        [Route("{username}/")]
-        public ActionResult<user> Get([FromRoute] String username)
+        [Route("me/")]
+        public ActionResult<user> Get()
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
@@ -46,14 +46,22 @@ namespace Mindmap.Controllers
         }
 
         [HttpGet]
-        [Route("{username}/boards/")]
-        public ActionResult<List<board>> GetBoards([FromRoute] String username)
+        [Route("me/boards/")]
+        public ActionResult<List<board>> GetBoards([FromQuery] Int32? limit)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
+            List<board> boards;
+            if (limit != null)
+            {
+                boards = _context.board.Where(x => x.owner_id == userId && x.deleted_at == null).OrderByDescending(x => x.created_at).Take(limit ?? 5).ToList();
+            }
+            else
+            {
+                boards = _context.board.Where(x => x.owner_id == userId && x.deleted_at == null).OrderByDescending(x => x.created_at).ToList();
+            }
 
-            List<board> boards = _context.board.Where(x => x.owner_id == userId && x.deleted_at == null).OrderByDescending(x => x.created_at).Take(5).ToList();
             if (boards == null)
             {
                 HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
@@ -66,8 +74,8 @@ namespace Mindmap.Controllers
         }
 
         [HttpPost]
-        [Route("{username}/boards/")]
-        public ActionResult<board> PostBoard([FromRoute] String username, [FromBody] dynamic body)
+        [Route("me/boards/")]
+        public ActionResult<board> PostBoard([FromBody] dynamic body)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
@@ -80,31 +88,60 @@ namespace Mindmap.Controllers
             return _context.board.SingleOrDefault(rec => rec.id == newBoard.id);
         }
 
-
-        [HttpDelete]
-        [Route("{username}/boards/{boardUniquename}/")]
-        public void DeleteBoard([FromRoute] String username, [FromRoute] String boardUniquename)
+        [HttpGet]
+        [Route("me/boards/{boardId}/")]
+        public ActionResult<board> GetBoard([FromRoute] Int32 boardId)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
 
-            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
-            board.deleted_at = DateTime.Now;
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
+            if (board == null)
+            {
+                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+            }
+            return board;
+        }
 
+        [HttpDelete]
+        [Route("me/boards/{boardId}/")]
+        public ActionResult<dynamic> DeleteBoard([FromRoute] Int32 boardId)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+            Int16 userId = _userService.GetUserId(token);
+
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
+            if (board == null)
+            {
+                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+            }
+            board.deleted_at = DateTime.Now;
             _context.SaveChanges();
+
+            JSONResponse result = new JSONResponse(JSONResponseStatus.OK, new { });
+            return result.toResponseObj();
         }
 
         [HttpPatch]
-        [Route("{username}/boards/{boardUniquename}/")]
-        public ActionResult<board> PatchBoard([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic requestBody)
+        [Route("me/boards/{boardId}/")]
+        public ActionResult<board> PatchBoard([FromRoute] Int32 boardId, [FromBody] dynamic requestBody)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
 
-            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
-            board.is_public = requestBody.is_public;
+            if (board == null)
+            {
+                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+            }
+            if (requestBody.is_public != null)
+            {
+                board.is_public = requestBody.is_public;
+            }
+
             if (requestBody.title != null)
             {
                 board.title = requestBody.title;
@@ -117,20 +154,18 @@ namespace Mindmap.Controllers
             return board;
         }
 
-
         [HttpGet]
-        [Route("{username}/boards/{boardUniquename}/nodes/")]
-        public ActionResult<List<view_node>> GetNodesInBoard([FromRoute] String username, [FromRoute] String boardUniquename)
+        [Route("me/boards/{boardId}/nodes/")]
+        public ActionResult<List<view_node>> GetNodesInBoard([FromRoute] Int32 boardId)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
-            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
 
             if (board == null)
             {
-                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
-                return null;
+                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
             }
 
             List<view_node> nodes = _contextForView.view_node.Where(x => x.board_id == board.id && x.deleted_at == null).ToList();
@@ -138,35 +173,34 @@ namespace Mindmap.Controllers
         }
 
         [HttpGet]
-        [Route("{username}/boards/{boardUniquename}/relationship/")]
-        public ActionResult<List<view_node_relationship>> GetRelationshipInBoard([FromRoute] String username, [FromRoute] String boardUniquename)
+        [Route("me/boards/{boardId}/relationship/")]
+        public ActionResult<List<view_node_relationship>> GetRelationshipInBoard([FromRoute] Int32 boardId)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
-            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
 
             if (board == null)
             {
-                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
-                return null;
+                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
             }
+
             return _contextForView.view_node_relationship.Where(x => x.board_id == board.id).ToList();
         }
 
         [HttpPost]
-        [Route("{username}/boards/{boardUniquename}/relationship/")]
-        public ActionResult<node_relationship> PostRelationshipInBoard([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic body)
+        [Route("me/boards/{boardId}/relationship/")]
+        public ActionResult<node_relationship> PostRelationshipInBoard([FromRoute] Int32 boardId, [FromBody] dynamic body)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
-            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
 
             if (board == null)
             {
-                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
-                return null;
+                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
             }
 
             node_relationship nodeRelationship = new node_relationship { parent_node_id = body.parent_node_id, child_node_id = body.child_node_id };
@@ -176,14 +210,19 @@ namespace Mindmap.Controllers
         }
 
         [HttpPost]
-        [Route("{username}/boards/{boardUniquename}/nodes/")]
-        public ActionResult<view_node> PostNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromBody] dynamic node)
+        [Route("me/boards/{boardId}/nodes/")]
+        public ActionResult<view_node> PostNode([FromRoute] Int32 boardId, [FromBody] dynamic node)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
 
             Int16 userId = _userService.GetUserId(token);
-            board board = _context.board.FirstOrDefault(x => x.uniquename.Equals(boardUniquename) && x.owner_id == userId);
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
+
+            if (board == null)
+            {
+                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+            }
 
             node newNode = new node { title = node.title, description = node.description, owner_id = userId, board_id = board.id };
             _context.node.Add(newNode);
@@ -200,15 +239,19 @@ namespace Mindmap.Controllers
         }
 
         [HttpPatch]
-        [Route("{username}/boards/{boardUniquename}/nodes/{nodeId}/")]
-        public ActionResult<node> PatchNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromRoute] Int16 nodeId, [FromBody] dynamic requestBody)
+        [Route("me/boards/{boardId}/nodes/{nodeId}/")]
+        public ActionResult<node> PatchNode([FromRoute] Int32 boardId, [FromRoute] Int16 nodeId, [FromBody] dynamic requestBody)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
 
-            node node = _context.node.FirstOrDefault(x => x.id == nodeId && x.owner_id == userId);
+            node node = _context.node.FirstOrDefault(x => x.id == nodeId && x.owner_id == userId && x.board_id == boardId && x.deleted_at == null);
 
+            if (node == null)
+            {
+                throw new MindMapException("The node is gone.", HttpStatusCode.NotFound);
+            }
             if (requestBody.title != null)
             {
                 node.title = requestBody.title;
@@ -222,14 +265,14 @@ namespace Mindmap.Controllers
         }
 
         [HttpDelete]
-        [Route("{username}/boards/{boardUniquename}/nodes/{nodeId}/")]
-        public ActionResult<dynamic> DeleteNode([FromRoute] String username, [FromRoute] String boardUniquename, [FromRoute] Int16 nodeId)
+        [Route("me/boards/{boardId}/nodes/{nodeId}/")]
+        public ActionResult<dynamic> DeleteNode([FromRoute] Int32 boardId, [FromRoute] Int16 nodeId)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
 
             Int16 userId = _userService.GetUserId(token);
-            node node = _context.node.FirstOrDefault(x => x.id == nodeId && x.owner_id == userId && x.deleted_at == null);
+            node node = _context.node.FirstOrDefault(x => x.id == nodeId && x.owner_id == userId && x.board_id == boardId && x.deleted_at == null);
 
             if (node is null)
             {

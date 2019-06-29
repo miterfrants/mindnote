@@ -26,24 +26,17 @@ export class Board {
         this.boardUniquename = args.boardUniquename;
         this.args = args;
         this.context = context;
-        if (this.token) {
-            api.init(API, RESPONSE_STATUS);
-            const nodes = (await api.apiService.nodes.get({
-                boardUniquename: this.boardUniquename,
-                token: this.token
-            })).data
-            const relationship = (await api.apiService.relationship.get({
-                boardUniquename: this.boardUniquename,
-                token: this.token
-            })).data;
-            const container = UI.getCytoContainer();
-            this.cy = Cyto.init(container, nodes, relationship, false);
-        } else {
-            UI.hideAuth();
-            if (this.cy) {
-                this.cy.destroy();
-            }
-        }
+        api.init(API, RESPONSE_STATUS);
+        const nodes = (await api.apiService.nodes.get({
+            boardUniquename: this.boardUniquename,
+            token: this.token
+        })).data
+        const relationship = (await api.apiService.relationship.get({
+            boardUniquename: this.boardUniquename,
+            token: this.token
+        })).data;
+        const container = UI.getCytoContainer();
+        this.cy = Cyto.init(container, nodes, relationship, false);
     }
 
     _bindEvent() {
