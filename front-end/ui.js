@@ -178,7 +178,7 @@ export const UI = {
             })
             const template = document.querySelector('.header .boards .menu-item.template').outerHTML;
             for (let i = 0; i < boards.length; i++) {
-                boards[i]['link'] = ['/mindmap/users/', username, '/boards/', boards[i].uniquename, '/'].join('');
+                boards[i]['link'] = ['/mindmap/users/me/boards/', boards[i].id, '/'].join('');
                 const el = template.bind(boards[i]).toDom()
                 el.removeClass('template');
                 boardsContainer.appendChild(el);
