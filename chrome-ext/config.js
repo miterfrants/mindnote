@@ -1,18 +1,21 @@
+const env = 'prod'; // dev or prod
+const apiEndPoint = env === 'dev' ? 'https://dev.sapiens.tools:8082/' : 'https://sapiens.tools/';
+const remoteLibEndpoint = env === 'dev' ? 'https://dev.sapiens.tools/' : 'https://sapiens.tools/';
+
+export const NODE_HISTORY_LIMIT = 5;
+export const CLIPBOARD_LIMIT = 10;
+export const REMOTE_LIB_API_SERVICE = remoteLibEndpoint + 'mindmap/service/api.v2.js';
 export const RESPONSE_STATUS = {
     OK: 'OK',
     FAILED: 'FAILED',
 };
-
 export const API = {
-    ENDPOINT: 'https://sapiens.tools/mindmap/api/v1/',
-    AUTHORIZED_CONTROLLER: {
+    ENDPOINT: apiEndPoint + 'mindmap/api/v1/',
+    AUTHORIZED: {
         USER: 'users/',
-        BOARDS: 'users/{username}/boards/',
-        BOARD: 'users/{username}/boards/{uniquename}/',
-        NODES: 'users/{username}/boards/{boardUniquename}/nodes/',
-        AUTH: 'auth/'
-    }
+        BOARDS: 'users/me/boards/',
+        BOARD: 'users/me/boards/{boardId}/',
+        NODES: 'users/me/boards/{boardId}/nodes/',
+    },
+    AUTHORIZE: 'auth/'
 };
-
-export const NODE_HISTORY_LIMIT = 5;
-export const CLIPBOARD_LIMIT = 10;

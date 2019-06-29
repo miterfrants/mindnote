@@ -38,24 +38,11 @@
                 </li>
                 <li class="tab-boards">
                     Boards
-                    <button class="expand fas fa-arrows-alt-v"></button>
                 </li>
                 <li class="tab-history">
                     Nodes History
                 </li>
             </ul>
-        </div>
-        <div class="form">
-            <div class="board-form hide pad-10">
-                <label for="board-title">
-                    <input type="text" id="board-title" data-field="title" placeholder="title" />
-                </label>
-                <label for="board-uniquename" class="marg-l-5">
-                    <input type="text" class="board-uniquename" data-field="uniquename"
-                        placeholder="uniquename for url" />
-                </label>
-                <button class="fa fa-icon fa-plus-circle add marg-l-5"></button>
-            </div>
         </div>
         <div class="body">
             <div class="nodeform hide">
@@ -72,6 +59,16 @@
             <div class="history">
             </div>
             <div class="boards">
+                <div class="board-form pad-10">
+                    <label for="board-title">
+                        <input class="title" type="text" id="board-title" data-field="title" placeholder="title" />
+                    </label>
+                    <!-- <label for="board-uniquename" class="marg-l-5">
+                        <input type="text" class="board-uniquename" data-field="uniquename"
+                            placeholder="uniquename for url" />
+                    </label> -->
+                    <button class="fa fa-icon fa-plus-circle add marg-l-5"></button>
+                </div>
             </div>
         </div>
     </div>
@@ -83,7 +80,7 @@
         </button>
     </div>
 
-    <script src="popup.js"></script>
+    <script type="module" src="popup.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,6 @@
 {
   "name": "Mindmap",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A chrome extension which insert selected text to Mindmap.",
   "manifest_version": 2,
   "icons": {
@@ -9,8 +9,7 @@
     "120": "/imgs/120x120.png"
   },
   "background": {
-    "scripts": ["background.js"],
-    "persistent": false
+    "page": "background.html"
   },
   "browser_action": {
     "default_popup": "popup/popup.html"
@@ -22,8 +21,7 @@
     "util/debounce.js",
     "components/board.js",
     "components/node.js",
-    "page/dialog.html",
-    "https://sapiens.tools/mindmap/controller.js"
+    "page/dialog.html"
   ],
   "commands": {
     "dialog": {
@@ -70,5 +68,5 @@
       "https://www.googleapis.com/auth/userinfo.profile"
     ]
   },
-  "content_security_policy": "script-src 'self' https://sapiens.tools; object-src 'self'"
+  "content_security_policy": "script-src 'self' https://*.sapiens.tools; object-src 'self'"
 }

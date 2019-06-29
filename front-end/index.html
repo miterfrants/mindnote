@@ -29,8 +29,6 @@
         .header {
             height: 52px;
             background: #2c2c2c;
-            position: fixed;
-            top: 0;
             width: 100%;
             z-index: 4;
         }
@@ -169,6 +167,7 @@
             border-radius: 50%;
             font-size: 20px;
             margin: 10px 15px;
+            border: 5px solid white;
         }
 
         .mask {
@@ -251,6 +250,43 @@
             width: 100%;
             border-radius: 0 0 5px 5px;
         }
+
+        .navigation {
+            padding: 0 30px;
+            color: white;
+        }
+
+        .navigation a {
+            color: white;
+        }
+
+        .router-user-boards .container .row {
+            display: flex;
+        }
+
+        .router-user-boards .board-card {
+            display: block;
+            padding: 10px;
+            width: 100px;
+            height: 100px;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            text-align: center;
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .router-user-boards .board-card a {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .router-user-boards .board-card .title {
+            padding-top: 35px;
+            display: block;
+        }
     </style>
 </head>
 
@@ -265,6 +301,8 @@
                     <i class="fab fa-google"></i>
                     Sign in with Google
                 </button>
+            </div>
+            <div class="navigation">
             </div>
             <div class="auth hide right relative">
                 <button class="profile vert-mid" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -290,35 +328,55 @@
 
     <div class="unauth hide unauth-message">Unauth Board</div>
 
-    <div id="cy"></div>
-
-    <div class="auth hide">
-        <div class="mask hide"></div>
-        <button class="btn-layout" type="button">
-            <i class="fas fa-share-alt"></i>
-            re-arrange
-        </button>
-        <div class="node-form hide">
-            <input class="node-id" type="hidden" />
-            <label for="node-title" class="vert-mid">
-                <input placeholder="title" id="node-title" class="title" type="text" />
-            </label>
-            <label for="node-description" class="vert-mid marg-t-10">
-                <textarea placeholder="description" id="node-description" class="description"></textarea>
-            </label>
-
-            <button class="btn-add hide">add</button>
-            <button class="btn-update hide">update</button>
-            <button class="btn-delete hide">
-                <i class="fas fa-trash"></i>
+    <div class="controller">
+        <div class="router-user-board hide">
+            <div id="cy"></div>
+            <div class="mask hide"></div>
+            <button class="btn-layout" type="button">
+                <i class="fas fa-share-alt"></i>
+                re-arrange
             </button>
-            <button class="btn-close fa fa-times"></button>
-        </div>
-    </div>
+            <div class="node-form hide">
+                <input class="node-id" type="hidden" />
+                <label for="node-title" class="vert-mid">
+                    <input placeholder="title" id="node-title" class="title" type="text" />
+                </label>
+                <label for="node-description" class="vert-mid marg-t-10">
+                    <textarea placeholder="description" id="node-description" class="description"></textarea>
+                </label>
 
-    <!-- Load Module-->
-    <script type="module">
-        import { APP } from '/mindmap/app.js';
+                <button class="btn-add hide">add</button>
+                <button class="btn-update hide">update</button>
+                <button class="btn-delete hide">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button class="btn-close fa fa-times"></button>
+            </div>
+        </div>
+        <div class="router-user-boards hide">
+            <div>
+                <input type="text" class="board-title" />
+                <input type="hidden" class="board-id" />
+                <button class="btn-add-board">add</button>
+                <button class="btn-update-board">update</button>
+                <button class="btn-delete-board">delete</button>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="template board-card" data-id="{id}" data-title="{title}" data-is_public="{is_public}">
+                        <span class="title">{title}</span>
+                        <a href="{link}"> link to </a>
+                        <div class="btn-toggle toggle-button">
+                        </div>
+                        <span class="permission"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Load Module-->
+        <script type="module">
+            import { APP } from '/mindmap/app.js';
         APP.run([{
             url: 'https://apis.google.com/js/api.js',
             checkVariable: 'gapi'

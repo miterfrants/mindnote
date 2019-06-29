@@ -1,3 +1,6 @@
+import {
+    RESPONSE_STATUS
+} from '/config.js';
 export const DATA = {
     getBoardsAsync: () => {
         return new Promise(function (resolve) {
@@ -32,7 +35,7 @@ export const DATA = {
             });
         });
     },
-    removeBoardAsync: (formData, board) => {
+    deleteBoardAsync: (formData, board) => {
         return new Promise(function (resolve, reject) {
             chrome.runtime.sendMessage({
                 service: 'authApiService',
@@ -57,7 +60,7 @@ export const DATA = {
                 action: 'patch',
                 data: {
                     ...formData,
-                    is_public: formData.is_public
+                    boardId: formData.id
                 }
             }, async (resp) => {
                 if (resp.status === RESPONSE_STATUS.OK) {
@@ -85,13 +88,14 @@ export const DATA = {
             });
         });
     },
-    postNodeAsync: (title, description) => {
+    postNodeAsync: (boardId, title, description) => {
         return new Promise(function (resolve, reject) {
             chrome.runtime.sendMessage({
                 service: 'authApiService',
                 module: 'nodes',
                 action: 'post',
                 data: {
+                    boardId,
                     title,
                     description
                 }

@@ -1,9 +1,9 @@
-let CLIPBOARD_LIMIT, API_ENDPOINT, API_AUTH;
+let _CLIPBOARD_LIMIT, _API, _RESPONSE_STATUS;
 export const extService = {
-    init: (clipboardLimit, apiEndpoint, apiAuth) => {
-        CLIPBOARD_LIMIT = clipboardLimit;
-        API_ENDPOINT = apiEndpoint;
-        API_AUTH = apiAuth;
+    init: (clipboardLimit, API, RESPONSE_STATUS) => {
+        _CLIPBOARD_LIMIT = clipboardLimit;
+        _API = API;
+        _RESPONSE_STATUS = RESPONSE_STATUS;
     },
     auth: {
         post: async (data, sendResponse) => {
@@ -18,14 +18,14 @@ export const extService = {
                             code: code
                         })
                     };
-                    const resp = await _fetch(API_ENDPOINT + API_AUTH, fetchOption)
+                    const resp = await _fetch(_API.ENDPOINT + _API.AUTHORIZE, fetchOption)
 
                     if (resp.status === 200) {
                         const userInfo = await resp.json();
                         const token = userInfo.token;
                         delete userInfo.token;
                         resolve({
-                            status: RESPONSE_STATUS.OK,
+                            status: _RESPONSE_STATUS.OK,
                             data: {
                                 token: token,
                                 userInfo: userInfo
@@ -33,7 +33,7 @@ export const extService = {
                         });
                     } else {
                         resolve({
-                            status: RESPONSE_STATUS.FAILED,
+                            status: _RESPONSE_STATUS.FAILED,
                             data: {
                                 errorMsg: 'auth fail'
                             }
@@ -50,7 +50,7 @@ export const extService = {
                 });
             });
             sendResponse({
-                status: RESPONSE_STATUS.OK,
+                status: _RESPONSE_STATUS.OK,
                 data: {
                     token
                 }
@@ -65,7 +65,7 @@ export const extService = {
                 });
             });
             sendResponse({
-                status: RESPONSE_STATUS.OK,
+                status: _RESPONSE_STATUS.OK,
                 data: {
                     clipboard: clipboard
                 }
@@ -81,7 +81,7 @@ export const extService = {
             if (clipboard === null || clipboard === undefined) {
                 clipboard = [];
             }
-            clipboard.splice(CLIPBOARD_LIMIT);
+            clipboard.splice(_CLIPBOARD_LIMIT);
             clipboard.unshift(data.text);
             chrome.storage.sync.set({
                 clipboard
