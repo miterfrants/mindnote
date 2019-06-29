@@ -18,6 +18,7 @@ export class UserBoards {
         this._bindEvent();
     }
     async run(args, context) {
+        this.continueDeleteCount = 0;
         const boards = await api.authApiService.boards.get({
             ...args,
         });
@@ -67,6 +68,19 @@ export class UserBoards {
         });
 
         document.querySelector('.btn-delete-board').addEventListener('click', async (e) => {
+            var result = 'DELETE'
+            if (this.continueDeleteCount <= 2) {
+                result = prompt('please type "DELETE"');
+            }
+
+            this.continueDeleteCount += 1;
+            setTimeout(() => {
+                this.continueDeleteCount = 0;
+            }, 120 * 1000);
+
+            if (result != 'DELETE') {
+                return;
+            }
             const boardId = document.querySelector('.board-id').value;
             await api.authApiService.board.delete({
                 token: this.token,
