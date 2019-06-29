@@ -15,16 +15,64 @@ h1 {
     font-size: 1em;
 }
 
+a,
+.link {
+    color: #24c0c1;
+}
+
+.dark a,
+.dark .link {
+    color: #90d9bf;
+}
+
+.dark a:visited {
+    color: #90d9bf;
+}
+
+.dark button {
+    color: #b0b0b0;
+}
+
+button,
+.btn {
+    cursor: pointer;
+}
+
+a:visited {
+    color: #24c0c1
+}
+
 button {
-    font-size: 15px;
+    font-size: 14px;
+}
+
+.text-center {
+    text-align: center;
 }
 
 .pad-tb-10 {
     padding: 10px 0;
 }
 
+.pad-tb-15 {
+    padding: 15px 0;
+}
+
+.pad-rl-10 {
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.pad-t-20 {
+    padding-top: 20px;
+}
+
 .marg-t-10 {
     margin-top: 10px;
+}
+
+.marg-l-10 {
+    margin-left: 10px;
 }
 
 .vert-mid {
@@ -47,6 +95,11 @@ button {
 
 a {
     text-decoration: none;
+}
+
+.desc {
+    color: #666;
+    font-size: 0.6em;
 }
 
 .toggle-button {

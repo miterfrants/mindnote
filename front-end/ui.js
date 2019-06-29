@@ -169,13 +169,15 @@ export const UI = {
                 ele.removeClass('hide');
             });
         },
-        generateBoards: (username, boards) => {
+        generateBoards: (boards) => {
+
             const boardsContainer = document.querySelector('.header .boards');
             document.querySelectorAll('.header .boards .menu-item').forEach((el) => {
                 if (el.className.split(' ').indexOf('template') === -1) {
                     boardsContainer.removeChild(el);
                 }
             })
+
             const template = document.querySelector('.header .boards .menu-item.template').outerHTML;
             for (let i = 0; i < boards.length; i++) {
                 boards[i]['link'] = ['/mindmap/users/me/boards/', boards[i].id, '/'].join('');
@@ -321,8 +323,9 @@ export const UI = {
     generateUserBoards: (boards) => {
         const eles = [];
         const boardsEle = document.querySelector('.router-user-boards')
+
         const containerEle = boardsEle.querySelector('.container .row');
-        containerEle.querySelectorAll('.container .row > *:not(.template)').forEach((el) => {
+        containerEle.querySelectorAll('.container .row > *:not(.template):not(.btn-virtual-add-board)').forEach((el) => {
             containerEle.removeChild(el);
         });
         const template = containerEle.querySelector('.template').outerHTML;
@@ -342,7 +345,7 @@ export const UI = {
         board.link = `/mindmap/users/me/boards/${board.id}/`;
         const newItem = template.bind(board).toDom();
         newItem.removeClass('template');
-        containerEle.prepend(newItem);
+        containerEle.insertBefore(newItem, containerEle.childNodes[2]);
         return newItem;
     },
     updateBoard: (board) => {
@@ -362,5 +365,44 @@ export const UI = {
             elBoardCard.querySelector('.btn-toggle').addClass('private');
             elBoardCard.querySelector('.permission').innerHTML = 'private';
         }
+    },
+    showBoardForm: (container, type) => {
+        const elBoardForm = document.querySelector('.board-form');
+        elBoardForm.removeClass('hide');
+        const elBoardTitle = elBoardForm.querySelector('.board-title')
+        if (elBoardForm.parentElement.classExists('show-form')) {
+            elBoardForm.parentElement.removeClass('show-form');
+        }
+        if (type === 'add') {
+            elBoardForm.querySelector('.btn-add-board').removeClass('hide');
+            elBoardForm.querySelector('.btn-update-board').addClass('hide');
+            elBoardForm.querySelector('.btn-delete-board').addClass('hide');
+            elBoardForm.querySelector('.board-title').value = '';
+        } else {
+            elBoardForm.querySelector('.btn-add-board').addClass('hide');
+            elBoardForm.querySelector('.btn-update-board').removeClass('hide');
+            elBoardForm.querySelector('.btn-delete-board').removeClass('hide');
+        }
+        container.append(elBoardForm);
+        container.addClass('show-form');
+        setTimeout(() => {
+            elBoardTitle.focus();
+            elBoardTitle.setSelectionRange(0, elBoardTitle.value.length);
+        }, 300);
+    },
+    hideBoardForm: () => {
+        const elBoardForm = document.querySelector('.board-form');
+        if (elBoardForm.parentElement.classExists('show-form')) {
+            elBoardForm.parentElement.addClass('hide-form');
+            setTimeout(() => {
+                elBoardForm.parentElement.removeClass('show-form');
+                elBoardForm.parentElement.removeClass('hide-form');
+            }, 300)
+
+        }
+    },
+    restoreBoardForm: () => {
+        const elBoardForm = document.querySelector('.board-form');
+        document.querySelector('.btn-virtual-add-board').append(elBoardForm);
     }
 }

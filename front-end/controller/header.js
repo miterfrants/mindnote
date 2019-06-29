@@ -95,11 +95,10 @@ export class Header {
             UI.showAuth();
             // generate boards
             const boards = await api.authApiService.boards.get({
-                username,
                 token,
                 limit: 5
             });
-            UI.header.generateBoards(username, boards.data);
+            UI.header.generateBoards(boards.data);
         } else {
             UI.header.hideAuth();
             UI.hideAuth();
