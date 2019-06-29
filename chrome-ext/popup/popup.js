@@ -76,8 +76,13 @@ document.querySelector('.auth-google').addEventListener('click', async () => {
             userInfo: resp.data.userInfo
         });
         chrome.storage.sync.get(['token', 'userInfo', 'history', 'selectedNode', 'selectedBoard', 'selectedTab', 'textSelection'], async (storage) => {
-            const boards = await DATA.getBoardsAsync();
-            UI.init(storage, boards, Node, isShowNodeForm);
+            const boardsPureData = await DATA.getBoardsAsync();
+            const elBoards = [];
+            for (let i = 0; i < boardsPureData.length; i++) {
+                const boardInstance = await buildBoardInstantAsync(boardsPureData[i]);
+                elBoards.push(boardInstance.element);
+            }
+            UI.init(storage, elBoards, Node, isShowNodeForm);
         });
     } catch (error) {}
 });
