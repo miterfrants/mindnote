@@ -68,5 +68,5 @@
       "https://www.googleapis.com/auth/userinfo.profile"
     ]
   },
-  "content_security_policy": "script-src 'self' https://*.sapiens.tools; object-src 'self'"
+  "content_security_policy": "script-src 'self' https://sapiens.tools; object-src 'self'"
 }
