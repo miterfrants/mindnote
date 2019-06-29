@@ -19,7 +19,10 @@
             height: 30px;
             border-radius: 30px;
             width: 125px;
-            font-size: 15px;
+        }
+
+        body {
+            font-size: 14px;
         }
 
         .right {
@@ -32,10 +35,21 @@
             width: 100%;
             z-index: 4;
             position: relative;
+            color: #b0b0b0;
         }
 
         .relative {
             position: relative;
+        }
+
+        .btn-delete {
+            background: #e89b4b;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 13px;
+            border: 5px solid white;
         }
 
         #cy {
@@ -157,16 +171,9 @@
         }
 
         .node-form .btn-delete {
-            background: #e8844b;
-            border: none;
-            color: white;
             position: absolute;
             right: 0;
             bottom: 0;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 20px;
             margin: 10px 15px;
             border: 5px solid white;
         }
@@ -191,102 +198,163 @@
         .menu {
             position: absolute;
             top: 48px;
-            background: white;
+            background: #2c2c2c;
             right: 0;
             border-radius: 5px;
-            width: 150px;
-            border: 1px solid #ccc;
-            font-size: 12px;
-        }
-
-        .menu::after {
-            border-bottom: 6px solid;
-            border-right: 6px solid transparent;
-            border-top: 0;
-            border-left: 6px solid transparent;
-            border-bottom-color: white;
-            display: block;
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: calc(50% - 2px);
-        }
-
-        .menu::before {
-            border-bottom: 6px solid;
-            border-right: 6px solid transparent;
-            border-top: 0;
-            border-left: 6px solid transparent;
-            border-bottom-color: #ccc;
-            display: block;
-            content: '';
-            position: absolute;
-            top: -6px;
-            left: calc(50% - 2px)
+            width: 200px;
+            border: 1px solid #777
         }
 
         .menu .separator {
             width: 100%;
             height: 1px;
-            background: #ccc;
+            background: #cccccc30;
         }
 
         .menu .menu-item {
-            padding: 10px 15px;
+            padding: 15px 15px;
             background: transparent;
             display: block;
             border: none;
         }
 
         .menu .menu-item:hover {
-            background: #eff0f2
+            background: #454545 !important;
+        }
+
+        .menu .menu-boards-head {
+            background: #333333;
         }
 
         .menu .boards {
-            border-radius: 5px 5px 0 0;
+            border-radius: 4px 4px 0 0;
             overflow: hidden;
         }
 
         .menu .menu-item.btn-logout {
+            background: #2a2a2a;
             width: 100%;
-            border-radius: 0 0 5px 5px;
+            border-radius: 0 0 4px 4px;
         }
 
         .navigation {
             padding: 0 30px;
-            color: white;
-        }
-
-        .navigation a {
-            color: white;
         }
 
         .router-user-boards .container .row {
             display: flex;
+            flex-wrap: wrap;
+        }
+
+        .router-user-boards .container .row .btn-virtual-add-board {
+            width: 200px;
+            height: 200px;
+            margin: 10px 10px;
+            border: 1px dashed #ccc;
+            background: transparent;
+            border-radius: 10px;
+            font-size: 30px;
+            color: #24c0c2;
+            padding: 0;
+            display: block;
+            overflow: hidden;
+        }
+
+        .inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: top 0.30s;
+            top: 0px;
+        }
+
+        .inner.show-form {
+            top: -198px;
+        }
+
+        .inner.hide-form {
+            top: 0;
+        }
+
+
+        .inner>* {
+            width: 200px;
+            height: 200px;
+            display: block;
+        }
+
+        .router-user-boards .container .row .btn-virtual-add-board .inner::before {
+            display: block;
+            height: 200px;
+            line-height: 200px;
         }
 
         .router-user-boards .board-card {
             display: block;
-            padding: 10px;
-            width: 100px;
-            height: 100px;
+            width: 200px;
+            height: 200px;
             overflow: hidden;
             border: 1px solid #ccc;
             border-radius: 10px;
             text-align: center;
-            margin: 0 10px;
+            margin: 10px 10px;
             position: relative;
         }
 
-        .router-user-boards .board-card a {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .router-user-boards .board-card .fa-link {
+            font-size: 20px;
         }
 
         .router-user-boards .board-card .title {
-            padding-top: 35px;
             display: block;
+            padding-top: 15px;
+            height: 120px;
+            overflow: hidden;
+            background: #EEE;
+        }
+
+        .router-user-boards .board-card .btn-toggle {
+            margin-left: 10px;
+        }
+
+        .board-form {
+            position: absolute;
+            display: none;
+        }
+
+        .show-form .board-form {
+            display: block;
+        }
+
+        .board-form input {
+            padding: 10px 10px;
+            width: calc(100% - 20px);
+            background: transparent;
+            border-radius: 5px;
+            box-shadow: none;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+            display: block;
+            margin: 20px auto;
+        }
+
+        .board-form .btn-add-board,
+        .board-form .btn-update-board {
+            position: absolute;
+            bottom: 0;
+            width: 202px;
+            left: 0;
+            padding: 10px;
+            background: rgb(35, 192, 193);
+            color: white;
+            margin-left: -1px;
+        }
+
+        .board-form .btn-delete-board {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+            margin: 10px 15px;
         }
     </style>
 </head>
@@ -303,7 +371,7 @@
                     Sign in with Google
                 </button>
             </div>
-            <div class="navigation">
+            <div class="navigation dark">
             </div>
             <div class="auth hide right relative">
                 <button class="profile vert-mid" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
@@ -314,13 +382,15 @@
                     <span class="name">
                     </span>
                 </button>
-                <div class="menu hide">
+                <div class="menu hide dark">
+                    <div class="menu-boards-head pad-tb-15 text-center">Recently Borads</div>
+                    <div class="separator"></div>
                     <div class="boards">
                         <a href="{link}" target="_self" class="menu-item template">{title}</a>
                     </div>
                     <div class="separator"></div>
                     <button class="menu-item btn-logout">
-                        Logout
+                        <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </div>
             </div>
@@ -348,28 +418,38 @@
 
                 <button class="btn-add hide">add</button>
                 <button class="btn-update hide">update</button>
-                <button class="btn-delete hide">
+                <button class="btn-delete btn-node-delete hide">
                     <i class="fas fa-trash"></i>
                 </button>
                 <button class="btn-close fa fa-times"></button>
             </div>
         </div>
         <div class="router-user-boards hide">
-            <div>
-                <input type="text" class="board-title" />
+            <div class="board-form">
+                <input placeholder="board title" type="text" class="board-title" />
                 <input type="hidden" class="board-id" />
                 <button class="btn-add-board">add</button>
                 <button class="btn-update-board">update</button>
-                <button class="btn-delete-board">delete</button>
+                <button class="btn-delete fa fa-trash btn-delete-board"></button>
             </div>
             <div class="container">
                 <div class="row">
-                    <div class="template board-card" data-id="{id}" data-title="{title}" data-is_public="{is_public}">
-                        <span class="title">{title}</span>
-                        <a href="{link}"> link to </a>
-                        <div class="btn-toggle toggle-button">
+                    <button class="btn-virtual-add-board ">
+                        <div class="inner fa fa-plus"></div>
+                    </button>
+                    <div class="template board-card btn" data-id="{id}" data-title="{title}"
+                        data-is_public="{is_public}">
+                        <div class="inner">
+                            <div>
+                                <div class="title desc">{title}</div>
+                                <div class="vert-mid pad-t-20 pad-rl-10">
+                                    <a class="fa fa-link btn-link" href="{link}" target="_self"></a>
+                                    <div class="btn-toggle toggle-button">
+                                    </div>
+                                    <span class="permission marg-l-10 desc"></span>
+                                </div>
+                            </div>
                         </div>
-                        <span class="permission"></span>
                     </div>
                 </div>
             </div>

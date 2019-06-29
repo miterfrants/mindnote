@@ -106,7 +106,7 @@ export class UserBoard {
                 UI.hideNodeForm();
             }
         });
-        document.querySelector('.btn-delete').addEventListener('click', async (e) => {
+        document.querySelector('.btn-node-delete').addEventListener('click', async (e) => {
             // 連續刪除超過兩次，就不跳 prompt 請使用者輸入
             var result = 'DELETE'
             if (this.continueDeleteCount < 2) {
