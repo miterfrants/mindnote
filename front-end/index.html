@@ -306,6 +306,7 @@
             padding: 10px;
             border: none;
             color: #24c0c2;
+            background: transparent;
         }
 
         .router-user-boards .board-card .title {
@@ -359,6 +360,12 @@
             right: 0px;
             margin: 10px 15px;
         }
+
+        .cy-edit-mode,
+        .cy {
+            height: calc(100% - 52px);
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -404,7 +411,7 @@
 
     <div class="controller">
         <div class="router-user-board hide">
-            <div id="cy"></div>
+            <div class="cy-edit-mode"></div>
             <div class="mask hide"></div>
             <button class="btn-layout auth" type="button">
                 <i class="fas fa-share-alt"></i>
@@ -457,7 +464,9 @@
                 </div>
             </div>
         </div>
-
+        <div class="router-board hide">
+            <div class="cy"></div>
+        </div>
         <!-- Load Module-->
         <script type="module">
             import { APP } from '/mindmap/app.js';

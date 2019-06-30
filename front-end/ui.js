@@ -321,15 +321,18 @@ export const UI = {
         const newWindow = window.open('', title, 'id=popup-mindmap, scrollbars=yes, width=' + w / systemZoom + ', height=' + height / systemZoom + ', top=' + top + ', left=' + left);
         const template = "<h1>{title}</h1><p>{desc}</p>"
         const result = template.replace(/{title}/gi, title)
-            .replace(/{desc}/gi, description);
+            .replace(/{desc}/gi, description).replace(/\n/gi, '<br/>');
         newWindow.document.querySelector("body").innerHTML = result;
         newWindow.document.querySelector("head").innerHTML = "<title>" + title + "</title>"
 
         // Puts focus on the newWindow
         if (window.focus) newWindow.focus();
     },
+    getCytoEditContainer: () => {
+        return document.querySelector('.cy-edit-mode');
+    },
     getCytoContainer: () => {
-        return document.getElementById('cy');
+        return document.querySelector('.cy');
     },
     generateUserBoards: (boards) => {
         const eles = [];

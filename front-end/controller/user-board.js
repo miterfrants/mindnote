@@ -44,7 +44,7 @@ export class UserBoard {
                 token: this.token
             })).data;
 
-            const container = UI.getCytoContainer();
+            const container = UI.getCytoEditContainer();
             this.cy = Cyto.init(container, nodes, relationship, true);
             // UI.header.showToggleButton();
             UI.header.generateNavigation([{

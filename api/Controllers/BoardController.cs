@@ -33,20 +33,18 @@ namespace Mindmap.Controllers
         }
 
         [HttpGet]
-        [Route("{boardUniqueName}/")]
-        public ActionResult<board> Get([FromRoute] string boardUniqueName)
+        [Route("{boardId}/")]
+        public ActionResult<board> Get([FromRoute] Int32 boardId)
         {
             board result = _context.board.FirstOrDefault(x =>
-                x.uniquename.Equals(boardUniqueName));
+                x.id == boardId && x.deleted_at == null);
             if (result == null)
             {
-                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
-                return null;
+                throw new MindMapException("Board is gone!", HttpStatusCode.NotFound);
             }
             else if (!result.is_public)
             {
-                HttpContext.Response.StatusCode = HttpStatusCode.Unauthorized.GetHashCode();
-                return null;
+                throw new MindMapException("The board have to authrize to watch!", HttpStatusCode.Unauthorized);
             }
             else
             {
@@ -55,20 +53,18 @@ namespace Mindmap.Controllers
         }
 
         [HttpGet]
-        [Route("{boardUniqueName}/nodes/")]
-        public ActionResult<List<node>> GetNodes([FromRoute] string boardUniqueName)
+        [Route("{boardId}/nodes/")]
+        public ActionResult<List<node>> GetNodes([FromRoute] Int32 boardId)
         {
             board board = _context.board.FirstOrDefault(x =>
-                x.uniquename.Equals(boardUniqueName));
+                x.id == boardId && x.deleted_at == null);
             if (board == null)
             {
-                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
-                return null;
+                throw new MindMapException("Board is gone!", HttpStatusCode.NotFound);
             }
             else if (!board.is_public)
             {
-                HttpContext.Response.StatusCode = HttpStatusCode.Unauthorized.GetHashCode();
-                return null;
+                throw new MindMapException("The board have to authrize to watch!", HttpStatusCode.Unauthorized);
             }
             else
             {
@@ -77,20 +73,18 @@ namespace Mindmap.Controllers
         }
 
         [HttpGet]
-        [Route("{boardUniqueName}/relationship/")]
-        public ActionResult<List<view_node_relationship>> GetRelationship([FromRoute] string boardUniqueName)
+        [Route("{boardId}/relationship/")]
+        public ActionResult<List<view_node_relationship>> GetRelationship([FromRoute] Int32 boardId)
         {
             board board = _context.board.FirstOrDefault(x =>
-                x.uniquename.Equals(boardUniqueName));
+                x.id == boardId);
             if (board == null)
             {
-                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
-                return null;
+                throw new MindMapException("Board is gone!", HttpStatusCode.NotFound);
             }
             else if (!board.is_public)
             {
-                HttpContext.Response.StatusCode = HttpStatusCode.Unauthorized.GetHashCode();
-                return null;
+                throw new MindMapException("The board have to authrize to watch!", HttpStatusCode.Unauthorized);
             }
             else
             {

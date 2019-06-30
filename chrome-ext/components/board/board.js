@@ -27,7 +27,7 @@ export function Board(data, clickHandler, removeButtonClickHandler, permissionBu
     this.element.querySelector('.remove').addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
-
+        let result = 'DELETE';
         if (continueDeleteCount < 2) {
             result = prompt('please type "DELETE"');
         }
