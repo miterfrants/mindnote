@@ -98,7 +98,7 @@ a {
 }
 
 .desc {
-    color: #666;
+    color: #666 !important;
     font-size: 0.6em;
 }
 
@@ -125,11 +125,11 @@ a {
 }
 
 .toggle-button.private {
-    border: 1px solid #6a6b71;
+    border: 1px solid #e89b4b;
 }
 
 .toggle-button.private:after {
-    background: #6a6b71;
+    background: #e89b4b;
     transform: translate(17px, 2px);
 }
 

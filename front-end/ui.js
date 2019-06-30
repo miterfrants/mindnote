@@ -15,7 +15,7 @@ export const UI = {
                 data: {
                     id: `create-${UI.Cyto.tempId}`,
                     title: title,
-                    description: desc,
+                    description: desc || '',
                     background: '#8BC34A',
                     size: style.size,
                     borderWidth: 20
@@ -44,6 +44,12 @@ export const UI = {
             return edges[0]
         },
         getStyle: (description) => {
+            if (description === undefined || description === '') {
+                return {
+                    background: '#3897f0',
+                    size: 50
+                }
+            }
             const length = description.length;
             if (length > 0 && length <= 60) {
                 return {
@@ -187,15 +193,19 @@ export const UI = {
             }
         },
         generateNavigation: (arrayNavigation) => {
-            const arrayString = [];
+            const arrayNav = [];
+            const arrayTitle = [];
             for (let i = 0; i < arrayNavigation.length; i++) {
                 if (arrayNavigation[i].link) {
-                    arrayString.push('<a target="_self" href="' + arrayNavigation[i].link + '">' + arrayNavigation[i].title + '</a>');
+                    arrayNav.push('<a target="_self" href="' + arrayNavigation[i].link + '">' + arrayNavigation[i].title + '</a>');
                 } else {
-                    arrayString.push(arrayNavigation[i].title);
+                    arrayNav.push(arrayNavigation[i].title);
                 }
+                arrayTitle.push(arrayNavigation[i].title);
             }
-            document.querySelector('.navigation').innerHTML = arrayString.join(' > ');
+            document.querySelector('.navigation').innerHTML = arrayNav.join(' > ');
+
+            document.title = arrayTitle.join(' > ') + ' - Mindmap';
         },
         showToggleButton: () => {
             document.querySelector('.toggle-button').removeClass('hide');

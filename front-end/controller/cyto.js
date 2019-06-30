@@ -220,7 +220,6 @@ export const Cyto = {
     },
     tapHandler: (e, isEditMode) => {
         let tappedNow = event.target;
-        let originalTapEvent;
         if (Cyto._tappedTimeout && Cyto._tappedBefore) {
             clearTimeout(Cyto._tappedTimeout);
         }
@@ -299,22 +298,20 @@ export const Cyto = {
             const sourceId = Cyto._edgeSourceNode._private.data.id;
             const targetId = e.target._private.data.id;
             // prevent self link
-            if (sourceId === targetId) {
-                return;
+            if (sourceId !== targetId) {
+                const edgeInstance = UI.Cyto.addEdge(Cyto.cy, sourceId, targetId);
+                // bubble event to html
+                var event = new CustomEvent('save-edge', {
+                    bubbles: true,
+                    cancelable: true,
+                    detail: {
+                        parent_node_id: sourceId,
+                        child_node_id: targetId,
+                        edgeInstance // for after http request done and change edge status
+                    }
+                });
+                Cyto.cy.container().dispatchEvent(event);
             }
-            const edgeInstance = UI.Cyto.addEdge(Cyto.cy, sourceId, targetId);
-
-            // bubble event to html
-            var event = new CustomEvent('save-edge', {
-                bubbles: true,
-                cancelable: true,
-                detail: {
-                    parent_node_id: sourceId,
-                    child_node_id: targetId,
-                    edgeInstance // for after http request done and change edge status
-                }
-            });
-            Cyto.cy.container().dispatchEvent(event);
         }
         Cyto._mousedown = false;
         Cyto._edgeSourceNode = null;
