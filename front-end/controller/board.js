@@ -23,16 +23,16 @@ export class Board {
     async run(args, context) {
         this.username = args.username;
         this.token = args.token;
-        this.boardUniquename = args.boardUniquename;
+        this.boardId = args.boardId;
         this.args = args;
         this.context = context;
         api.init(API, RESPONSE_STATUS);
         const nodes = (await api.apiService.nodes.get({
-            boardUniquename: this.boardUniquename,
+            boardId: this.boardId,
             token: this.token
         })).data
         const relationship = (await api.apiService.relationship.get({
-            boardUniquename: this.boardUniquename,
+            boardId: this.boardId,
             token: this.token
         })).data;
         const container = UI.getCytoContainer();

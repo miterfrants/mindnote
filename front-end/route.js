@@ -161,17 +161,14 @@ export const Route = {
             dependency: [{
                 url: "/mindmap/third-party/cyto/cytoscape.js",
                 checkVariable: 'cytoscape'
-            }],
+            }]
         }, {
-            path: 'boards/',
+            path: 'boards/{boardId}/',
             controller: Board,
             dependency: [{
-                url: "/mindmap/third-party/cyto/cytoscape-cose-bilkent.js",
-                dependency: [{
-                    url: "/mindmap/third-party/cyto/cytoscape.js",
-                    checkVariable: 'cytoscape'
-                }]
-            }],
+                url: "/mindmap/third-party/cyto/cytoscape.js",
+                checkVariable: 'cytoscape'
+            }]
         }]
     }]
 }
