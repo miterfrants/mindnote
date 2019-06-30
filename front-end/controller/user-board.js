@@ -189,5 +189,12 @@ export class UserBoard {
                 UI.hideNodeForm();
             }
         });
+        document.querySelectorAll('.node-form input, .node-form textarea').forEach((el) => {
+            el.addEventListener('keyup', (e) => {
+                if (e.keyCode === 13) {
+                    document.querySelector('.btn-add').click();
+                }
+            })
+        });
     }
 }
