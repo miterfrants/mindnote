@@ -413,6 +413,9 @@ export const UI = {
     },
     restoreBoardForm: () => {
         const elBoardForm = document.querySelector('.board-form');
+        document.querySelectorAll('.show-form').forEach((el) => {
+            el.removeClass('show-form');
+        });
         document.querySelector('.btn-virtual-add-board').append(elBoardForm);
     }
 }
