@@ -170,7 +170,7 @@ export const Cyto = {
 
         // 複製一份新的 node 把綠色換成藍色
         const nodeConstructData = node.json();
-        nodeConstructData.data.id = data.id;
+        nodeConstructData.data.id = 'node-' + data.id;
         Cyto.cy.add([
             nodeConstructData
         ]);
