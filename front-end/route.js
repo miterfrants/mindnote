@@ -18,11 +18,6 @@ import {
     Loader
 } from '/mindmap/loader.js';
 
-import {
-    api
-} from '/mindmap/service/api.v2.js';
-
-
 export const Route = {
     init: (context) => {
         Route.findMatchRouterAndRunController(location.pathname, Route.RoutingTable, context);

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Testing</title>
+    <title></title>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1">
     <link href="/mindmap/third-party/fontawesome-free-5.9.0-web/css/all.css" rel="stylesheet">
     <link href="/mindmap/css/common.css" rel="stylesheet">
@@ -301,8 +301,11 @@
             position: relative;
         }
 
-        .router-user-boards .board-card .fa-link {
-            font-size: 20px;
+        .router-user-boards .board-card .fa-edit {
+            font-size: 23px;
+            padding: 10px;
+            border: none;
+            color: #24c0c2;
         }
 
         .router-user-boards .board-card .title {
@@ -335,7 +338,7 @@
             border: 1px solid #ccc;
             margin-top: 20px;
             display: block;
-            margin: 20px auto;
+            margin: 8px auto;
         }
 
         .board-form .btn-add-board,
@@ -397,7 +400,7 @@
         </div>
     </div>
 
-    <div class="unauth hide unauth-message">Unauth Board</div>
+    <div class="unauth hide unauth-message">If you want to see this board, have to login ..... </div>
 
     <div class="controller">
         <div class="router-user-board hide">
@@ -441,9 +444,9 @@
                         data-is_public="{is_public}">
                         <div class="inner">
                             <div>
-                                <div class="title desc">{title}</div>
+                                <a href="{link}" class="title desc">{title}</a>
                                 <div class="vert-mid pad-t-20 pad-rl-10">
-                                    <a class="fa fa-link btn-link" href="{link}" target="_self"></a>
+                                    <button class="fa fa-edit btn-link" href="{link}" target="_self"></button>
                                     <div class="btn-toggle toggle-button">
                                     </div>
                                     <span class="permission marg-l-10 desc"></span>
