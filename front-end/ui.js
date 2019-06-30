@@ -246,11 +246,12 @@ export const UI = {
         if (nodeId.length > 0) {
             document.querySelector('.btn-update').removeClass('hide');
             document.querySelector('.btn-add').addClass('hide');
+            document.querySelector('.btn-delete').removeClass('hide');
         } else {
             document.querySelector('.btn-update').addClass('hide');
             document.querySelector('.btn-add').removeClass('hide');
+            document.querySelector('.btn-delete').addClass('hide');
         }
-        document.querySelector('.btn-delete').removeClass('hide');
         let estimateTop = position.y - document.querySelector('.node-form').offsetHeight - 10;;
         let estimateLeft = position.x - document.querySelector('.node-form').offsetWidth / 2;
         let targetTop, targetLeft, panX, panY;
