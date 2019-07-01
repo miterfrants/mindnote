@@ -117,7 +117,7 @@ export const Cyto = {
         }, {
             data: {
                 id: 'preview_edge',
-                source: Cyto.cy._private.elements[0]._private.data.id,
+                source: 'preview_source_node',
                 target: 'preview_target_node'
             },
             group: 'edges',
@@ -350,7 +350,6 @@ export const Cyto = {
     },
     mousemoveInEditModeHandler: (e) => {
         if (Cyto._isConnecting) {
-            console.log('isConnecting');
             const sourceId = Cyto._edgeSourceNode._private.data.id;
             UI.Cyto.updatePreviewEdge(Cyto.cy, sourceId, e.position);
             UI.Cyto.showPreviewEdge(Cyto.cy);

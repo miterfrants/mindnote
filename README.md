@@ -2,12 +2,11 @@
 
 ## Overview
 
-## API Server
+## API Server .NET Core Web API App
 
-## Front-End Site
+## Front-End Site Vanilla JS
 
-## Chrome Extension
-
+## Chrome Extension Vanilla JS
 
 # Launch api service
 

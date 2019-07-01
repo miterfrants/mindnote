@@ -299,6 +299,16 @@
             text-align: center;
             margin: 10px 10px;
             position: relative;
+            transition: border-color 0.3s;
+        }
+
+        .router-user-boards .board-card.private::after {
+            display: block;
+            content: '';
+        }
+
+        .router-user-boards .board-card.private {
+            border-color: #e89b4b;
         }
 
         .router-user-boards .board-card .fa-edit {
@@ -407,7 +417,7 @@
         </div>
     </div>
 
-    <div class="unauth hide unauth-message">If you want to see this board, have to login ..... </div>
+    <div class="unauth hide unauth-message">If you want to see the board, just login ..... </div>
 
     <div class="controller">
         <div class="router-user-board hide">
@@ -479,9 +489,7 @@
             url: 'https://apis.google.com/js/api.js',
             checkVariable: 'gapi'
         }]);
-        
     </script>
-
 </body>
 
 </html>

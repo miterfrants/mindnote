@@ -68,7 +68,7 @@ export class UserBoards {
         });
 
         document.querySelector('.btn-delete-board').addEventListener('click', async (e) => {
-            var result = 'DELETE'
+            var result = 'DELETE';
             if (this.continueDeleteCount <= 2) {
                 result = prompt('please type "DELETE"');
             }
@@ -97,18 +97,32 @@ export class UserBoards {
             UI.showBoardForm(container, 'add');
         })
 
-        document.querySelector('.board-form input.board-title').addEventListener('click', (e) => {
+        const elBoardTitle = document.querySelector('.board-form input.board-title');
+        elBoardTitle.addEventListener('click', (e) => {
             e.stopPropagation();
             e.preventDefault();
             return;
         })
 
-        document.querySelector('.board-form input.board-title').addEventListener('keyup', (e) => {
-            if (e.keyCode === 13) {
-                document.querySelector('.board-form .btn-add-board:not(.hide),.board-form .btn-update-board:not(.hide)').click();
-            } else if (e.keyCode === 27) {
-                UI.hideBoardForm();
+        elBoardTitle.addEventListener('keyup', (e) => {
+            if (e.currentTarget.value === '') {
+                e.currentTarget.dataset['isComposing'] = false;
+            } else {
+                const isComposing = e.currentTarget.dataset['isComposing'] === 'true';
+                if (e.keyCode === 13 && isComposing === false) {
+                    document.querySelector('.board-form .btn-add-board:not(.hide),.board-form .btn-update-board:not(.hide)').click();
+                } else if (e.keyCode === 27 && isComposing === false) {
+                    UI.hideBoardForm();
+                }
+                if (e.isComposing) {
+                    e.currentTarget.dataset['isComposing'] = true;
+                } else {
+                    e.currentTarget.dataset['isComposing'] = false;
+                }
             }
+            e.stopPropagation();
+            e.preventDefault();
+            return;
         });
     }
 
