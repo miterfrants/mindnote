@@ -35,7 +35,7 @@ export const Cyto = {
                 animate: false,
                 randomize: true
             },
-
+            wheelSensitivity: 0.1,
             style: [{
                 selector: 'node',
                 style: {
@@ -89,10 +89,41 @@ export const Cyto = {
             }],
             elements
         })
-
-        if (Cyto.cy.nodes().length > 0) {
-            UI.Cyto.addPreviewEdge(Cyto.cy);
-        }
+        window.cyto = Cyto.cy;
+        Cyto.cy.add([{
+            data: {
+                title: '',
+                id: 'preview_source_node',
+                background: '#ffffff',
+                size: 1,
+                borderWidth: 0
+            },
+            group: 'nodes',
+            classes: 'hide',
+            grabbable: false,
+            pannable: false
+        }, {
+            data: {
+                title: '',
+                id: 'preview_target_node',
+                background: '#ffffff',
+                size: 1,
+                borderWidth: 0
+            },
+            group: 'nodes',
+            classes: 'hide',
+            grabbable: false,
+            pannable: false
+        }, {
+            data: {
+                id: 'preview_edge',
+                source: Cyto.cy._private.elements[0]._private.data.id,
+                target: 'preview_target_node'
+            },
+            group: 'edges',
+            classes: 'hide preview',
+            grabbable: false
+        }]);
 
         Cyto.cy.on('tap', (e) => {
             Cyto.tapHandler(e, Cyto._isEditMode);
@@ -103,6 +134,9 @@ export const Cyto = {
             Cyto.cy.on('mousemove', Cyto.mousemoveInEditModeHandler);
         }
         Cyto.cy.on('doubleTap', Cyto.doubleTapHandler)
+        Cyto.cy.on('re-arrange', (e) => {
+            UI.Cyto.reArrange(Cyto.cy);
+        });
 
         // from index.html
         Cyto.cy.on('createNode', (e, title, description) => {
@@ -155,6 +189,7 @@ export const Cyto = {
     },
     saveEdgeDoneHandler: (e, data) => {
         data.edgeInstance.removeClass('saving');
+        UI.Cyto.restorePreviewEdge(Cyto.cy);
         data.edgeInstance.data('id', data.id);
     },
     createNodeHandler: (e, title, description) => {
@@ -175,11 +210,6 @@ export const Cyto = {
             nodeConstructData
         ]);
         Cyto.cy.remove(node);
-
-        // 如果是第一個 node 加上 preview edge
-        if (Cyto.cy.nodes().length === 1) {
-            UI.Cyto.addPreviewEdge(Cyto.cy);
-        }
         Cyto._isCreating = false;
         Cyto._createNode = null;
 
@@ -320,6 +350,7 @@ export const Cyto = {
     },
     mousemoveInEditModeHandler: (e) => {
         if (Cyto._isConnecting) {
+            console.log('isConnecting');
             const sourceId = Cyto._edgeSourceNode._private.data.id;
             UI.Cyto.updatePreviewEdge(Cyto.cy, sourceId, e.position);
             UI.Cyto.showPreviewEdge(Cyto.cy);

@@ -18,8 +18,21 @@ import {
     Loader
 } from '/mindmap/loader.js';
 
+window['MindMapController'] = [];
+
 export const Route = {
     init: (context) => {
+        window.addEventListener("popstate", function (e) {
+            Route.findMatchRouterAndRunController(location.pathname, Route.RoutingTable, context);
+        });
+
+        (function (original) {
+            history.pushState = function (data, title, newPath) {
+                Route.findMatchRouterAndRunController(newPath, Route.RoutingTable, context);
+                return original.apply(this, arguments);
+            };
+        })(history.pushState);
+
         Route.findMatchRouterAndRunController(location.pathname, Route.RoutingTable, context);
         document.addEventListener('DOMNodeInserted', (e) => {
             if (e.target.tagName === 'A') {
@@ -28,7 +41,6 @@ export const Route = {
                     e.preventDefault();
                     e.stopPropagation();
                     const newPath = e.target.href.replace(location.origin, '');
-                    Route.findMatchRouterAndRunController(newPath, Route.RoutingTable, context);
                     history.pushState({}, '', newPath);
                     return;
                 })
@@ -38,7 +50,6 @@ export const Route = {
                         e.preventDefault();
                         e.stopPropagation();
                         const newPath = e.target.href.replace(location.origin, '');
-                        Route.findMatchRouterAndRunController(newPath, Route.RoutingTable, context);
                         history.pushState({}, '', newPath);
                         return;
                     });

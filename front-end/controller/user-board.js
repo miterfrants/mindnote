@@ -12,13 +12,13 @@ import {
 } from '/mindmap/config.js';
 
 window['MindMapRoutingLocation'] = [];
-window['MindMapController'] = [];
+window['MindMapContinueDeleteCount'] = 0;
+window['MindMapContinueDeleteTimer'];
 
 export class UserBoard {
     constructor(args, context) {
         this.init(args, context);
         this.run(args, context);
-        this.continueDeleteCount = 0;
     }
     async init(args, context) {
         this.cy = null;
@@ -46,7 +46,6 @@ export class UserBoard {
 
             const container = UI.getCytoEditContainer();
             this.cy = Cyto.init(container, nodes, relationship, true);
-            // UI.header.showToggleButton();
             UI.header.generateNavigation([{
                 title: 'Boards',
                 link: '/mindmap/users/me/boards/'
@@ -109,17 +108,19 @@ export class UserBoard {
         document.querySelector('.btn-node-delete').addEventListener('click', async (e) => {
             // 連續刪除超過兩次，就不跳 prompt 請使用者輸入
             var result = 'DELETE'
-            if (this.continueDeleteCount < 2) {
+
+            if (window.MindMapContinueDeleteCount <= 2) {
                 result = prompt('please type "DELETE"');
+            } else {
+                clearTimeout(window.MindMapContinueDeleteTimer);
             }
 
-            this.continueDeleteCount += 1;
-            setTimeout(() => {
-                this.continueDeleteCount = 0;
+            window.MindMapContinueDeleteCount += 1;
+            window.MindMapContinueDeleteTimer = setTimeout(() => {
+                window.MindMapContinueDeleteCount = 0;
             }, 120 * 1000);
 
             if (result === 'DELETE') {
-
                 const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
                 const resp = await api.authApiService.node.delete({
                     token: this.token,
@@ -138,13 +139,12 @@ export class UserBoard {
             }
         });
         document.querySelector('.btn-layout').addEventListener('click', () => {
-            UI.Cyto.reArrange(this.cy);
+            this.cy.trigger('re-arrange');
         });
         document.querySelector('.btn-close').addEventListener('click', UI.hideNodeForm);
         document.querySelector('.mask').addEventListener('click', UI.hideNodeForm);
 
         document.addEventListener('save-edge', async (e) => {
-            const token = localStorage.getItem('token');
             const resp = await api.authApiService.relationship.post({
                 parent_node_id: e.detail.parent_node_id.replace(/node\-/gi, ''),
                 child_node_id: e.detail.child_node_id.replace(/node\-/gi, ''),
@@ -189,7 +189,7 @@ export class UserBoard {
                 UI.hideNodeForm();
             }
         });
-        document.querySelectorAll('.node-form input, .node-form textarea').forEach((el) => {
+        document.querySelectorAll('.node-form input').forEach((el) => {
             el.addEventListener('keyup', (e) => {
                 if (e.keyCode === 13) {
                     document.querySelector('.btn-add').click();
