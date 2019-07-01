@@ -192,12 +192,17 @@ export class UserBoard {
         });
         document.querySelectorAll('.node-form .title').forEach((el) => {
             el.addEventListener('keyup', (e) => {
+                const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
                 if (e.currentTarget.value === '') {
                     e.currentTarget.dataset['isComposing'] = false;
                 } else {
                     const isComposing = e.currentTarget.dataset['isComposing'] === 'true';
                     if (e.keyCode === 13 && isComposing === false) {
-                        document.querySelector('.btn-add').click();
+                        if (nodeId === '') {
+                            document.querySelector('.btn-add').click();
+                        } else {
+                            document.querySelector('.btn-update').click();
+                        }
                     }
                     if (e.isComposing) {
                         e.currentTarget.dataset['isComposing'] = true;
