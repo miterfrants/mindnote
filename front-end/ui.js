@@ -93,41 +93,25 @@ export const UI = {
             cy.$('#preview_edge').addClass('hide');
         },
         showPreviewEdge: (cy) => {
+            //console.log(cy.$('#preview_edge'));
             cy.$('#preview_edge').removeClass('hide');
         },
         updatePreviewEdge: (cy, sourceNodeId, position) => {
             cy.$('#preview_edge').move({
                 source: sourceNodeId
             });
-            cy.$('#preview_node').position({
+            cy.$('#preview_target_node').position({
                 x: position.x - 10,
                 y: position.y - 10
             });
         },
-        addPreviewEdge: (cy) => {
-            cy.add([{
-                data: {
-                    title: '',
-                    id: 'preview_node',
-                    background: '#ffffff',
-                    size: 1,
-                    borderWidth: 0
-                },
-                group: 'nodes',
-                classes: 'hide',
-                grabbable: false,
-                pannable: false
-            }, {
-                data: {
-                    id: 'preview_edge',
-                    // fix: 這裡可能會有問題如果 elements 第一個不是 node 是 edge 
-                    source: cy._private.elements[0]._private.data.id,
-                    target: 'preview_node'
-                },
-                group: 'edges',
-                classes: 'hide preview',
-                grabbable: false
-            }]);
+        restorePreviewEdge: (cy) => {
+            console.log(cy.$('#preview_edge'));
+            cy.$('#preview_edge').move({
+                source: '#preview_source_node',
+                target: '#preview_target_node'
+            });
+            console.log(cy.$('#preview_edge'));
         },
         clearHoverNodeStyle: (cy) => {
             cy.$('.touch-border').removeClass('touch-border');

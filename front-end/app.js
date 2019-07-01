@@ -13,11 +13,7 @@ import {
 export const APP = {
     GoogleAuth: null,
     run: () => {
-        try {
-            api.init(API, RESPONSE_STATUS);
-            Route.init(APP);
-        } catch (error) {
-            console.log(error);
-        }
+        api.init(API, RESPONSE_STATUS);
+        Route.init(APP);
     }
 }
