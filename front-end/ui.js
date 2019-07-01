@@ -106,12 +106,10 @@ export const UI = {
             });
         },
         restorePreviewEdge: (cy) => {
-            console.log(cy.$('#preview_edge'));
             cy.$('#preview_edge').move({
                 source: '#preview_source_node',
                 target: '#preview_target_node'
             });
-            console.log(cy.$('#preview_edge'));
         },
         clearHoverNodeStyle: (cy) => {
             cy.$('.touch-border').removeClass('touch-border');
@@ -357,9 +355,11 @@ export const UI = {
     },
     setBoardPublicPermission: (elBoardCard, isPublic) => {
         if (isPublic) {
+            elBoardCard.removeClass('private');
             elBoardCard.querySelector('.btn-toggle').removeClass('private');
             elBoardCard.querySelector('.permission').innerHTML = 'public';
         } else {
+            elBoardCard.addClass('private');
             elBoardCard.querySelector('.btn-toggle').addClass('private');
             elBoardCard.querySelector('.permission').innerHTML = 'private';
         }

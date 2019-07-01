@@ -53,6 +53,7 @@ export class UserBoard {
                 title: board.title,
             }]);
             UI.showAuth();
+            UI.hideNodeForm();
         } else {
             UI.hideAuth();
             if (this.cy) {
@@ -189,12 +190,25 @@ export class UserBoard {
                 UI.hideNodeForm();
             }
         });
-        document.querySelectorAll('.node-form input').forEach((el) => {
+        document.querySelectorAll('.node-form .title').forEach((el) => {
             el.addEventListener('keyup', (e) => {
-                if (e.keyCode === 13) {
-                    document.querySelector('.btn-add').click();
+                if (e.currentTarget.value === '') {
+                    e.currentTarget.dataset['isComposing'] = false;
+                } else {
+                    const isComposing = e.currentTarget.dataset['isComposing'] === 'true';
+                    if (e.keyCode === 13 && isComposing === false) {
+                        document.querySelector('.btn-add').click();
+                    }
+                    if (e.isComposing) {
+                        e.currentTarget.dataset['isComposing'] = true;
+                    } else {
+                        e.currentTarget.dataset['isComposing'] = false;
+                    }
                 }
-            })
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            });
         });
     }
 }
