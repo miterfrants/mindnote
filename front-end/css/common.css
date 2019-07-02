@@ -36,6 +36,7 @@ a,
 button,
 .btn {
     cursor: pointer;
+    user-select: none;
 }
 
 a:visited {

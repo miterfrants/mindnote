@@ -36,8 +36,7 @@ namespace Mindmap.Controllers
             user user = _context.user.FirstOrDefault(x => x.id == userId);
             if (user == null)
             {
-                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
-                return null;
+                throw new MindMapException("You are not the account owner.", HttpStatusCode.NotFound);
             }
             else
             {
@@ -61,16 +60,7 @@ namespace Mindmap.Controllers
             {
                 boards = _context.board.Where(x => x.owner_id == userId && x.deleted_at == null).OrderByDescending(x => x.created_at).ToList();
             }
-
-            if (boards == null)
-            {
-                HttpContext.Response.StatusCode = HttpStatusCode.NotFound.GetHashCode();
-                return null;
-            }
-            else
-            {
-                return boards;
-            }
+            return boards;
         }
 
         [HttpPost]

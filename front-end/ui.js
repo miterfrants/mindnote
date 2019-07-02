@@ -319,11 +319,11 @@ export const UI = {
     generateUserBoards: (boards) => {
         const eles = [];
         const boardsEle = document.querySelector('.router-user-boards')
-
         const containerEle = boardsEle.querySelector('.container .row');
-        containerEle.querySelectorAll('.container .row > *:not(.template):not(.btn-virtual-add-board)').forEach((el) => {
+        document.querySelectorAll('.container .row > div:not(.template):not(.btn-virtual-add-board)').forEach((el) => {
             containerEle.removeChild(el);
         });
+
         const template = containerEle.querySelector('.template').outerHTML;
         for (let i = 0; i < boards.length; i++) {
             boards[i].link = `/mindmap/users/me/boards/${boards[i].id}/`;
@@ -356,54 +356,35 @@ export const UI = {
     setBoardPublicPermission: (elBoardCard, isPublic) => {
         if (isPublic) {
             elBoardCard.removeClass('private');
-            elBoardCard.querySelector('.btn-toggle').removeClass('private');
+            elBoardCard.querySelector('.btn-toggle-permission').removeClass('private');
             elBoardCard.querySelector('.permission').innerHTML = 'public';
         } else {
             elBoardCard.addClass('private');
-            elBoardCard.querySelector('.btn-toggle').addClass('private');
+            elBoardCard.querySelector('.btn-toggle-permission').addClass('private');
             elBoardCard.querySelector('.permission').innerHTML = 'private';
         }
     },
-    showBoardForm: (container, type) => {
-        const elBoardForm = document.querySelector('.board-form');
-        elBoardForm.removeClass('hide');
-        const elBoardTitle = elBoardForm.querySelector('.board-title')
-        if (elBoardForm.parentElement.classExists('show-form')) {
-            elBoardForm.parentElement.removeClass('show-form');
+    showBoardForm: (container) => {
+        const title = container.dataset['title'] || '';
+        const elBoardTitle = container.querySelector('.board-title')
+        elBoardTitle.value = title;
+        if (container.classExists('show-form')) {
+            container.removeClass('show-form');
         }
-        if (type === 'add') {
-            elBoardForm.querySelector('.btn-add-board').removeClass('hide');
-            elBoardForm.querySelector('.btn-update-board').addClass('hide');
-            elBoardForm.querySelector('.btn-delete-board').addClass('hide');
-            elBoardForm.querySelector('.board-title').value = '';
-        } else {
-            elBoardForm.querySelector('.btn-add-board').addClass('hide');
-            elBoardForm.querySelector('.btn-update-board').removeClass('hide');
-            elBoardForm.querySelector('.btn-delete-board').removeClass('hide');
-        }
-        container.append(elBoardForm);
         container.addClass('show-form');
         setTimeout(() => {
             elBoardTitle.focus();
             elBoardTitle.setSelectionRange(0, elBoardTitle.value.length);
         }, 300);
     },
-    hideBoardForm: () => {
-        const elBoardForm = document.querySelector('.board-form');
-        if (elBoardForm.parentElement.classExists('show-form')) {
-            elBoardForm.parentElement.addClass('hide-form');
+    hideBoardForm: (container) => {
+        if (container.classExists('show-form')) {
+            container.addClass('hide-form');
             setTimeout(() => {
-                elBoardForm.parentElement.removeClass('show-form');
-                elBoardForm.parentElement.removeClass('hide-form');
+                container.removeClass('show-form');
+                container.removeClass('hide-form');
             }, 300)
 
         }
-    },
-    restoreBoardForm: () => {
-        const elBoardForm = document.querySelector('.board-form');
-        document.querySelectorAll('.show-form').forEach((el) => {
-            el.removeClass('show-form');
-        });
-        document.querySelector('.btn-virtual-add-board').append(elBoardForm);
     }
 }

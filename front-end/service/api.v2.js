@@ -238,37 +238,47 @@ const _fetch = (url, option, withCatch) => {
     return fetch(url, newOption);
 };
 
-const test = {
-    'a': '1'
-}
-
 const _handleRequest = (api, fetchOption, sendResponse) => {
     return new Promise(async (resolve, reject) => {
         let result;
-        if (
-            fetchOption.method === 'GET' &&
-            MindMapApiCache[api] !== undefined &&
-            MindMapApiCache[api][JSON.stringify(fetchOption)] !== undefined
-        ) {
-            result = MindMapApiCache[api][JSON.stringify(fetchOption)];
+        // if (
+        //     fetchOption.method === 'GET' &&
+        //     MindMapApiCache[api] !== undefined &&
+        //     MindMapApiCache[api][JSON.stringify(fetchOption)] !== undefined
+        // ) {
+        //     result = MindMapApiCache[api][JSON.stringify(fetchOption)];
+        //     if (sendResponse) {
+        //         sendResponse(result);
+        //     }
+        //     resolve(result);
+        //     return;
+        // }
+
+        // if (
+        //     fetchOption.method !== 'GET'
+        // ) {
+        //     for (let cacheKey in MindMapApiCache) {
+        //         if (api.indexOf(cacheKey) === 0) {
+        //             delete MindMapApiCache[cacheKey];
+        //         }
+        //     }
+        // }
+        let resp
+        try {
+            resp = await _fetch(api, fetchOption);
+        } catch (error) {
+            result = {
+                status: _RESPONSE_STATUS.FAILED,
+                data: {
+                    errorMsg: error
+                }
+            }
             if (sendResponse) {
                 sendResponse(result);
             }
             resolve(result);
             return;
         }
-
-        if (
-            fetchOption.method !== 'GET'
-        ) {
-            for (let cacheKey in MindMapApiCache) {
-                if (api.indexOf(cacheKey) === 0) {
-                    delete MindMapApiCache[cacheKey];
-                }
-            }
-        }
-
-        const resp = await _fetch(api, fetchOption);
         if (resp.status === 200) {
             const jsonData = await resp.json();
             result = {
@@ -280,10 +290,11 @@ const _handleRequest = (api, fetchOption, sendResponse) => {
                 MindMapApiCache[api][JSON.stringify(fetchOption)] = result;
             }
         } else {
+            const jsonData = await resp.json();
             result = {
                 status: _RESPONSE_STATUS.FAILED,
                 data: {
-                    errorMsg: 'get board failed:' + JSON.stringify(resp)
+                    errorMsg: 'network error: ' + jsonData.data.message
                 }
             };
         }

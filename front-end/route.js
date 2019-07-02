@@ -18,7 +18,7 @@ import {
     Loader
 } from '/mindmap/loader.js';
 
-window['MindMapController'] = [];
+window['MindmapController'] = [];
 
 export const Route = {
     init: (context) => {
@@ -77,12 +77,12 @@ export const Route = {
                     await loader.load(routingTable[i].dependency);
                 }
 
-                window.MindMapRoutingLocation.push({
+                window.MindmapRoutingLocation.push({
                     controller: routingTable[i].controller,
                     args: JSON.stringify(args)
                 });
                 // 如果已經有 instance 了就不要在執行 init
-                const instances = window.MindMapController.filter((instance) => {
+                const instances = window.MindmapController.filter((instance) => {
                     return instance instanceof routingTable[i].controller
                 })
 
@@ -98,7 +98,7 @@ export const Route = {
                 if (instances.length === 0) {
                     // check pre function exists
                     const controllerInstance = new routingTable[i].controller(args, context);
-                    window.MindMapController.push(controllerInstance);
+                    window.MindmapController.push(controllerInstance);
                 } else {
                     // refactor data from route?
                     instances[0].run(args, instances[0].context);
