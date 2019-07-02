@@ -5,9 +5,15 @@ import {
 import {
     api
 } from '/mindmap/service/api.v2.js';
+
 import {
     RESPONSE_STATUS
 } from '/mindmap/config.js';
+
+import {
+    MindmapError,
+    MINDMAP_ERROR_TYPE
+} from '/mindmap/util/mindmap-error.js';
 
 export class UserBoards {
     constructor(args, context) {
@@ -19,98 +25,190 @@ export class UserBoards {
     }
     async run(args, context) {
         this.continueDeleteCount = 0;
-        const boards = await api.authApiService.boards.get({
+        const resp = await api.authApiService.boards.get({
             ...args,
         });
+
+        if (resp.status === RESPONSE_STATUS.FAILED) {
+            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, 'get boards', resp.data.errorMsg);
+        }
+
         this.token = args.token;
         UI.header.generateNavigation([{
             title: 'Boards'
         }]);
-        UI.restoreBoardForm();
-        UI.generateUserBoards(boards.data).forEach((elBoardCard) => {
-            UI.setBoardPublicPermission(elBoardCard, elBoardCard.dataset['is_public'] == 'true');
+        UI.generateUserBoards(resp.data).forEach((elBoardCard) => {
             this.initBoardCard(elBoardCard);
         });
     }
 
     _bindEvent() {
-        document.querySelector('.btn-add-board').addEventListener('click', async (e) => {
-            const title = document.querySelector('.board-title').value;
-            const board = (await api.authApiService.boards.post({
-                token: this.token,
-                title
-            })).data;
-            const elBoardCard = UI.addBoard(board);
-            this.initBoardCard(elBoardCard);
-            document.querySelector('.board-title').value = '';
-            document.querySelector('.board-id').value = '';
-            e.stopPropagation();
-            e.preventDefault();
-            return;
-        });
-        document.querySelector('.btn-update-board').addEventListener('click', async (e) => {
-            const title = document.querySelector('.board-title').value;
-            const boardId = document.querySelector('.board-id').value;
-            const board = (await api.authApiService.board.patch({
-                token: this.token,
-                title,
-                boardId
-            })).data;
-            UI.updateBoard(board);
-            setTimeout(() => {
-                UI.hideBoardForm();
-                document.querySelector('.board-title').value = '';
-                document.querySelector('.board-id').value = '';
-            }, 300);
-            e.stopPropagation();
-            e.preventDefault();
-            return;
+        this.initBoardCard(document.querySelector('.btn-virtual-add-board'));
+    }
+
+    async _setPermission(elBoardCard) {
+        let isPublic = !(elBoardCard.dataset['is_public'] === 'true');
+        UI.setBoardPublicPermission(elBoardCard, isPublic);
+        let resp = await api.authApiService.board.patch({
+            token: this.token,
+            boardId: elBoardCard.dataset['id'],
+            is_public: isPublic
         });
 
-        document.querySelector('.btn-delete-board').addEventListener('click', async (e) => {
-            var result = 'DELETE';
-            if (this.continueDeleteCount <= 2) {
-                result = prompt('please type "DELETE"');
-            }
+        if (resp.status === RESPONSE_STATUS.FAILED) {
+            UI.setBoardPublicPermission(elBoardCard, !isPublic);
+            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, 'change permission of board', resp.data.errorMsg);
+        }
+        elBoardCard.dataset['is_public'] = resp.data.is_public;
+    }
 
-            this.continueDeleteCount += 1;
-            setTimeout(() => {
-                this.continueDeleteCount = 0;
-            }, 120 * 1000);
+    initBoardCard(elBoardCard) {
+        if (elBoardCard.dataset['is_public'] !== undefined) {
+            UI.setBoardPublicPermission(elBoardCard, elBoardCard.dataset['is_public'] == 'true');
+        }
+        const elBtnTogglePermission = elBoardCard.querySelector('.btn-toggle-permission');
+        const elBtnSwitchEditMode = elBoardCard.querySelector('.btn-switch-edit-mode');
+        const elBtnUpdateBoard = elBoardCard.querySelector('.btn-update-board');
+        const elBtnDeleteBoard = elBoardCard.querySelector('.btn-delete-board');
+        const elBtnAddBoard = elBoardCard.querySelector('.btn-add-board');
 
-            if (result != 'DELETE') {
+        if (elBtnSwitchEditMode) {
+            elBtnSwitchEditMode.addEventListener('click', (e) => {
+                if (e.currentTarget.classExists('show-form')) {
+                    return;
+                }
+                elBoardCard.querySelector('.board-title').value = e.currentTarget.dataset['title'];
+                UI.showBoardForm(elBoardCard);
+            });
+        }
+
+        if (elBtnTogglePermission) {
+            elBtnTogglePermission.addEventListener('click', async (e) => {
+                this._setPermission(elBoardCard);
+                e.stopPropagation();
+                e.preventDefault();
                 return;
-            }
-            const boardId = document.querySelector('.board-id').value;
-            await api.authApiService.board.delete({
-                token: this.token,
-                boardId
             })
-            UI.restoreBoardForm();
-            UI.removeBoard(boardId);
-            document.querySelector('.board-title').value = '';
-            document.querySelector('.board-id').value = '';
-        });
+        }
 
-        document.querySelector('.btn-virtual-add-board').addEventListener('click', (e) => {
-            const container = e.currentTarget.querySelector('.inner');
-            UI.showBoardForm(container, 'add');
-        })
+        if (elBtnUpdateBoard) {
+            elBtnUpdateBoard.addEventListener('click', async (e) => {
+                const elButtonUpdateBoard = e.currentTarget;
+                if (elButtonUpdateBoard.classExists('disabled')) {
+                    return;
+                }
+                elButtonUpdateBoard.addClass('disabled');
+                const title = elBoardCard.querySelector('input.board-title').value;
+                const boardId = elBoardCard.dataset['id'];
+                const resp = (await api.authApiService.board.patch({
+                    token: this.token,
+                    title,
+                    boardId
+                }));
 
-        const elBoardTitle = document.querySelector('.board-form input.board-title');
-        elBoardTitle.addEventListener('click', (e) => {
+                if (resp.status === RESPONSE_STATUS.FAILED) {
+                    elButtonUpdateBoard.removeClass('disabled');
+                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, 'you update board\'s title', resp.data.errorMsg);
+                }
+
+                const board = resp.data;
+                UI.updateBoard(board);
+                setTimeout(() => {
+                    UI.hideBoardForm(elBoardCard);
+                    elButtonUpdateBoard.removeClass('disabled');
+                }, 300);
+
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            });
+        }
+
+        if (elBtnDeleteBoard) {
+            elBtnDeleteBoard.addEventListener('click', async (e) => {
+                const elButtonDel = e.currentTarget;
+                if (elButtonDel.classExists('disabled')) {
+                    return;
+                }
+
+                elButtonDel.addClass('disabled');
+                var result = 'DELETE';
+                if (this.continueDeleteCount <= 2) {
+                    result = prompt('please type "DELETE"');
+                }
+
+                this.continueDeleteCount += 1;
+                setTimeout(() => {
+                    this.continueDeleteCount = 0;
+                }, 120 * 1000);
+
+                if (result != 'DELETE') {
+                    return;
+                }
+                const boardId = elBoardCard.dataset['id'];
+                const resp = await api.authApiService.board.delete({
+                    token: this.token,
+                    boardId
+                })
+
+                elButtonDel.removeClass('disabled');
+                if (resp.status === RESPONSE_STATUS.FAILED) {
+                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, 'delete board', resp.data.errorMsg);
+                }
+                UI.removeBoard(boardId);
+                e.stopPropagation();
+                e.preventDefault();
+                return;
+            });
+        }
+
+        if (elBtnAddBoard) {
+            elBtnAddBoard.addEventListener('click', async (e) => {
+                const elAddBoardCard = document.querySelector('.btn-virtual-add-board');
+                const boardTitle = elAddBoardCard.querySelector('.board-title').value;
+                if (elBtnAddBoard.classExists('disabled')) {
+                    return;
+                }
+                elBtnAddBoard.addClass('disabled');
+
+                let resp = await api.authApiService.boards.post({
+                    token: this.token,
+                    title: boardTitle
+                });
+
+                if (resp.status === RESPONSE_STATUS.FAILED) {
+                    elBtnAddBoard.removeClass('disabled');
+                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, 'add a board', resp.data.errorMsg);
+                }
+
+                const board = resp.data;
+                const elBoardCard = UI.addBoard(board);
+                this.initBoardCard(elBoardCard);
+                setTimeout(() => {
+                    elBtnAddBoard.removeClass('disabled');
+                    elAddBoardCard.querySelector('.board-title').value = '';
+                }, 300);
+            });
+        }
+
+        elBoardCard.querySelector('input.board-title').addEventListener('click', (e) => {
             e.stopPropagation();
             e.preventDefault();
             return;
-        })
+        });
 
-        elBoardTitle.addEventListener('keyup', (e) => {
+        elBoardCard.querySelector('input.board-title').addEventListener('keyup', (e) => {
             if (e.currentTarget.value === '') {
                 e.currentTarget.dataset['isComposing'] = false;
             } else {
                 const isComposing = e.currentTarget.dataset['isComposing'] === 'true';
                 if (e.keyCode === 13 && isComposing === false) {
-                    document.querySelector('.board-form .btn-add-board:not(.hide),.board-form .btn-update-board:not(.hide)').click();
+                    if (elBtnUpdateBoard) {
+                        elBtnUpdateBoard.click();
+                    } else {
+                        elBtnAddBoard.click();
+                    }
+
                 } else if (e.keyCode === 27 && isComposing === false) {
                     UI.hideBoardForm();
                 }
@@ -124,42 +222,5 @@ export class UserBoards {
             e.preventDefault();
             return;
         });
-    }
-
-    _fillDataToForm(e) {
-        document.querySelector('.board-title').value = e.currentTarget.dataset['title'];
-        document.querySelector('.board-id').value = e.currentTarget.dataset['id'];
-    }
-
-    async _setPermission(elBoardCard) {
-        let isPublic = !(elBoardCard.dataset['is_public'] === 'true');
-        UI.setBoardPublicPermission(elBoardCard, isPublic);
-        let resp = await api.authApiService.board.patch({
-            token: this.token,
-            boardId: elBoardCard.dataset['id'],
-            is_public: isPublic
-        });
-
-        if (resp.status !== RESPONSE_STATUS.OK) {
-            UI.setBoardPublicPermission(elBoardCard, !isPublic);
-        } else {
-            elBoardCard.dataset['is_public'] = resp.data.is_public;
-        }
-    }
-
-    initBoardCard(elBoardCard) {
-        elBoardCard.addEventListener('click', (e) => {
-            if (e.currentTarget.querySelectorAll('.show-form').length > 0) {
-                return;
-            }
-            this._fillDataToForm(e);
-            UI.showBoardForm(e.currentTarget.querySelector('.inner'), 'update');
-        });
-        elBoardCard.querySelector('.btn-toggle').addEventListener('click', async (e) => {
-            this._setPermission(elBoardCard);
-            e.stopPropagation();
-            e.preventDefault();
-            return;
-        })
     }
 }

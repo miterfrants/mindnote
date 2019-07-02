@@ -11,9 +11,9 @@ import {
     RESPONSE_STATUS
 } from '/mindmap/config.js';
 
-window['MindMapRoutingLocation'] = [];
-window['MindMapContinueDeleteCount'] = 0;
-window['MindMapContinueDeleteTimer'];
+window['MindmapRoutingLocation'] = [];
+window['MindmapContinueDeleteCount'] = 0;
+window['MindmapContinueDeleteTimer'];
 
 export class UserBoard {
     constructor(args, context) {
@@ -110,15 +110,15 @@ export class UserBoard {
             // 連續刪除超過兩次，就不跳 prompt 請使用者輸入
             var result = 'DELETE'
 
-            if (window.MindMapContinueDeleteCount <= 2) {
+            if (window.MindmapContinueDeleteCount <= 2) {
                 result = prompt('please type "DELETE"');
             } else {
-                clearTimeout(window.MindMapContinueDeleteTimer);
+                clearTimeout(window.MindmapContinueDeleteTimer);
             }
 
-            window.MindMapContinueDeleteCount += 1;
-            window.MindMapContinueDeleteTimer = setTimeout(() => {
-                window.MindMapContinueDeleteCount = 0;
+            window.MindmapContinueDeleteCount += 1;
+            window.MindmapContinueDeleteTimer = setTimeout(() => {
+                window.MindmapContinueDeleteCount = 0;
             }, 120 * 1000);
 
             if (result === 'DELETE') {

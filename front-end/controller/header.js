@@ -96,15 +96,19 @@ export class Header {
             UI.header.showAuth();
             UI.showAuth();
             // generate boards
-            const boards = await api.authApiService.boards.get({
-                token,
-                limit: 5
-            });
-            UI.header.generateBoards(boards.data);
+            // const boards = await api.authApiService.boards.get({
+            //     token,
+            //     limit: 5
+            // });
+            // UI.header.generateBoards(boards.data);
         } else {
             UI.header.hideAuth();
             UI.hideAuth();
             UI.header.generateNavigation([]);
+            // refactor: 把所有 html 搬到 component 裡頭去 render
+            document.querySelectorAll(`div[class^="router-"]`).forEach((el) => {
+                el.addClass('hide');
+            })
         }
     }
 }
