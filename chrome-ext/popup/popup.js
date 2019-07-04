@@ -138,9 +138,22 @@ document.querySelectorAll('.tab-boards,.tab-history,.tab-nodeform').forEach((el)
 
 document.querySelectorAll('.board-form input').forEach((el) => {
     el.addEventListener('keyup', async (e) => {
-        if (e.keyCode === 13) {
-            document.querySelector('.board-form .add').click();
+        if (e.currentTarget.value === '') {
+            e.currentTarget.dataset['isComposing'] = false;
+        } else {
+            const isComposing = e.currentTarget.dataset['isComposing'] === 'true';
+            if (e.keyCode === 13 && isComposing === false) {
+                document.querySelector('.board-form .add').click();
+            }
+            if (e.isComposing) {
+                e.currentTarget.dataset['isComposing'] = true;
+            } else {
+                e.currentTarget.dataset['isComposing'] = false;
+            }
         }
+        e.stopPropagation();
+        e.preventDefault();
+        return;
     });
 })
 

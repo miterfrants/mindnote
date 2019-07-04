@@ -40,3 +40,34 @@ secrets.json
     }
 }
 ```
+
+
+backup 
+```
+docker run -d \
+--rm \
+--network pgnetwork \
+-p 5432:5432 \
+--name postgres \
+--env-file /srv/postgres/pg-env.list \
+-v /srv/postgres/volume \
+postgres
+
+docker run -d \
+--rm \
+--network pgnetwork \
+-p 5050:5050 \
+--name pgadmin \
+--env-file /srv/pgadmin/pgadmin-env.list \
+-v /srv/pgadmin/volume \
+postgres
+
+docker run \                                                                                                    
+-e ASPNETCORE_URLS=http://\*:8081 \
+--network pgnetwork \
+-d \
+--rm \
+-v /srv/mindmap:/app/volume \
+--name mindmap-api-server \
+-p 8081:8081 mindmap-api-server
+```
