@@ -84,7 +84,7 @@ namespace Mindmap.Controllers
 
             if (user.board_count >= 2 && !user.is_subscribed)
             {
-                throw new MindMapException("Add board deny, because free account only have two boards. If you need to create new board, please subscribe our service become a paid user.", HttpStatusCode.ExpectationFailed);
+                throw new MindMapException("Add board deny, because free account only have two boards. If you need to create new board, join us just pay $1 per month to subscribe our service.", HttpStatusCode.ExpectationFailed);
             }
 
             board newBoard = new board { title = body.title, uniquename = body.uniquename, owner_id = userId };

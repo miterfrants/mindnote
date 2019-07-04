@@ -119,6 +119,10 @@
             color: white;
         }
 
+        .header .fa-sign-out-alt {
+            font-size: 15px;
+        }
+
         .dropdown-toggle::after {
             border-top-color: white;
             margin-left: 12px;
@@ -233,6 +237,22 @@
             text-align: center;
         }
 
+        .menu .menu-item:nth-child(1) {
+            background: #313131;
+        }
+
+        .menu .menu-item:nth-child(2) {
+            background: #313131;
+        }
+
+        .menu .menu-item:nth-child(3) {
+            background: #272727;
+        }
+
+        .menu .menu-item:nth-child(4) {
+            background: #202020;
+        }
+
         .menu .menu-item:hover {
             background: #454545 !important;
         }
@@ -247,7 +267,6 @@
         }
 
         .menu .menu-item.btn-logout {
-            background: #2a2a2a;
             border-radius: 0 0 4px 4px;
         }
 
@@ -436,6 +455,7 @@
             border: none;
             border-radius: 50px;
             color: white;
+            font-weight: bold;
         }
 
         .router-checkout .btn-subscribe.disabled {
@@ -478,10 +498,10 @@
                         <i class="fas fa-strikethrough"></i> Unsubscribe
                     </button>
                     <a class="menu-item btn-subscribe" target="_blank" href="/mindmap/checkout/">
-                        <i class="fas fa-strike"></i> Subscribe
+                        <i class="fas fa-arrow-alt-circle-up"></i> Subscribe&nbsp;&nbsp;$1/month
                     </a>
                     <a class="menu-item" target="_blank" href="/mindmap/users/me/boards/">
-                        Boards
+                        <i class="fas fa-clone"></i> Boards
                     </a>
                     <button class="menu-item btn-logout">
                         <i class="fas fa-sign-out-alt"></i> Logout
@@ -584,7 +604,11 @@
                 <div class="tpfield" id="card-ccv"></div>
             </label>
 
-            <button class="btn-subscribe">Subscribe</button>
+            <button class="btn-subscribe">
+                Subscribe
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                $1 / month
+            </button>
         </div>
     </div>
 
