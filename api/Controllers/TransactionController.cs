@@ -9,6 +9,7 @@ using System;
 using System.Text;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Threading;
 
 using Mindmap.Util;
 using Mindmap.Models;
@@ -122,6 +123,7 @@ namespace Mindmap.Controllers
             StringContent httpContent = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(postBody), Encoding.UTF8, "application/json");
             HttpResponseMessage response = await httpClient.PostAsync(_tapPayEndpoint, httpContent);
             string resultFromTapPay = await response.Content.ReadAsStringAsync();
+            dynamic resultObjFromTapPay = Newtonsoft.Json.JsonConvert.DeserializeObject(resultFromTapPay);
 
             // update local transaction status
             user user = _context.user.FirstOrDefault(x => x.id == userId);
@@ -130,13 +132,22 @@ namespace Mindmap.Controllers
             {
 
                 newTransaction.raw_data = resultFromTapPay;
-                newTransaction.status = Enum.GetName(typeof(TransactionStatus), TransactionStatus.PAID);
+                if (resultObjFromTapPay.status == 0)
+                {
+                    newTransaction.status = Enum.GetName(typeof(TransactionStatus), TransactionStatus.PAID);
+                }
                 newTransaction.paid_at = DateTime.Now;
                 user.phone = requestBody.phone;
                 user.full_name = requestBody.card_holder;
                 user.email = requestBody.email;
-
                 _context.SaveChanges();
+
+                if (resultObjFromTapPay.status != 0)
+                {
+                    throw new MindMapException(resultObjFromTapPay.msg.Value, HttpStatusCode.InternalServerError);
+                }
+
+
                 result = new JSONResponse(JSONResponseStatus.OK, new
                 {
                     data = resultFromTapPay

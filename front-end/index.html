@@ -14,7 +14,7 @@
             top: 65;
             z-index: 2;
             border: none;
-            background: rgb(36, 192, 193);
+            background: #24c0c1;
             color: white;
             height: 30px;
             border-radius: 30px;
@@ -27,7 +27,7 @@
 
         button.disabled {
             pointer-events: none;
-            cursor: default;
+            cursor: not-allowed;
         }
 
         button.disabled::before {
@@ -51,7 +51,7 @@
             width: 100%;
             z-index: 4;
             position: relative;
-            color: #b0b0b0;
+            color: #ccc;
         }
 
         .relative {
@@ -229,7 +229,7 @@
             border: none;
             width: 100%;
             box-sizing: border-box;
-            color: #b0b0b0 !important;
+            color: #ccc !important;
             text-align: center;
         }
 
@@ -391,25 +391,55 @@
             width: 100%;
         }
 
-        .router-checkout .btn-subscribe {
-            background: white;
-            border: 1px solid #ccc;
-            width: 300px;
-            border-radius: 10px;
-            padding: 15px 10px;
-            position: relative;
-            overflow: hidden;
-            margin: 20px auto;
+        .router-checkout label {
             display: block;
+            width: 302px;
+            margin: 20px auto;
         }
 
-        .tpfield {
-            height: 40px;
-            width: 300px;
-            border: 1px solid gray;
+        .router-checkout label .label-title {
+            color: #2a2a2a;
+            padding-left: 18px;
+        }
+
+        .router-checkout label input,
+        .router-checkout label .tpfield {
+            width: 302px;
+            border: 1px solid #ccc;
+            border-radius: 36px;
+            font-size: 14px;
+            padding: 15px 20px;
+            color: #2a2a2a;
             margin: 5px 0;
-            padding: 5px;
-            margin: 20px auto;
+        }
+
+        .router-checkout label .tpfield {
+            height: 28px;
+            border: 1px solid #ccc;
+            margin: 5px 0;
+            padding: 10px 20px;
+            width: 259px;
+        }
+
+        .router-checkout label input::placeholder {
+            color: #ccc;
+        }
+
+        .router-checkout .btn-subscribe {
+            background: #24c0c1;
+            width: 300px;
+            padding: 19px 10px;
+            position: relative;
+            overflow: hidden;
+            margin: 60px auto;
+            display: block;
+            border: none;
+            border-radius: 50px;
+            color: white;
+        }
+
+        .router-checkout .btn-subscribe.disabled {
+            background: #ccc;
         }
     </style>
 </head>
@@ -449,6 +479,9 @@
                     </button>
                     <a class="menu-item btn-subscribe" target="_blank" href="/mindmap/checkout/">
                         <i class="fas fa-strike"></i> Subscribe
+                    </a>
+                    <a class="menu-item" target="_blank" href="/mindmap/users/me/boards/">
+                        Boards
                     </a>
                     <button class="menu-item btn-logout">
                         <i class="fas fa-sign-out-alt"></i> Logout
@@ -522,23 +555,36 @@
         </div>
         <div class="router-checkout hide">
             <label>
-                持卡人:
+                <div class="label-title">Card Holder:</div>
                 <input placeholder="信用卡持有人姓名" id="card_holder" />
             </label>
 
             <label>
-                Email:
+                <div class="label-title">Email:</div>
                 <input placeholder="email" id="email" />
             </label>
 
             <label>
-                Phone:
+                <div class="label-title">Phone:</div>
                 <input placeholder="phone" id="phone" />
             </label>
-            <div class="tpfield" id="card-number"></div>
-            <div class="tpfield" id="card-expiration-date"></div>
-            <div class="tpfield" id="card-ccv"></div>
-            <button class="btn-subscribe">訂閱</button>
+
+            <label>
+                <div class="label-title">Card Number:</div>
+                <div class="tpfield" id="card-number"></div>
+            </label>
+
+            <label>
+                <div class="label-title">Expiration Date:</div>
+                <div class="tpfield" id="card-expiration-date"></div>
+            </label>
+
+            <label>
+                <div class="label-title">CCV:</div>
+                <div class="tpfield" id="card-ccv"></div>
+            </label>
+
+            <button class="btn-subscribe">Subscribe</button>
         </div>
     </div>
 
