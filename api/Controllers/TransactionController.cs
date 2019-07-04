@@ -34,7 +34,7 @@ namespace Mindmap.Controllers
             _context = context;
             _userService = userService;
             _contextForView = contextForView;
-            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(appSetting.Value));
+
             AppSettings tempAppSetting = (AppSettings)appSetting.Value;
             _tapPayEndpoint = tempAppSetting.Common.TapPayEndpoint;
             _tapPayPartnerKey = tempAppSetting.Secrets.TapPayPartnerKey;
