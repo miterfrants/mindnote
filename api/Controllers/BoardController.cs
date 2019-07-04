@@ -44,7 +44,7 @@ namespace Mindmap.Controllers
             }
             else if (!result.is_public)
             {
-                throw new MindMapException("The board have to authrize to watch!", HttpStatusCode.Unauthorized);
+                throw new MindMapException("The board is private!", HttpStatusCode.Unauthorized);
             }
             else
             {
@@ -64,7 +64,7 @@ namespace Mindmap.Controllers
             }
             else if (!board.is_public)
             {
-                throw new MindMapException("The board have to authrize to watch!", HttpStatusCode.Unauthorized);
+                throw new MindMapException("The board is private!", HttpStatusCode.Unauthorized);
             }
             else
             {
@@ -84,7 +84,7 @@ namespace Mindmap.Controllers
             }
             else if (!board.is_public)
             {
-                throw new MindMapException("The board have to authrize to watch!", HttpStatusCode.Unauthorized);
+                throw new MindMapException("The board is private!", HttpStatusCode.Unauthorized);
             }
             else
             {

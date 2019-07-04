@@ -3,6 +3,10 @@ import {
 } from '/util/extended-prototype.js';
 extendStringProtoType();
 
+import {
+    remoteEndpoint
+} from '/config.js';
+
 let template = '';
 (async () => {
     const resp = await fetch('/components/board/board.html');
@@ -42,7 +46,7 @@ export function Board(data, clickHandler, removeButtonClickHandler, permissionBu
     }, false);
 
     this.element.querySelector('.btn-link').addEventListener('click', (e) => {
-        window.open(['https://sapiens.tools/mindmap/users/me/boards/', self.data.id, '/'].join(''));
+        window.open([remoteEndpoint + '/mindmap/users/me/boards/', self.data.id, '/'].join(''));
     });
 
     this.element.querySelector('.toggle-button').addEventListener('click', (e) => {

@@ -52,7 +52,8 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
       username: storage.userInfo ? storage.userInfo.username : null,
       token: storage.token || null,
       selectedBoard: storage.selectedBoard ? storage.selectedBoard : null,
-      selectedNode: storage.selectedNode ? storage.selectedNode : null
+      selectedNode: storage.selectedNode ? storage.selectedNode : null,
+      profile_url: storage.userInfo ? storage.userInfo.picture : null
     }
     window[req.service][req.module][req.action]({
       ...req.data,

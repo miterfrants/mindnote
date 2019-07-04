@@ -16,6 +16,15 @@ import {
     Route
 } from '/mindmap/route.js';
 
+import {
+    Toaster
+} from '/mindmap/service/toaster.js';
+
+import {
+    MindmapError,
+    MINDMAP_ERROR_TYPE
+} from '/mindmap/util/mindmap-error.js';
+
 export class Header {
     constructor(args, context) {
         this.init(args, context);
@@ -41,7 +50,13 @@ export class Header {
 
     async run(args, context) {
         this.context = context;
-        this.self = this;
+        this.token = args.token;
+        this.me = args.me;
+        if (args.me && !args.me.is_subscribed) {
+            UI.unsubscribeFinish();
+        } else {
+            UI.subscribeFinish();
+        }
     }
 
     _bindEvent() {
@@ -49,8 +64,33 @@ export class Header {
             this.context.GoogleAuth.signOut()
             localStorage.setItem('token', '');
             localStorage.setItem('username', '');
-            this.context.GoogleAuth.signOut();
+            localStorage.setItem('profile_url', '');
+            UI.hideAuth();
+            UI.header.hideAuth();
+            UI.header.generateNavigation([]);
             Route.runFromController(this.context, location.pathname, Header);
+        });
+
+        document.querySelector('.header .btn-unsubscribe').addEventListener('click', async () => {
+            if (prompt('Are you sure you want to unsubscribe our service, please type \'UNSUBSCRIBE\'') !== 'UNSUBSCRIBE') {
+                return;
+            }
+
+            const resp = await api.authApiService.transaction.delete({
+                token: this.token
+            });
+
+            if (resp.status === RESPONSE_STATUS.OK) {
+                Toaster.popup(MINDMAP_ERROR_TYPE.INFO, 'Unsubscribe success', 5000);
+                UI.unsubscribeFinish();
+                return;
+            } else {
+                if (resp.httpStatus === 417) {
+                    throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                } else {
+                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                }
+            }
         });
 
         document.querySelector('.auth-google').addEventListener('click', () => {
@@ -70,10 +110,11 @@ export class Header {
     async _updateSigninStatus() {
         const user = this.context.GoogleAuth.currentUser.get();
         const isGoogleAuthorized = user.hasGrantedScopes(GOOGLE.AUTH.SCOPE);
+        let token = localStorage.getItem('token');
+        let username = localStorage.getItem('username');
+        let profile = localStorage.getItem('profile_url');
 
         if (isGoogleAuthorized) {
-            let token = localStorage.getItem('token');
-            let username = localStorage.getItem('username');
             if (!token || !username) {
                 const result = await api.apiService.auth.post({
                     code: user.getAuthResponse().access_token
@@ -101,6 +142,10 @@ export class Header {
             //     limit: 5
             // });
             // UI.header.generateBoards(boards.data);
+        } else if (token) {
+            UI.setupProfile(profile, this.me.fullname);
+            UI.header.showAuth();
+            UI.showAuth();
         } else {
             UI.header.hideAuth();
             UI.hideAuth();

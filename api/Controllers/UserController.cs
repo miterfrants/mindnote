@@ -2,8 +2,10 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+
 using Mindmap.Models;
 using Mindmap.Services;
 using Mindmap.Util;
@@ -27,20 +29,27 @@ namespace Mindmap.Controllers
 
         [HttpGet]
         [Route("me/")]
-        public ActionResult<user> Get()
+        public ActionResult<dynamic> Get()
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
 
             Int16 userId = _userService.GetUserId(token);
-            user user = _context.user.FirstOrDefault(x => x.id == userId);
+            view_user user = _contextForView.view_user.FirstOrDefault(x => x.id == userId);
             if (user == null)
             {
                 throw new MindMapException("You are not the account owner.", HttpStatusCode.NotFound);
             }
             else
             {
-                return user;
+                return new
+                {
+                    username = user.username,
+                    fullname = user.full_name,
+                    email = user.email,
+                    phone = user.phone,
+                    is_subscribed = user.is_subscribed
+                };
             }
         }
 
@@ -69,7 +78,14 @@ namespace Mindmap.Controllers
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
-            Int16 userId = _userService.GetUserId(token);
+            Int32 userId = _userService.GetUserId(token);
+
+            view_user user = _contextForView.view_user.FirstOrDefault(x => x.id == userId);
+
+            if (user.board_count >= 2 && !user.is_subscribed)
+            {
+                throw new MindMapException("Add board deny, because free account only have two boards. If you need to create new board, please subscribe our service become a paid user.", HttpStatusCode.ExpectationFailed);
+            }
 
             board newBoard = new board { title = body.title, uniquename = body.uniquename, owner_id = userId };
             _context.board.Add(newBoard);
@@ -121,12 +137,13 @@ namespace Mindmap.Controllers
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
-            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
 
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
             if (board == null)
             {
                 throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
             }
+
             if (requestBody.is_public != null)
             {
                 board.is_public = requestBody.is_public;

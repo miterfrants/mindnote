@@ -11,6 +11,7 @@ namespace Mindmap.Helpers
     public class Common
     {
         public Auth Auth { get; set; }
+        public string TapPayEndpoint { get; set; }
     }
 
     public class Auth
@@ -22,5 +23,6 @@ namespace Mindmap.Helpers
     {
         public string DBConnectionString { get; set; }
         public string JwtKey { get; set; }
+        public string TapPayPartnerKey { get; set; }
     }
 }

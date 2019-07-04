@@ -13,5 +13,9 @@ namespace Mindmap.Models
         public DateTime? deleted_at { get; set; }
         public int? owner_id { get; set; }
         public int? board_id { get; set; }
+        public decimal? x { get; set; }
+        public decimal? y { get; set; }
+
+        public virtual board board_ { get; set; }
     }
 }

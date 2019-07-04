@@ -23,6 +23,20 @@ export const api = {
         _RESPONSE_STATUS = RESPONSE_STATUS;
     },
     authApiService: {
+        me: {
+            get: async (data, sendResponse) => {
+                let api = _API.ENDPOINT + _API.AUTHORIZED.ME;
+                api = api.bind(data);
+
+                let fetchOption = {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
+                    }
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
+            }
+        },
         boards: {
             post: async (data, sendResponse) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.BOARDS;
@@ -185,6 +199,39 @@ export const api = {
                 };
                 return _handleRequest(api, fetchOption, sendResponse);
             }
+        },
+        transaction: {
+            post: async (data, sendResponse) => {
+                let api = _API.ENDPOINT + _API.AUTHORIZED.TRANSACTION;
+                api = api.bind(data);
+
+                let postBody = {
+                    prime: data.prime,
+                    phone: data.phone,
+                    email: data.email,
+                    card_holder: data.card_holder
+                };
+
+                let fetchOption = {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
+                    },
+                    body: JSON.stringify(postBody)
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
+            },
+            delete: async (data, sendResponse) => {
+                let api = _API.ENDPOINT + _API.AUTHORIZED.TRANSACTION;
+
+                let fetchOption = {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
+                    }
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
+            }
         }
     },
     apiService: {
@@ -234,35 +281,31 @@ const _fetch = (url, option, withCatch) => {
     } else {
         newOption['cache'] = 'cache';
     }
-
     return fetch(url, newOption);
 };
 
 const _handleRequest = (api, fetchOption, sendResponse) => {
     return new Promise(async (resolve, reject) => {
         let result;
-        // if (
-        //     fetchOption.method === 'GET' &&
-        //     MindMapApiCache[api] !== undefined &&
-        //     MindMapApiCache[api][JSON.stringify(fetchOption)] !== undefined
-        // ) {
-        //     result = MindMapApiCache[api][JSON.stringify(fetchOption)];
-        //     if (sendResponse) {
-        //         sendResponse(result);
-        //     }
-        //     resolve(result);
-        //     return;
-        // }
+        if (
+            fetchOption.method === 'GET' &&
+            MindMapApiCache[api] !== undefined &&
+            MindMapApiCache[api][JSON.stringify(fetchOption)] !== undefined
+        ) {
+            result = MindMapApiCache[api][JSON.stringify(fetchOption)];
+            if (sendResponse) {
+                sendResponse(result);
+            }
+            resolve(result);
+            return;
+        }
 
-        // if (
-        //     fetchOption.method !== 'GET'
-        // ) {
-        //     for (let cacheKey in MindMapApiCache) {
-        //         if (api.indexOf(cacheKey) === 0) {
-        //             delete MindMapApiCache[cacheKey];
-        //         }
-        //     }
-        // }
+        if (
+            fetchOption.method !== 'GET'
+        ) {
+            // refactor 現在的做法是只要發生 http method 不是 get 就把整個 cache 清掉，未來的作法應該是 API Response 會對應到 client 端 DB
+            MindMapApiCache = {};
+        }
         let resp
         try {
             resp = await _fetch(api, fetchOption);
@@ -283,6 +326,7 @@ const _handleRequest = (api, fetchOption, sendResponse) => {
             const jsonData = await resp.json();
             result = {
                 status: _RESPONSE_STATUS.OK,
+                httpStatus: resp.status,
                 data: jsonData
             };
             if (fetchOption.method === 'GET') {
@@ -293,8 +337,9 @@ const _handleRequest = (api, fetchOption, sendResponse) => {
             const jsonData = await resp.json();
             result = {
                 status: _RESPONSE_STATUS.FAILED,
+                httpStatus: resp.status,
                 data: {
-                    errorMsg: 'network error: ' + jsonData.data.message
+                    errorMsg: jsonData.data.message
                 }
             };
         }

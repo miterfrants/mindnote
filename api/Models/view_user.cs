@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Mindmap.Models
 {
-    public partial class user
+    public partial class view_user
     {
         public int id { get; set; }
         public string email { get; set; }
@@ -20,5 +20,8 @@ namespace Mindmap.Models
         public string sub { get; set; }
         public string full_name { get; set; }
         public string phone { get; set; }
+        public bool is_subscribed { get; set; }
+        public int? transaction_id { get; set; }
+        public int board_count { get; set; }
     }
 }

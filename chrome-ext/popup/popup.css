@@ -157,3 +157,9 @@
 .nodeform label textarea {
     height: 200px;
 }
+
+.subscribe-section {
+    padding: 20px;
+    background: #fac32d;
+    margin-bottom: 20px;
+}

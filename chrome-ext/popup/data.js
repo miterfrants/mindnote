@@ -19,7 +19,7 @@ export const DATA = {
         })
     },
     postBoardAsync: (formData) => {
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             chrome.runtime.sendMessage({
                 service: 'authApiService',
                 module: 'boards',
@@ -29,8 +29,7 @@ export const DATA = {
                 if (resp.status === RESPONSE_STATUS.OK) {
                     resolve(resp);
                 } else {
-                    alert(resp.data.errorMsg);
-                    reject();
+                    resolve(resp);
                 }
             });
         });
@@ -107,6 +106,14 @@ export const DATA = {
                     reject();
                 }
             });
+        });
+    },
+    popupCheckout: (data) => {
+        chrome.runtime.sendMessage({
+            service: 'extService',
+            module: 'popup',
+            action: 'checkout',
+            data,
         });
     }
 }
