@@ -14,6 +14,9 @@ import {
     MindmapError,
     MINDMAP_ERROR_TYPE
 } from '/mindmap/util/mindmap-error.js';
+import {
+    Toaster
+} from '/mindmap/service/toaster.js';
 
 export class UserBoards {
     constructor(args, context) {
@@ -30,7 +33,11 @@ export class UserBoards {
         });
 
         if (resp.status === RESPONSE_STATUS.FAILED) {
-            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, 'get boards', resp.data.errorMsg);
+            if (resp.httpStatus === 417) {
+                throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+            } else {
+                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+            }
         }
 
         this.token = args.token;
@@ -57,7 +64,11 @@ export class UserBoards {
 
         if (resp.status === RESPONSE_STATUS.FAILED) {
             UI.setBoardPublicPermission(elBoardCard, !isPublic);
-            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, 'change permission of board', resp.data.errorMsg);
+            if (resp.httpStatus === 417) {
+                throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+            } else {
+                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+            }
         }
         elBoardCard.dataset['is_public'] = resp.data.is_public;
     }
@@ -108,7 +119,11 @@ export class UserBoards {
 
                 if (resp.status === RESPONSE_STATUS.FAILED) {
                     elButtonUpdateBoard.removeClass('disabled');
-                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, 'you update board\'s title', resp.data.errorMsg);
+                    if (resp.httpStatus === 417) {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                    } else {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                    }
                 }
 
                 const board = resp.data;
@@ -153,7 +168,11 @@ export class UserBoards {
 
                 elButtonDel.removeClass('disabled');
                 if (resp.status === RESPONSE_STATUS.FAILED) {
-                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, 'delete board', resp.data.errorMsg);
+                    if (resp.httpStatus === 417) {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                    } else {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                    }
                 }
                 UI.removeBoard(boardId);
                 e.stopPropagation();
@@ -178,7 +197,12 @@ export class UserBoards {
 
                 if (resp.status === RESPONSE_STATUS.FAILED) {
                     elBtnAddBoard.removeClass('disabled');
-                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, 'add a board', resp.data.errorMsg);
+                    if (resp.httpStatus === 417) {
+                        Toaster.popup(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg, 5000, '/mindmap/checkout/');
+                        return;
+                    } else {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                    }
                 }
 
                 const board = resp.data;

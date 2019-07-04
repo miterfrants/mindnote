@@ -320,7 +320,7 @@ export const UI = {
         const eles = [];
         const boardsEle = document.querySelector('.router-user-boards')
         const containerEle = boardsEle.querySelector('.container .row');
-        document.querySelectorAll('.container .row > div:not(.template):not(.btn-virtual-add-board)').forEach((el) => {
+        boardsEle.querySelectorAll('.container .row > div:not(.template):not(.btn-virtual-add-board)').forEach((el) => {
             containerEle.removeChild(el);
         });
 
@@ -386,5 +386,13 @@ export const UI = {
             }, 300)
 
         }
+    },
+    unsubscribeFinish: () => {
+        document.querySelector('.header .btn-unsubscribe').addClass('hide');
+        document.querySelector('.header .btn-subscribe').removeClass('hide');
+    },
+    subscribeFinish: () => {
+        document.querySelector('.header .btn-unsubscribe').removeClass('hide');
+        document.querySelector('.header .btn-subscribe').addClass('hide');
     }
 }

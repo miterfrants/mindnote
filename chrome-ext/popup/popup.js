@@ -31,7 +31,8 @@ import {
 } from '/popup/ui.js';
 
 import {
-    NODE_HISTORY_LIMIT
+    NODE_HISTORY_LIMIT,
+    RESPONSE_STATUS
 } from '/config.js';
 
 let isShowNodeForm = false;
@@ -65,6 +66,12 @@ function init(isShowNodeForm) {
 /**
  * Event Listener
  */
+
+document.querySelector('.subscribe-section').addEventListener('click', () => {
+    chrome.storage.sync.get(['token'], (storage) => {
+        DATA.popupCheckout();
+    });
+})
 
 document.querySelector('.selected-node').addEventListener('click', UI.clearSelectedNode);
 document.querySelector('.selected-board').addEventListener('click', UI.clearSelectedBoard);
@@ -132,14 +139,7 @@ document.querySelectorAll('.tab-boards,.tab-history,.tab-nodeform').forEach((el)
 document.querySelectorAll('.board-form input').forEach((el) => {
     el.addEventListener('keyup', async (e) => {
         if (e.keyCode === 13) {
-            const formData = document.querySelector('.board-form').collectFormData();
-            try {
-                const resp = await DATA.postBoardAsync(formData);
-                const board = await buildBoardInstantAsync({
-                    ...resp.data
-                });
-                UI.postBoardFinish(board.element);
-            } catch (error) {}
+            document.querySelector('.board-form .add').click();
         }
     });
 })
@@ -149,6 +149,16 @@ document.querySelector('.board-form .add').addEventListener('click', async (e) =
     try {
         // storage.userInfo.username
         const resp = await DATA.postBoardAsync(formData);
+        if (resp.status === RESPONSE_STATUS.FAILED) {
+            if (resp.httpStatus === 417) {
+                document.querySelector('.subscribe-section').removeClass('hide');
+                document.querySelector('.subscribe-section').innerHTML = resp.data.errorMsg;
+            } else {
+                alert(resp.data.errorMsg);
+            }
+            return;
+        }
+
         const board = await buildBoardInstantAsync({
             ...resp.data
         });

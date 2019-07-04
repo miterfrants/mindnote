@@ -25,7 +25,7 @@ export const APP = {
     run: () => {
         window.addEventListener('error', (e) => {
             if (e.error && e.error instanceof MindmapError) {
-                Toaster.popup(e.reason.type, e.reason.reason + ' when ' + e.reason.when);
+                Toaster.popup(e.error.type, e.error.reason);
                 e.stopPropagation();
                 e.preventDefault();
                 return;
@@ -34,7 +34,7 @@ export const APP = {
 
         window.addEventListener("unhandledrejection", function (e) {
             if (e.reason && e.reason instanceof MindmapError) {
-                Toaster.popup(e.reason.type, e.reason.reason + ' when ' + e.reason.when);
+                Toaster.popup(e.reason.type, e.reason.reason);
                 e.stopPropagation();
                 e.preventDefault();
                 return;

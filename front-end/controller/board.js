@@ -11,6 +11,12 @@ import {
 import {
     UI
 } from '/mindmap/ui.js';
+
+import {
+    MindmapError,
+    MINDMAP_ERROR_TYPE
+} from '/mindmap/util/mindmap-error.js';
+
 export class Board {
     constructor(args, context) {
         this.init(args, context);
@@ -26,17 +32,37 @@ export class Board {
         this.boardId = args.boardId;
         this.args = args;
         this.context = context;
+
+        UI.header.generateNavigation([{
+            title: 'Boards',
+            link: '/mindmap/users/me/boards/'
+        }]);
+
         api.init(API, RESPONSE_STATUS);
-        const nodes = (await api.apiService.nodes.get({
+        const respForNodes = (await api.apiService.nodes.get({
             boardId: this.boardId,
             token: this.token
-        })).data
-        const relationship = (await api.apiService.relationship.get({
+        }));
+
+        if (respForNodes.status !== RESPONSE_STATUS.OK) {
+            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForNodes.data.errorMsg);
+        }
+
+        const respForRelationship = (await api.apiService.relationship.get({
             boardId: this.boardId,
             token: this.token
-        })).data;
+        }));
+
+        if (respForRelationship.status !== RESPONSE_STATUS.OK) {
+            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForRelationship.data.errorMsg);
+        }
+
+        const nodes = respForNodes.data;
+        const relationship = respForRelationship.data;
+
         const container = UI.getCytoContainer();
         this.cy = Cyto.init(container, nodes, relationship, false);
+
     }
 
     _bindEvent() {

@@ -14,6 +14,7 @@ public class ErrorHandlingMiddleware
 
     public async Task Invoke(HttpContext context /* other dependencies */)
     {
+
         try
         {
             await next(context);
@@ -35,9 +36,7 @@ public class ErrorHandlingMiddleware
                 code = mindMapEx.code;
             }
         }
-
         var result = new JSONResponse(JSONResponseStatus.FAILED, new { message = ex.Message });
-
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)code.GetHashCode();
         return context.Response.WriteAsync(result.toString());

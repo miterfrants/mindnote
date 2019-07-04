@@ -10,13 +10,15 @@ export const API = {
         BOARD: 'users/me/boards/{boardId}/',
         NODES: 'users/me/boards/{boardId}/nodes/',
         NODE: 'users/me/boards/{boardId}/nodes/{nodeId}/',
-        RELATIONSHIP: 'users/me/boards/{boardId}/relationship/'
+        RELATIONSHIP: 'users/me/boards/{boardId}/relationship/',
+        TRANSACTION: 'transaction/',
+        ME: 'users/me/'
     },
     COMMON: {
         NODES: 'boards/{boardId}/nodes/',
         RELATIONSHIP: 'boards/{boardId}/relationship/'
     },
-    AUTHORIZE: 'auth/'
+    AUTHORIZE: 'auth/',
 };
 
 export const GOOGLE = {

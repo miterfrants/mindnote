@@ -1,3 +1,7 @@
+import {
+    remoteEndpoint
+} from '/config.js';
+
 let _CLIPBOARD_LIMIT, _API, _RESPONSE_STATUS;
 export const extService = {
     init: (clipboardLimit, API, RESPONSE_STATUS) => {
@@ -85,6 +89,18 @@ export const extService = {
             clipboard.unshift(data.text);
             chrome.storage.sync.set({
                 clipboard
+            });
+        }
+    },
+    popup: {
+        checkout: (data) => {
+            chrome.tabs.create({
+                active: true,
+                url: remoteEndpoint + 'mindmap/checkout/?waiting=true'
+            }, function (tab) {
+                chrome.tabs.executeScript(tab.id, {
+                    code: `localStorage.setItem("token","${data.token}"); localStorage.setItem("profile_url","${data.profile_url}")`
+                });
             });
         }
     }

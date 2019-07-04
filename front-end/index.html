@@ -206,11 +206,6 @@
             transition: opacity 0.3s;
         }
 
-        .unauth-message {
-            padding: 100px;
-            text-align: center;
-        }
-
         .menu {
             position: absolute;
             top: 48px;
@@ -232,6 +227,10 @@
             background: transparent;
             display: block;
             border: none;
+            width: 100%;
+            box-sizing: border-box;
+            color: #b0b0b0 !important;
+            text-align: center;
         }
 
         .menu .menu-item:hover {
@@ -249,7 +248,6 @@
 
         .menu .menu-item.btn-logout {
             background: #2a2a2a;
-            width: 100%;
             border-radius: 0 0 4px 4px;
         }
 
@@ -393,41 +391,25 @@
             width: 100%;
         }
 
-        .toaster {
-            position: fixed;
-            bottom: 20px;
-            right: 100px;
-        }
-
-        .toaseter-item {
-            opacity: 1;
-            background: #2c2c2c;
-            color: white;
+        .router-checkout .btn-subscribe {
+            background: white;
+            border: 1px solid #ccc;
             width: 300px;
-            padding: 15px 20px;
             border-radius: 10px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            margin-top: 10px;
+            padding: 15px 10px;
             position: relative;
-            padding-left: 36px;
-            padding-top: 35px;
-        }
-
-        .toaseter-item.show {
-            opacity: 1;
-        }
-
-        .toaseter-item::before {
-            content: 'Error';
+            overflow: hidden;
+            margin: 20px auto;
             display: block;
-            border-left: 3px solid #fa5c2d;
-            height: calc(100% - 30px);
-            position: absolute;
-            left: 23px;
-            padding-left: 10px;
-            color: #fa5c2d;
-            top: 15px;
+        }
+
+        .tpfield {
+            height: 40px;
+            width: 300px;
+            border: 1px solid gray;
+            margin: 5px 0;
+            padding: 5px;
+            margin: 20px auto;
         }
     </style>
 </head>
@@ -462,6 +444,12 @@
                         <a href="{link}" target="_self" class="menu-item template">{title}</a>
                     </div>
                     <div class="separator"></div> -->
+                    <button class="menu-item btn-unsubscribe">
+                        <i class="fas fa-strikethrough"></i> Unsubscribe
+                    </button>
+                    <a class="menu-item btn-subscribe" target="_blank" href="/mindmap/checkout/">
+                        <i class="fas fa-strike"></i> Subscribe
+                    </a>
                     <button class="menu-item btn-logout">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
@@ -469,8 +457,6 @@
             </div>
         </div>
     </div>
-
-    <div class="unauth hide unauth-message">If you want to see the page, just login ..... </div>
 
     <div class="controller">
         <div class="router-user-board hide">
@@ -534,18 +520,57 @@
         <div class="router-board hide">
             <div class="cy"></div>
         </div>
+        <div class="router-checkout hide">
+            <label>
+                持卡人:
+                <input placeholder="信用卡持有人姓名" id="card_holder" />
+            </label>
+
+            <label>
+                Email:
+                <input placeholder="email" id="email" />
+            </label>
+
+            <label>
+                Phone:
+                <input placeholder="phone" id="phone" />
+            </label>
+            <div class="tpfield" id="card-number"></div>
+            <div class="tpfield" id="card-expiration-date"></div>
+            <div class="tpfield" id="card-ccv"></div>
+            <button class="btn-subscribe">訂閱</button>
+        </div>
     </div>
 
     <!-- Load Module-->
     <script src="https://browser.sentry-cdn.com/5.4.3/bundle.min.js" crossorigin="anonymous">
     </script>
+    <script src="https://js.tappaysdk.com/tpdirect/v5.1.0"></script>
+    <script>
+        TPDirect.setupSDK(13848, 'app_N9VZ8fjo8HLgqx882iYUeaH7BgXlIW8TeZ8CF4wlvKo0mP82CKxAKLT50rRq', 'sandbox');
+    </script>
+
     <script type="module">
-        // Sentry.init({ dsn: 'https://6d0d511139984858867f0a56dba09b3f@sentry.io/1493857' });
+        Sentry.init({ dsn: 'https://6d0d511139984858867f0a56dba09b3f@sentry.io/1493857' });
+
+        let timeoutDuration = 0;
+        if(location.search.length > 0 ){
+            const queryStringArray = location.search.substring(1).split('&');
+            for(let i=0;i<queryStringArray.length;i++){
+                const keyValuePair = queryStringArray[i].split('=');
+                if(keyValuePair[0]==='waiting' && keyValuePair[1]==='true'){
+                    timeoutDuration = 300;
+                }
+            }
+        }
+
         import { APP } from '/mindmap/app.js';
-        APP.run([{
-            url: 'https://apis.google.com/js/api.js',
-            checkVariable: 'gapi'
-        }]);
+        setTimeout(()=> {
+            APP.run([{
+                url: 'https://apis.google.com/js/api.js',
+                checkVariable: 'gapi'
+            }]);
+        }, timeoutDuration);
     </script>
 </body>
 

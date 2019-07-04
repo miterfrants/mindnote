@@ -1,24 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
 
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
+
 using Mindmap.Models;
 using Mindmap.Helpers;
 using Mindmap.Services;
+using Mindmap.Util;
 
 
 namespace Mindmap
@@ -85,6 +80,38 @@ namespace Mindmap
                     IssuerSigningKey = new SymmetricSecurityKey(encodedJwtSecret),
                     ValidateIssuer = false,
                     ValidateAudience = false
+                };
+                x.Events = new JwtBearerEvents()
+                {
+                    OnChallenge = context =>
+                    {
+                        context.HandleResponse();
+                        context.Response.StatusCode = 403;
+                        context.Response.ContentType = "application/json";
+                        byte[] bytes = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(new
+                        {
+                            status = JSONResponseStatus.FAILED,
+                            data = new
+                            {
+                                message = "Login required"
+                            }
+                        }));
+                        return context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        context.Response.StatusCode = 401;
+                        context.Response.ContentType = "application/json";
+                        byte[] bytes = Encoding.UTF8.GetBytes(Newtonsoft.Json.JsonConvert.SerializeObject(new
+                        {
+                            status = JSONResponseStatus.FAILED,
+                            data = new
+                            {
+                                message = "Aa error occurred processing your authentication"
+                            }
+                        }));
+                        return context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
+                    }
                 };
             });
 
