@@ -23,7 +23,6 @@ export class Checkout {
         this.run(args, context);
     }
     async init(args, context) {
-
         var fields = {
             number: {
                 // css selector
@@ -43,45 +42,26 @@ export class Checkout {
         TPDirect.card.setup({
             fields: fields,
             styles: {
-                // Style all elements
                 'input': {
-                    'color': 'gray'
+                    'font-size': '14px',
+                    'color': '#2a2a2a'
                 },
-                // Styling ccv field
-                'input.cvc': {
-                    // 'font-size': '16px'
-                },
-                // Styling expiration-date field
-                'input.expiration-date': {
-                    // 'font-size': '16px'
-                },
-                // Styling card-number field
-                'input.card-number': {
-                    // 'font-size': '16px'
-                },
-                // style focus state
-                ':focus': {
-                    // 'color': 'black'
-                },
-                // style valid state
                 '.valid': {
-                    'color': 'green'
+                    'color': '#2a2a2a'
                 },
-                // style invalid state
                 '.invalid': {
-                    'color': 'red'
+                    'color': '#fa5c2d'
                 },
-                // Media queries
-                // Note that these apply to the iframe, not the root window.
                 '@media screen and (max-width: 400px)': {
                     'input': {
-                        'color': 'orange'
+                        'color': '#2a2a2a'
                     }
                 }
             }
         });
         this._bindEvent();
         this.token = args.token;
+        this.appendDOtCycleTimer;
     }
     async run(args, context) {
         const me = args.me;
@@ -98,63 +78,80 @@ export class Checkout {
         container.querySelector('#email').value = me.email;
         container.querySelector('#phone').value = me.phone;
         container.querySelector('.btn-subscribe').removeClass('disabled');
+
     }
 
     _bindEvent() {
         const container = document.querySelector('.router-checkout');
         container.querySelector('.btn-subscribe').addEventListener('click', (e) => {
-            if (e.currentTarget.classExists('disabled')) {
+            const elBtnSubscribe = e.currentTarget;
+            elBtnSubscribe.innerHTML = 'Subscribing';
+            this.appendDotCycle(elBtnSubscribe);
+
+            if (elBtnSubscribe.classExists('disabled')) {
                 return;
             }
-            e.currentTarget.addClass('disabled');
+            elBtnSubscribe.addClass('disabled');
 
             // 取得 TapPay Fields 的 status
             const tappayStatus = TPDirect.card.getTappayFieldsStatus()
 
             // 確認是否可以 getPrime
             if (tappayStatus.canGetPrime === false) {
-                alert('can not get prime')
+                if (tappayStatus.status.number !== 0) {
+                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, 'The card number is wrong')
+                } else if (tappayStatus.status.expiry !== 0) {
+                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, 'Invalid expiration date')
+                } else if (tappayStatus.status.ccv !== 0) {
+                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, 'CCV is wrong')
+                }
+                elBtnSubscribe.removeClass('disabled');
+                elBtnSubscribe.innerHTML = 'Subscribe';
+                clearTimeout(this.appendDOtCycleTimer);
                 return
             }
-
             // Get prime
-            try {
-                TPDirect.card.getPrime(async (result) => {
-                    if (result.status !== 0) {
-                        alert('get prime error ' + result.msg)
-                        return
-                    }
-
-                    const card_holder = document.querySelector('#card_holder').value;
-                    const phone = document.querySelector('#phone').value;
-                    const email = document.querySelector('#email').value;
-
-                    const resp = await api.authApiService.transaction.post({
-                        token: this.token,
-                        prime: result.card.prime,
-                        card_holder,
-                        phone,
-                        email
-                    });
-
-                    if (resp.status === RESPONSE_STATUS.OK) {
-                        history.pushState({}, '', '/mindmap/users/me/boards/');
-                        Toaster.popup(MINDMAP_ERROR_TYPE.INFO, 'Thank you for subscribing');
-                    } else {
-                        if (resp.httpStatus === 417) {
-                            throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
-                        } else {
-                            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
-                        }
-                    }
-                })
-            } catch (error) {
-                if (error instanceof MindmapError) {
-                    throw error;
+            TPDirect.card.getPrime(async (result) => {
+                if (result.status !== 0) {
+                    elBtnSubscribe.removeClass('disabled');
+                    elBtnSubscribe.innerHTML = 'Subscribe';
+                    clearTimeout(this.appendDOtCycleTimer);
+                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, result.msg);
                 }
-                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, error.message);
-            }
+
+                const card_holder = document.querySelector('#card_holder').value;
+                const phone = document.querySelector('#phone').value;
+                const email = document.querySelector('#email').value;
+
+                const resp = await api.authApiService.transaction.post({
+                    token: this.token,
+                    prime: result.card.prime,
+                    card_holder,
+                    phone,
+                    email
+                });
+
+                elBtnSubscribe.removeClass('disabled');
+                elBtnSubscribe.innerHTML = 'Subscribe';
+                clearTimeout(this.appendDOtCycleTimer);
+                if (resp.status === RESPONSE_STATUS.OK) {
+                    history.pushState({}, '', '/mindmap/users/me/boards/');
+                    Toaster.popup(MINDMAP_ERROR_TYPE.INFO, 'Thank you for subscribing');
+                } else {
+                    if (resp.httpStatus === 417) {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                    } else {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                    }
+                }
+            });
 
         });
+    }
+    appendDotCycle(element) {
+        element.innerHTML = element.innerHTML + '.';
+        this.appendDOtCycleTimer = setTimeout(() => {
+            this.appendDotCycle(element);
+        }, 500);
     }
 }

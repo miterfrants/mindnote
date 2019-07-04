@@ -1,7 +1,7 @@
 {
   "name": "Mindmap",
-  "version": "0.0.3",
-  "description": "A chrome extension which insert selected text to Mindmap.",
+  "version": "0.0.4",
+  "description": "A chrome extension which quickly collect idea and knowledge on web",
   "manifest_version": 2,
   "icons": {
     "16": "/imgs/16x16.png",
