@@ -198,7 +198,6 @@ export const Route = {
         path: '/mindmap/',
         controller: Header,
         dependency: [{
-            type: 'script',
             url: 'https://apis.google.com/js/api.js',
             checkVariable: 'gapi'
         }],
@@ -240,7 +239,11 @@ export const Route = {
             }]
         }, {
             path: 'checkout/',
-            controller: Checkout
+            controller: Checkout,
+            dependency: [{
+                url: 'https://js.tappaysdk.com/tpdirect/v5.1.0',
+                checkVariable: 'TPDirect'
+            }],
         }]
     }]
 }

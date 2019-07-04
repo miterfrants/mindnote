@@ -23,6 +23,7 @@ export class Checkout {
         this.run(args, context);
     }
     async init(args, context) {
+        TPDirect.setupSDK(13848, 'app_N9VZ8fjo8HLgqx882iYUeaH7BgXlIW8TeZ8CF4wlvKo0mP82CKxAKLT50rRq', 'sandbox');
         var fields = {
             number: {
                 // css selector
