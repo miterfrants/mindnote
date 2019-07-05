@@ -40,7 +40,7 @@ export class Board {
         this.showTipCountDownDuration = 6000;
 
         UI.header.generateNavigation([{
-            title: 'Boards',
+            title: '分類',
             link: '/mindmap/users/me/boards/'
         }]);
 
@@ -89,7 +89,7 @@ export class Board {
 
     showTip() {
         this.timerForTip = setTimeout(() => {
-            Toaster.popup(MINDMAP_ERROR_TYPE.INFO, 'Try to double tap blue circle to see detail', 5000)
+            Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '小提示: 如果需要看詳細內容，請對藍色圈圈連點兩次', 5000)
             this.showTip();
         }, this.showTipCountDownDuration)
         this.showTipCountDownDuration *= 3;

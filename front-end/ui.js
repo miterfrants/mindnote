@@ -357,11 +357,11 @@ export const UI = {
         if (isPublic) {
             elBoardCard.removeClass('private');
             elBoardCard.querySelector('.btn-toggle-permission').removeClass('private');
-            elBoardCard.querySelector('.permission').innerHTML = 'public';
+            elBoardCard.querySelector('.permission').innerHTML = '公開';
         } else {
             elBoardCard.addClass('private');
             elBoardCard.querySelector('.btn-toggle-permission').addClass('private');
-            elBoardCard.querySelector('.permission').innerHTML = 'private';
+            elBoardCard.querySelector('.permission').innerHTML = '隱藏';
         }
     },
     showBoardForm: (container) => {

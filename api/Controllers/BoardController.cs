@@ -37,11 +37,11 @@ namespace Mindmap.Controllers
                 x.id == boardId && x.deleted_at == null);
             if (result == null)
             {
-                throw new MindMapException("Board is gone!", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             else if (!result.is_public)
             {
-                throw new MindMapException("The board is private!", HttpStatusCode.Unauthorized);
+                throw new MindMapException("這個分類被作者隱藏起來了～～", HttpStatusCode.Unauthorized);
             }
             else
             {
@@ -57,11 +57,11 @@ namespace Mindmap.Controllers
                 x.id == boardId && x.deleted_at == null);
             if (board == null)
             {
-                throw new MindMapException("Board is gone!", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             else if (!board.is_public)
             {
-                throw new MindMapException("The board is private!", HttpStatusCode.Unauthorized);
+                throw new MindMapException("這個分類被作者隱藏起來了～～", HttpStatusCode.Unauthorized);
             }
             else
             {
@@ -77,11 +77,11 @@ namespace Mindmap.Controllers
                 x.id == boardId);
             if (board == null)
             {
-                throw new MindMapException("Board is gone!", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             else if (!board.is_public)
             {
-                throw new MindMapException("The board is private!", HttpStatusCode.Unauthorized);
+                throw new MindMapException("這個分類被作者隱藏起來了～～", HttpStatusCode.Unauthorized);
             }
             else
             {

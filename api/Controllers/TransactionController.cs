@@ -52,7 +52,7 @@ namespace Mindmap.Controllers
 
             if (!user.is_subscribed)
             {
-                throw new MindMapException("you already unsubscribe", HttpStatusCode.ExpectationFailed);
+                throw new MindMapException("痾～你好像不是訂閱用戶", HttpStatusCode.ExpectationFailed);
             }
 
             transaction existedTransaction = new transaction { id = user.transaction_id ?? -1 };
@@ -75,7 +75,7 @@ namespace Mindmap.Controllers
             view_user view_user = _contextForView.view_user.FirstOrDefault(x => x.id == userId);
             if (view_user.is_subscribed)
             {
-                throw new MindMapException("transaction error: you have already subscribed to our service.", HttpStatusCode.ExpectationFailed);
+                throw new MindMapException("你已經是我們的訂閱用戶", HttpStatusCode.ExpectationFailed);
             }
             transaction newTransaction = null;
             try
@@ -98,7 +98,7 @@ namespace Mindmap.Controllers
             }
             catch (System.Exception ex)
             {
-                throw new MindMapException("transaction error:" + ex.Message, HttpStatusCode.InternalServerError);
+                throw new MindMapException("交易失敗:" + ex.Message, HttpStatusCode.InternalServerError);
             }
 
             // send transaction data to tap pay

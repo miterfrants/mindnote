@@ -68,10 +68,10 @@ export class Checkout {
         const me = args.me;
         if (me.is_subscribed) {
             history.pushState({}, '', '/mindmap/users/me/boards/');
-            Toaster.popup(MINDMAP_ERROR_TYPE.INFO, 'Thank you for subcribing')
+            Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '感謝你的訂閱')
         }
         UI.header.generateNavigation([{
-            title: 'Boards',
+            title: '分類',
             link: '/mindmap/users/me/boards/'
         }]);
         const container = document.querySelector('.router-checkout');
@@ -86,7 +86,7 @@ export class Checkout {
         const container = document.querySelector('.router-checkout');
         container.querySelector('.btn-subscribe').addEventListener('click', (e) => {
             const elBtnSubscribe = e.currentTarget;
-            elBtnSubscribe.innerHTML = 'Subscribing';
+            elBtnSubscribe.innerHTML = '訂閱中...';
             this.appendDotCycle(elBtnSubscribe);
 
             if (elBtnSubscribe.classExists('disabled')) {
@@ -100,14 +100,14 @@ export class Checkout {
             // 確認是否可以 getPrime
             if (tappayStatus.canGetPrime === false) {
                 if (tappayStatus.status.number !== 0) {
-                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, 'The card number is wrong')
+                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, '信用卡卡號錯誤')
                 } else if (tappayStatus.status.expiry !== 0) {
-                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, 'Invalid expiration date')
+                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, '不正確的過期時間')
                 } else if (tappayStatus.status.ccv !== 0) {
-                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, 'CCV is wrong')
+                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, '卡片背面三碼錯誤')
                 }
                 elBtnSubscribe.removeClass('disabled');
-                elBtnSubscribe.innerHTML = 'Subscribe';
+                elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';
                 clearTimeout(this.appendDOtCycleTimer);
                 return
             }
@@ -115,7 +115,7 @@ export class Checkout {
             TPDirect.card.getPrime(async (result) => {
                 if (result.status !== 0) {
                     elBtnSubscribe.removeClass('disabled');
-                    elBtnSubscribe.innerHTML = 'Subscribe';
+                    elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';
                     clearTimeout(this.appendDOtCycleTimer);
                     throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, result.msg);
                 }
@@ -133,11 +133,11 @@ export class Checkout {
                 });
 
                 elBtnSubscribe.removeClass('disabled');
-                elBtnSubscribe.innerHTML = 'Subscribe';
+                elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';
                 clearTimeout(this.appendDOtCycleTimer);
                 if (resp.status === RESPONSE_STATUS.OK) {
                     history.pushState({}, '', '/mindmap/users/me/boards/');
-                    Toaster.popup(MINDMAP_ERROR_TYPE.INFO, 'Thank you for subscribing');
+                    Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '感謝你的訂閱');
                 } else {
                     if (resp.httpStatus === 417) {
                         throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);

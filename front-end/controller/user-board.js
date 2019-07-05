@@ -48,7 +48,7 @@ export class UserBoard {
             const container = UI.getCytoEditContainer();
             this.cy = Cyto.init(container, nodes, relationship, true);
             UI.header.generateNavigation([{
-                title: 'Boards',
+                title: '分類',
                 link: '/mindmap/users/me/boards/'
             }, {
                 title: this.board.title
@@ -112,7 +112,7 @@ export class UserBoard {
             var result = 'DELETE'
 
             if (window.MindmapContinueDeleteCount <= 2) {
-                result = prompt('please type "DELETE"');
+                result = prompt('如果需要刪除，請輸入 "DELETE"');
             } else {
                 clearTimeout(window.MindmapContinueDeleteTimer);
             }
@@ -137,7 +137,7 @@ export class UserBoard {
                     UI.hideNodeForm();
                 }
             } else {
-                alert('Text not match');
+                alert('輸入文字不吻合');
             }
         });
         document.querySelector('.btn-layout').addEventListener('click', () => {
@@ -227,10 +227,10 @@ export class UserBoard {
             tempElement.select();
             document.execCommand("copy");
             document.body.removeChild(tempElement);
-            button.querySelector('span').innerHTML = 'copied'
+            button.querySelector('span').innerHTML = '已複製'
             button.addClass('copied');
             setTimeout(() => {
-                button.querySelector('span').innerHTML = 'copy public link'
+                button.querySelector('span').innerHTML = '複製公開連結'
                 button.removeClass('copied');
             }, 3000)
         })

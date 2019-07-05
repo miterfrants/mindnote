@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>Auth</title>
     <link href="https://sapiens.tools/mindmap//third-party/fontawesome-free-5.9.0-web/css/all.css" rel="stylesheet">
     <link href="/common.css" rel="stylesheet">
@@ -24,11 +25,12 @@
                 </div>
             </div>
             <div class="selected-board">
-                <div class="title">Current Board</div>
+                <!--<div class="title">Current Board</div>-->
+                <div class="title">目前選擇的分類</div>
                 <div class="content"></div>
             </div>
             <div class="selected-node">
-                <div class="title">Parent Node</div>
+                <div class="title">父筆記</div>
                 <div class="content"></div>
             </div>
         </div>
@@ -36,34 +38,34 @@
         <div class="tab">
             <ul>
                 <li class="tab-nodeform">
-                    Node Form
+                    新增筆記
                 </li>
                 <li class="tab-boards">
-                    Boards
+                    分類
                 </li>
                 <li class="tab-history">
-                    Nodes History
+                    筆記歷史紀錄
                 </li>
             </ul>
         </div>
         <div class="body">
             <div class="nodeform hide">
                 <label class="title" for="title-input" style="padding-top: 0">
-                    <span>title:</span>
+                    <span>標題:</span>
                     <input class="marg-t-10 pad-10" id="title-input" type="text" value="">
                 </label>
                 <label class="desc pad-t-20" for="description-input">
-                    <span>description:</span>
+                    <span>內容:</span>
                     <textarea class="marg-t-10 pad-10" id="description-input"></textarea>
                 </label>
-                <button class="btn-create">Create</button>
+                <button class="btn-create">新增</button>
             </div>
             <div class="history">
             </div>
             <div class="boards">
                 <div class="board-form pad-10">
                     <label for="board-title">
-                        <input class="title" type="text" id="board-title" data-field="title" placeholder="title" />
+                        <input class="title" type="text" id="board-title" data-field="title" placeholder="標題" />
                     </label>
                     <!-- <label for="board-uniquename" class="marg-l-5">
                         <input type="text" class="board-uniquename" data-field="uniquename"
@@ -78,7 +80,7 @@
     <div class="unauth hide">
         <button class="auth-google">
             <i class="fab fa-google"></i>
-            Sign in with Google
+            使用 Google 登入
         </button>
     </div>
 

@@ -67,7 +67,7 @@ namespace Mindmap.Controllers
             }
             else
             {
-                throw new Exception("Token Failed:" + result);
+                throw new Exception("無效憑證: " + result);
             }
         }
     }

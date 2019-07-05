@@ -129,6 +129,7 @@
     height: 44px;
     left: 0;
     background: rgb(35, 192, 193);
+    color: white;
 }
 
 .nodeform label span {

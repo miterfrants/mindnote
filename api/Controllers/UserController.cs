@@ -38,7 +38,7 @@ namespace Mindmap.Controllers
             view_user user = _contextForView.view_user.FirstOrDefault(x => x.id == userId);
             if (user == null)
             {
-                throw new MindMapException("You are not the account owner.", HttpStatusCode.NotFound);
+                throw new MindMapException("你不是帳號的擁有者", HttpStatusCode.NotFound);
             }
             else
             {
@@ -84,7 +84,8 @@ namespace Mindmap.Controllers
 
             if (user.board_count >= 2 && !user.is_subscribed)
             {
-                throw new MindMapException("Add board deny, because free account only have two boards. If you need to create new board, join us just pay $1 per month to subscribe our service.", HttpStatusCode.ExpectationFailed);
+                // throw new MindMapException("Add board deny, because free account only have two boards. If you need to create new board, join us just pay $3 per month to subscribe our service.", HttpStatusCode.ExpectationFailed);
+                throw new MindMapException("因為免費使用者只有兩個分類可以使用，所以新增分類失敗，如果你需要更多的分類來整理筆記，一個月只需要 $ 99 元，就能使用無限多的分類，請點擊這則訊息進入到付款流程。", HttpStatusCode.ExpectationFailed);
             }
 
             board newBoard = new board { title = body.title, uniquename = body.uniquename, owner_id = userId };
@@ -105,7 +106,7 @@ namespace Mindmap.Controllers
             board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
             if (board == null)
             {
-                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             return board;
         }
@@ -121,7 +122,7 @@ namespace Mindmap.Controllers
             board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
             if (board == null)
             {
-                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             board.deleted_at = DateTime.Now;
             _context.SaveChanges();
@@ -141,7 +142,7 @@ namespace Mindmap.Controllers
             board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
             if (board == null)
             {
-                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             if (requestBody.is_public != null)
@@ -172,7 +173,7 @@ namespace Mindmap.Controllers
 
             if (board == null)
             {
-                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             List<view_node> nodes = _contextForView.view_node.Where(x => x.board_id == board.id && x.deleted_at == null).ToList();
@@ -190,7 +191,7 @@ namespace Mindmap.Controllers
 
             if (board == null)
             {
-                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             return _contextForView.view_node_relationship.Where(x => x.board_id == board.id).ToList();
@@ -207,7 +208,7 @@ namespace Mindmap.Controllers
 
             if (board == null)
             {
-                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             node_relationship nodeRelationship = new node_relationship { parent_node_id = body.parent_node_id, child_node_id = body.child_node_id };
@@ -228,7 +229,7 @@ namespace Mindmap.Controllers
 
             if (board == null)
             {
-                throw new MindMapException("The board is gone.", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             node newNode = new node { title = node.title, description = node.description, owner_id = userId, board_id = board.id };
@@ -257,7 +258,7 @@ namespace Mindmap.Controllers
 
             if (node == null)
             {
-                throw new MindMapException("The node is gone.", HttpStatusCode.NotFound);
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             if (requestBody.title != null)
             {
@@ -283,7 +284,7 @@ namespace Mindmap.Controllers
 
             if (node is null)
             {
-                throw new MindMapException("Node not found", HttpStatusCode.NotFound);
+                throw new MindMapException("筆記已經找不到了 Q_Q", HttpStatusCode.NotFound);
             }
             else
             {
@@ -291,7 +292,7 @@ namespace Mindmap.Controllers
                 Int32 deleteResult = _context.SaveChanges();
                 if (deleteResult != 1)
                 {
-                    throw new MindMapException("Node not found", HttpStatusCode.ExpectationFailed);
+                    throw new MindMapException("筆記已經找不到了 Q_Q", HttpStatusCode.ExpectationFailed);
                 }
             }
             JSONResponse result = new JSONResponse(JSONResponseStatus.OK, new { });
