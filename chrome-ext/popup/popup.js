@@ -183,8 +183,8 @@ document.querySelector('.btn-create').addEventListener('click', async (e) => {
     var title = document.querySelector('.nodeform .title input').value,
         description = document.querySelector('.nodeform .desc textarea').value;
     try {
-        const storage = await getStorageAsync(['selectedBoard'])
-        const resp = await DATA.postNodeAsync(storage.selectedBoard.id, title, description);
+        const storage = await getStorageAsync(['selectedBoard', 'selectedNode']);
+        const resp = await DATA.postNodeAsync(storage.selectedBoard.id, storage.selectedNode.id, title, description);
         appendNodeHistory(resp.data, () => {
             window.close();
         });

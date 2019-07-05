@@ -159,6 +159,10 @@ export const api = {
                     description: data.description
                 };
 
+                if (data.parent_node_id) {
+                    postBody.parent_node_id = data.parent_node_id;
+                }
+
                 let fetchOption = {
                     method: 'POST',
                     headers: {
