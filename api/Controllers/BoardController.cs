@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+
 using Mindmap.Models;
 using Mindmap.Services;
 using Mindmap.Constants;
@@ -54,7 +51,7 @@ namespace Mindmap.Controllers
 
         [HttpGet]
         [Route("{boardId}/nodes/")]
-        public ActionResult<List<node>> GetNodes([FromRoute] Int32 boardId)
+        public ActionResult<List<view_node>> GetNodes([FromRoute] Int32 boardId)
         {
             board board = _context.board.FirstOrDefault(x =>
                 x.id == boardId && x.deleted_at == null);
@@ -68,7 +65,7 @@ namespace Mindmap.Controllers
             }
             else
             {
-                return _context.node.Where(x => x.board_id == board.id && x.deleted_at == null).ToList();
+                return _contextForView.view_node.Where(x => x.board_id == board.id && x.deleted_at == null).ToList();
             }
         }
 
