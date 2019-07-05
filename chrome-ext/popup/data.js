@@ -87,7 +87,7 @@ export const DATA = {
             });
         });
     },
-    postNodeAsync: (boardId, title, description) => {
+    postNodeAsync: (boardId, parentNodeId, title, description) => {
         return new Promise(function (resolve, reject) {
             chrome.runtime.sendMessage({
                 service: 'authApiService',
@@ -96,7 +96,8 @@ export const DATA = {
                 data: {
                     boardId,
                     title,
-                    description
+                    description,
+                    parent_node_id: parentNodeId
                 }
             }, (resp) => {
                 if (resp.status === 'OK') {
