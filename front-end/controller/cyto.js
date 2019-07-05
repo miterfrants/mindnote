@@ -26,7 +26,8 @@ export const Cyto = {
                 style
             }
         });
-        const elements = Cyto.prepareData(nodes, relationship, isEditMode ? 20 : 0);
+        // const elements = Cyto.prepareData(nodes, relationship, isEditMode ? 20 : 0);
+        const elements = Cyto.prepareData(nodes, relationship, 20);
 
         Cyto.cy = cytoscape({
             container: container,
@@ -55,6 +56,11 @@ export const Cyto = {
                 style: {
                     'width': 3,
                     'line-color': '#4ba6d8'
+                }
+            }, {
+                selector: 'label',
+                style: {
+                    'color': '#333333'
                 }
             }, {
                 selector: '.touch-border',

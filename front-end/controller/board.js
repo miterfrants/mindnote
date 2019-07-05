@@ -17,6 +17,10 @@ import {
     MINDMAP_ERROR_TYPE
 } from '/mindmap/util/mindmap-error.js';
 
+import {
+    Toaster
+} from '/mindmap/service/toaster.js';
+
 export class Board {
     constructor(args, context) {
         this.init(args, context);
@@ -32,6 +36,8 @@ export class Board {
         this.boardId = args.boardId;
         this.args = args;
         this.context = context;
+        this.timerForTip;
+        this.showTipCountDownDuration = 6000;
 
         UI.header.generateNavigation([{
             title: 'Boards',
@@ -62,7 +68,10 @@ export class Board {
 
         const container = UI.getCytoContainer();
         this.cy = Cyto.init(container, nodes, relationship, false);
-
+        const haveLearnedTipDoubleTap = localStorage.getItem('have_learned_tip_double_tap') === 'true';
+        if (nodes.length > 0 && !haveLearnedTipDoubleTap) {
+            this.showTip();
+        }
     }
 
     _bindEvent() {
@@ -70,9 +79,19 @@ export class Board {
             const title = e.detail.title;
             const desc = e.detail.description;
             UI.openNodeWindow(title, desc)
+            localStorage.setItem('have_learned_tip_double_tap', 'true');
+            setTimeout(this.timerForTip);
         });
         document.querySelector('.btn-layout').addEventListener('click', () => {
             UI.Cyto.reArrange(this.cy);
         });
+    }
+
+    showTip() {
+        this.timerForTip = setTimeout(() => {
+            Toaster.popup(MINDMAP_ERROR_TYPE.INFO, 'Try to double tap blue circle to see detail', 5000)
+            this.showTip();
+        }, this.showTipCountDownDuration)
+        this.showTipCountDownDuration *= 3;
     }
 }
