@@ -80,7 +80,7 @@ export class Board {
             const desc = e.detail.description;
             UI.openNodeWindow(title, desc)
             localStorage.setItem('have_learned_tip_double_tap', 'true');
-            setTimeout(this.timerForTip);
+            clearTimeout(this.timerForTip);
         });
         document.querySelector('.btn-layout').addEventListener('click', () => {
             UI.Cyto.reArrange(this.cy);
