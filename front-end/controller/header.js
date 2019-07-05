@@ -72,16 +72,19 @@ export class Header {
         });
 
         document.querySelector('.header .btn-unsubscribe').addEventListener('click', async () => {
-            if (prompt('Are you sure you want to unsubscribe our service, please type \'UNSUBSCRIBE\'') !== 'UNSUBSCRIBE') {
+            if (prompt('你真的要退訂閱嗎？ 如果這是真的，請輸入 \'UNSUBSCRIBE\'') !== 'UNSUBSCRIBE') {
                 return;
             }
+            // if (prompt('Are you sure you want to unsubscribe our service, please type \'UNSUBSCRIBE\'') !== 'UNSUBSCRIBE') {
+            //     return;
+            // }
 
             const resp = await api.authApiService.transaction.delete({
                 token: this.token
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
-                Toaster.popup(MINDMAP_ERROR_TYPE.INFO, 'Unsubscribe success', 5000);
+                Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '已完成退訂閱，款項會於下一個信用卡結帳週期退回，後會有期了', 5000);
                 UI.unsubscribeFinish();
                 return;
             } else {

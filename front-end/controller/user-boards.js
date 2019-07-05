@@ -42,7 +42,7 @@ export class UserBoards {
 
         this.token = args.token;
         UI.header.generateNavigation([{
-            title: 'Boards'
+            title: '分類'
         }]);
         UI.generateUserBoards(resp.data).forEach((elBoardCard) => {
             this.initBoardCard(elBoardCard);
@@ -149,7 +149,7 @@ export class UserBoards {
                 elButtonDel.addClass('disabled');
                 var result = 'DELETE';
                 if (this.continueDeleteCount <= 2) {
-                    result = prompt('please type "DELETE"');
+                    result = prompt('如果需要刪除，請輸入 "DELETE"');
                 }
 
                 this.continueDeleteCount += 1;

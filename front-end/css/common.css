@@ -207,19 +207,19 @@ a {
 }
 
 .toaster-item.ERROR::before {
-    content: 'Error';
+    content: '錯誤';
     border-left: 3px solid #fa5c2d;
     color: #fa5c2d;
 }
 
 .toaster-item.WARN::before {
-    content: 'Warn';
+    content: '警告';
     border-left: 3px solid #fac32d;
     color: #fac32d;
 }
 
 .toaster-item.INFO::before {
-    content: 'Info';
+    content: '訊息';
     border-left: 3px solid #2daffa;
     color: #2daffa;
 }

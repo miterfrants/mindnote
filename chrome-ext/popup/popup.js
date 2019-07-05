@@ -184,6 +184,11 @@ document.querySelector('.btn-create').addEventListener('click', async (e) => {
         description = document.querySelector('.nodeform .desc textarea').value;
     try {
         const storage = await getStorageAsync(['selectedBoard', 'selectedNode']);
+        if (!storage.selectedBoard || !storage.selectedBoard.id) {
+            // alert('Please select a board which you want to add.')
+            alert('請選擇你新增筆記的分類')
+        }
+
         const resp = await DATA.postNodeAsync(storage.selectedBoard.id, storage.selectedNode.id, title, description);
         appendNodeHistory(resp.data, () => {
             window.close();
