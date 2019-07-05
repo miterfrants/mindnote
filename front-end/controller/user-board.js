@@ -27,11 +27,12 @@ export class UserBoard {
     async run(args, context) {
         this.token = args.token;
         this.boardId = args.boardId;
+        this.board;
         if (this.token) {
             if (this.cy) {
                 this.cy.destroy();
             }
-            const board = (await api.authApiService.board.get({
+            this.board = (await api.authApiService.board.get({
                 boardId: this.boardId,
                 token: this.token
             })).data;
@@ -50,7 +51,7 @@ export class UserBoard {
                 title: 'Boards',
                 link: '/mindmap/users/me/boards/'
             }, {
-                title: board.title,
+                title: this.board.title
             }]);
             UI.showAuth();
             UI.hideNodeForm();
@@ -215,5 +216,23 @@ export class UserBoard {
                 return;
             });
         });
+        document.querySelector('.btn-copy-shared-link').addEventListener('click', (e) => {
+            const button = e.currentTarget;
+            const tempElement = document.createElement('textarea');
+            tempElement.value = `${location.origin}/mindmap/boards/${this.board.id }/`;
+            tempElement.style.opacity = 0;
+            tempElement.style.position = 'fixed';
+            tempElement.style.top = 0;
+            document.body.appendChild(tempElement);
+            tempElement.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempElement);
+            button.querySelector('span').innerHTML = 'copied'
+            button.addClass('copied');
+            setTimeout(() => {
+                button.querySelector('span').innerHTML = 'copy public link'
+                button.removeClass('copied');
+            }, 3000)
+        })
     }
 }

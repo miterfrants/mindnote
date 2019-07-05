@@ -8,19 +8,6 @@
     <link href="/mindmap/css/common.css" rel="stylesheet">
     <meta charset="UTF-8">
     <style>
-        .btn-layout {
-            position: fixed;
-            left: 15px;
-            top: 65;
-            z-index: 2;
-            border: none;
-            background: #24c0c1;
-            color: white;
-            height: 30px;
-            border-radius: 30px;
-            width: 125px;
-        }
-
         body {
             font-size: 14px;
         }
@@ -461,6 +448,27 @@
         .router-checkout .btn-subscribe.disabled {
             background: #ccc;
         }
+
+        .router-user-board .function-buttons {
+            position: fixed;
+            left: 15px;
+            top: 50;
+            z-index: 2;
+        }
+
+        .router-user-board .function-buttons button {
+            display: block;
+            margin-top: 20px;
+            background: #24c0c1;
+            color: white;
+            border-radius: 30px;
+            border: none;
+            padding: 10px 20px;
+        }
+
+        .router-user-board .function-buttons .btn-copy-shared-link.copied {
+            background: #fac32d;
+        }
     </style>
 </head>
 
@@ -515,10 +523,17 @@
         <div class="router-user-board hide">
             <div class="cy-edit-mode"></div>
             <div class="mask hide"></div>
-            <button class="btn-layout auth" type="button">
-                <i class="fas fa-share-alt"></i>
-                re-arrange
-            </button>
+            <div class="function-buttons">
+                <button class="btn-layout auth" type="button">
+                    <i class="fas fa-share-alt"></i>
+                    re-arrange
+                </button>
+                <button class="auth btn-copy-shared-link" type="button">
+                    <i class="fas fa-share-square"></i>
+                    <span>copy public link</span>
+                </button>
+            </div>
+
             <div class="node-form hide">
                 <input class="node-id" type="hidden" />
                 <label for="node-title" class="vert-mid">
