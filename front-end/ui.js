@@ -301,7 +301,7 @@ export const UI = {
         const left = (width - w) / 2 / systemZoom + dualScreenLeft
         const top = 0
         const newWindow = window.open('', title, 'id=popup-mindmap, scrollbars=yes, width=' + w / systemZoom + ', height=' + height / systemZoom + ', top=' + top + ', left=' + left);
-        const template = "<h1>{title}</h1><p>{desc}</p>"
+        const template = '<h1>{title}</h1><p style="line-height: 1.6em; letter-spacing: 0.05em; word-break: break-word;">{desc}</p>'
         const result = template.replace(/{title}/gi, title)
             .replace(/{desc}/gi, description).replace(/\n/gi, '<br/>');
         newWindow.document.querySelector("body").innerHTML = result;
