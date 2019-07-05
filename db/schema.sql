@@ -229,16 +229,18 @@ ALTER TABLE public.view_node OWNER TO webservice;
 -- Name: view_node_relationship; Type: VIEW; Schema: public; Owner: webservice
 --
 
-CREATE VIEW public.view_node_relationship AS
- SELECT node_relationship.parent_node_id,
+create view view_node_relationship as (
+SELECT node_relationship.parent_node_id,
     node_relationship.child_node_id,
     node_relationship.id,
     parent_node.board_id
-   FROM (public.node_relationship
-     LEFT JOIN public.node parent_node ON ((parent_node.id = node_relationship.parent_node_id)));
+   FROM node_relationship
+     LEFT JOIN node parent_node ON parent_node.id = node_relationship.parent_node_id
+	 LEFT JOIN node child_node ON child_node.id = node_relationship.child_node_id
+	 where parent_node.deleted_at is null and child_node.deleted_at is null
+);
 
-
-ALTER TABLE public.view_node_relationship OWNER TO webservice;
+ALTER TABLE view_node_relationship OWNER TO webservice;
 
 --
 -- TOC entry 208 (class 1259 OID 16598)
