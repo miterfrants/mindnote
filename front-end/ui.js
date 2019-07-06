@@ -135,7 +135,8 @@ export const UI = {
                 animate: 'end',
                 animationEasing: 'ease-out',
                 animationDuration: 1000,
-                randomize: true
+                randomize: true,
+                isForce: true
             });
             layout.run();
         }

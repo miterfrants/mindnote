@@ -28,7 +28,6 @@ export const Cyto = {
         });
         // const elements = Cyto.prepareData(nodes, relationship, isEditMode ? 20 : 0);
         const elements = Cyto.prepareData(nodes, relationship, 20);
-
         Cyto.cy = cytoscape({
             container: container,
             layout: {
@@ -49,18 +48,14 @@ export const Cyto = {
                     'border-alignment': 'outside',
                     'border-color': 'data(background)',
                     'border-opacity': 0.25,
-                    'overlay-opacity': 0
+                    'overlay-opacity': 0,
+                    'color': '#333'
                 }
             }, {
                 selector: 'edge',
                 style: {
                     'width': 3,
                     'line-color': '#4ba6d8'
-                }
-            }, {
-                selector: 'label',
-                style: {
-                    'color': '#333333'
                 }
             }, {
                 selector: '.touch-border',
@@ -134,6 +129,21 @@ export const Cyto = {
         Cyto.cy.on('tap', (e) => {
             Cyto.tapHandler(e, Cyto._isEditMode);
         });
+
+        Cyto.cy.on('mouseup', (e) => {
+            if (Cyto.isNode(e)) {
+                var event = new CustomEvent('dropdown-node', {
+                    bubbles: true,
+                    cancelable: true,
+                    detail: {
+                        position: e.target.position(),
+                        nodeId: e.target.id().replace('node-', '')
+                    }
+                });
+                Cyto.cy.container().dispatchEvent(event);
+            }
+        });
+
         if (Cyto._isEditMode) {
             Cyto.cy.on('mousedown', Cyto.mousedownInEditModeHandler);
             Cyto.cy.on('mouseup', Cyto.mouseupInEditModeHandler);
@@ -156,6 +166,27 @@ export const Cyto = {
         Cyto.cy.on('saveEdgeDone', Cyto.saveEdgeDoneHandler)
         Cyto.cy.on('updateNodeDone', Cyto.updateNodeDoneHandler);
         Cyto.cy.on('deleteNodeDone', Cyto.deleteNodeDoneHandler)
+        Cyto.cy.on('layoutstop', (e) => {
+            const nodes = e.target.cy.nodes().filter((node) => {
+                if (node.id().indexOf('node-') !== -1) {
+                    return true;
+                }
+                return false;
+            }).map((node) => {
+                return {
+                    id: Number(node.id().replace(/node\-/gi, '')),
+                    ...node.position()
+                };
+            });
+            var event = new CustomEvent('layout-done', {
+                bubbles: true,
+                cancelable: true,
+                detail: {
+                    nodes
+                }
+            });
+            Cyto.cy.container().dispatchEvent(event);
+        });
         return Cyto.cy;
     },
     deleteNodeDoneHandler: (e, data) => {
@@ -172,10 +203,14 @@ export const Cyto = {
                     description: nodes[i].description,
                     background: nodes[i].style.background,
                     size: nodes[i].style.size,
-                    borderWidth: borderWidth
+                    borderWidth: borderWidth,
+                },
+                position: {
+                    x: nodes[i].x,
+                    y: nodes[i].y
                 },
                 group: "nodes",
-                grabbable: true,
+                grabbable: true
             });
         }
 
