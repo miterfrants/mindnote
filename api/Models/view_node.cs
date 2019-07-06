@@ -17,5 +17,7 @@ namespace Mindmap.Models
         public string board_uniquename { get; set; }
         public bool board_is_public { get; set; }
         public string username { get; set; }
+        public int? x { get; set; }
+        public int? y { get; set; }
     }
 }

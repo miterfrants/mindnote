@@ -3,6 +3,9 @@ const extendStringProtoType = () => {
         String.prototype.bind = function (variable) {
             var result = this.toString();
             for (var key in variable) {
+                if (typeof variable[key] !== "string") {
+                    continue;
+                }
                 var reg = new RegExp('{' + key + '}', 'gi');
                 result = result.replace(reg, variable[key]);
             }

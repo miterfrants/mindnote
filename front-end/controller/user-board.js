@@ -233,6 +233,22 @@ export class UserBoard {
                 button.querySelector('span').innerHTML = '複製公開連結'
                 button.removeClass('copied');
             }, 3000)
-        })
+        });
+        document.addEventListener('dropdown-node', (e) => {
+            api.authApiService.node.patch({
+                token: this.token,
+                boardId: this.boardId,
+                nodeId: e.detail.nodeId,
+                x: e.detail.position.x,
+                y: e.detail.position.y
+            });
+        });
+        document.addEventListener('layout-done', (e) => {
+            api.authApiService.nodes.patch({
+                token: this.token,
+                boardId: this.boardId,
+                nodes: e.detail.nodes
+            });
+        });
     }
 }

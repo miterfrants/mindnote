@@ -226,7 +226,7 @@ export const Route = {
             controller: UserBoard,
             dependency: [{
                 type: 'script',
-                url: "/mindmap/third-party/cyto/cytoscape.js",
+                url: "/mindmap/third-party/cyto/cytoscape.min.js",
                 checkVariable: 'cytoscape'
             }]
         }, {
@@ -234,7 +234,7 @@ export const Route = {
             controller: Board,
             dependency: [{
                 type: 'script',
-                url: "/mindmap/third-party/cyto/cytoscape.js",
+                url: "/mindmap/third-party/cyto/cytoscape.min.js",
                 checkVariable: 'cytoscape'
             }]
         }, {

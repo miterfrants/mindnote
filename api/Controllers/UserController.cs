@@ -10,6 +10,8 @@ using Mindmap.Models;
 using Mindmap.Services;
 using Mindmap.Util;
 
+using Newtonsoft.Json.Linq;
+
 namespace Mindmap.Controllers
 {
     [Authorize]
@@ -247,6 +249,36 @@ namespace Mindmap.Controllers
         }
 
         [HttpPatch]
+        [Route("me/boards/{boardId}/nodes/")]
+        public ActionResult<List<view_node>> PatchNodes([FromRoute] Int32 boardId, [FromBody] dynamic requestBody)
+        {
+
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+
+            Int16 userId = _userService.GetUserId(token);
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
+
+            if (board == null)
+            {
+                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+            }
+            var nodes = ((JArray)requestBody.nodes).ToList();
+            List<Int32> nodeIds = new List<Int32>();
+            for (int i = 0; i < nodes.Count; i++)
+            {
+                dynamic nodeFromRequest = nodes[i];
+                node existedNode = new node { id = nodeFromRequest.id };
+                _context.Attach<node>(existedNode);
+                existedNode.x = nodeFromRequest.x;
+                existedNode.y = nodeFromRequest.y;
+                nodeIds.Add((Int32)nodeFromRequest.id);
+            }
+            _context.SaveChanges();
+            return _contextForView.view_node.Where(x => x.board_id == board.id && x.deleted_at == null && nodeIds.Contains(x.id)).ToList();
+        }
+
+        [HttpPatch]
         [Route("me/boards/{boardId}/nodes/{nodeId}/")]
         public ActionResult<node> PatchNode([FromRoute] Int32 boardId, [FromRoute] Int16 nodeId, [FromBody] dynamic requestBody)
         {
@@ -267,6 +299,14 @@ namespace Mindmap.Controllers
             if (requestBody.description != null)
             {
                 node.description = requestBody.description;
+            }
+            if (requestBody.x != null)
+            {
+                node.x = requestBody.x;
+            }
+            if (requestBody.y != null)
+            {
+                node.y = requestBody.y;
             }
             _context.SaveChanges();
             return node;

@@ -115,15 +115,28 @@ export const api = {
             patch: async (data, sendResponse) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.NODE;
                 api = api.bind(data);
+
+                const requestBody = {};
+
+                if (data.title !== null && data.title !== undefined) {
+                    requestBody.title = data.title;
+                }
+                if (data.description !== null && data.description !== undefined) {
+                    requestBody.description = data.description;
+                }
+                if (data.x !== null && data.x !== undefined) {
+                    requestBody.x = data.x;
+                }
+                if (data.y !== null && data.y !== undefined) {
+                    requestBody.y = data.y;
+                }
+
                 const fetchOption = {
                     method: 'PATCH',
                     headers: {
                         'Authorization': 'Bearer ' + data.token
                     },
-                    body: JSON.stringify({
-                        title: data.title,
-                        description: data.description
-                    })
+                    body: JSON.stringify(requestBody)
                 };
                 return _handleRequest(api, fetchOption, sendResponse);
             },
@@ -169,6 +182,26 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     },
                     body: JSON.stringify(postBody)
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
+            },
+            patch: async (data, sendResponse) => {
+                let api = _API.ENDPOINT + _API.AUTHORIZED.NODES;
+                api = api.bind(data);
+                let requestBody = {
+                    nodes: data.nodes
+                };
+
+                if (data.parent_node_id) {
+                    postBody.parent_node_id = data.parent_node_id;
+                }
+
+                let fetchOption = {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
+                    },
+                    body: JSON.stringify(requestBody)
                 };
                 return _handleRequest(api, fetchOption, sendResponse);
             }
