@@ -48,7 +48,7 @@ export class UserBoard {
             const container = UI.getCytoEditContainer();
             this.cy = Cyto.init(container, nodes, relationship, true);
             UI.header.generateNavigation([{
-                title: '分類',
+                title: '我的分類',
                 link: '/mindmap/users/me/boards/'
             }, {
                 title: this.board.title

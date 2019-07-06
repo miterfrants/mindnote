@@ -75,7 +75,7 @@ export class Checkout {
             }
         }
         UI.header.generateNavigation([{
-            title: '分類',
+            title: '我的分類',
             link: '/mindmap/users/me/boards/'
         }]);
         const container = document.querySelector('.router-checkout');

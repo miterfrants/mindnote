@@ -40,7 +40,7 @@ export class Board {
         this.showTipCountDownDuration = 6000;
 
         UI.header.generateNavigation([{
-            title: '分類',
+            title: '我的分類',
             link: '/mindmap/users/me/boards/'
         }]);
 

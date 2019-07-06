@@ -42,7 +42,7 @@ export class UserBoards {
 
         this.token = args.token;
         UI.header.generateNavigation([{
-            title: '分類'
+            title: '我的分類'
         }]);
         UI.generateUserBoards(resp.data).forEach((elBoardCard) => {
             this.initBoardCard(elBoardCard);
