@@ -3,7 +3,7 @@ const extendStringProtoType = () => {
         String.prototype.bind = function (variable) {
             var result = this.toString();
             for (var key in variable) {
-                if (typeof variable[key] !== "string") {
+                if (typeof variable[key] !== "string" && typeof variable[key] !== "number" && typeof variable[key] !== "boolean") {
                     continue;
                 }
                 var reg = new RegExp('{' + key + '}', 'gi');
