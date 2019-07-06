@@ -18,5 +18,6 @@ namespace Mindmap.Models
         public int amount { get; set; }
         public int discount { get; set; }
         public DateTime? paid_at { get; set; }
+        public bool is_next_subscribe { get; set; }
     }
 }

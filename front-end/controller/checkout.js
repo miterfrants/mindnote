@@ -68,7 +68,11 @@ export class Checkout {
         const me = args.me;
         if (me.is_subscribed) {
             history.pushState({}, '', '/mindmap/users/me/boards/');
-            Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '感謝你的訂閱')
+            if (me.is_next_subscribe) {
+                Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '你已經是訂閱用戶')
+            } else {
+                Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '目前你還是訂閱用戶，將在下一期取消訂閱')
+            }
         }
         UI.header.generateNavigation([{
             title: '分類',

@@ -23,5 +23,6 @@ namespace Mindmap.Models
         public bool is_subscribed { get; set; }
         public int? transaction_id { get; set; }
         public int board_count { get; set; }
+        public bool is_next_subscribe { get; set; }
     }
 }

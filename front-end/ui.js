@@ -388,11 +388,15 @@ export const UI = {
 
         }
     },
-    unsubscribeFinish: () => {
+    unsubscribed: () => {
         document.querySelector('.header .btn-unsubscribe').addClass('hide');
         document.querySelector('.header .btn-subscribe').removeClass('hide');
     },
-    subscribeFinish: () => {
+    unsubscribing: () => {
+        document.querySelector('.header .btn-subscribe').addClass('hide');
+        document.querySelector('.header .btn-unsubscribe').addClass('hide');
+    },
+    subscribed: () => {
         document.querySelector('.header .btn-unsubscribe').removeClass('hide');
         document.querySelector('.header .btn-subscribe').addClass('hide');
     }

@@ -20,6 +20,16 @@ namespace Mindmap.Models
         public virtual DbSet<node_relationship> node_relationship { get; set; }
         public virtual DbSet<transaction> transaction { get; set; }
         public virtual DbSet<user> user { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseNpgsql("host=127.0.0.1;port=5432;database=mindmap;username=webservice;password=ck{'06OZdZKZ9ru5Ygl^upTpqzEW2~VVVfWV");
+            }
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
@@ -107,6 +117,10 @@ namespace Mindmap.Models
                 entity.Property(e => e.email)
                     .IsRequired()
                     .HasMaxLength(32);
+
+                entity.Property(e => e.is_next_subscribe)
+                    .IsRequired()
+                    .HasDefaultValueSql("true");
 
                 entity.Property(e => e.method)
                     .IsRequired()
