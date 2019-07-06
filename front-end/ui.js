@@ -293,7 +293,6 @@ export const UI = {
     openNodeWindow: (title, description) => {
         const w = 400;
         const dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : window.screenX;
-        const dualScreenTop = window.screenTop != undefined ? window.screenTop : window.screenY;
 
         const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
         const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
@@ -303,8 +302,10 @@ export const UI = {
         const top = 0
         const newWindow = window.open('', title, 'id=popup-mindmap, scrollbars=yes, width=' + w / systemZoom + ', height=' + height / systemZoom + ', top=' + top + ', left=' + left);
         const template = '<h1>{title}</h1><p style="line-height: 1.6em; letter-spacing: 0.05em; word-break: break-word;">{desc}</p>'
+        const md = window.markdownit();
+        const detail = md.render(description);
         const result = template.replace(/{title}/gi, title)
-            .replace(/{desc}/gi, description).replace(/\n/gi, '<br/>');
+            .replace(/{desc}/gi, detail).replace(/\n/gi, '<br/>');
         newWindow.document.querySelector("body").innerHTML = result;
         newWindow.document.querySelector("head").innerHTML = "<title>" + title + "</title>"
 
