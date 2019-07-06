@@ -53,9 +53,15 @@ export class Header {
         this.token = args.token;
         this.me = args.me;
         if (args.me && !args.me.is_subscribed) {
-            UI.unsubscribeFinish();
+            UI.unsubscribed();
         } else {
-            UI.subscribeFinish();
+            if (!args.me.is_next_subscribe) {
+                console.log('a');
+                UI.unsubscribing();
+            } else {
+                console.log('b');
+                UI.subscribed();
+            }
         }
     }
 
@@ -84,8 +90,8 @@ export class Header {
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
-                Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '已完成退訂閱，款項會於下一個信用卡結帳週期退回，後會有期了', 5000);
-                UI.unsubscribeFinish();
+                Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '已完成退訂閱，下一期我們會停止扣款', 5000);
+                UI.unsubscribing();
                 return;
             } else {
                 if (resp.httpStatus === 417) {

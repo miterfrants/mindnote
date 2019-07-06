@@ -50,7 +50,8 @@ namespace Mindmap.Controllers
                     fullname = user.full_name,
                     email = user.email,
                     phone = user.phone,
-                    is_subscribed = user.is_subscribed
+                    is_subscribed = user.is_subscribed,
+                    is_next_subscribe = user.is_next_subscribe
                 };
             }
         }

@@ -55,9 +55,16 @@ namespace Mindmap.Controllers
                 throw new MindMapException("痾～你好像不是訂閱用戶", HttpStatusCode.ExpectationFailed);
             }
 
-            transaction existedTransaction = new transaction { id = user.transaction_id ?? -1 };
-            _context.Attach<transaction>(existedTransaction);
-            existedTransaction.deleted_at = DateTime.Now;
+            transaction existedTransaction = _context.transaction.FirstOrDefault(x => x.id == user.transaction_id);
+            if (!existedTransaction.is_next_subscribe)
+            {
+                throw new MindMapException("已經取消訂閱囉～下一期我們將停止扣款");
+            }
+
+            // transaction existedTransaction = new transaction { id = user.transaction_id ?? -1 };
+            // _context.Attach<transaction>(existedTransaction);
+
+            existedTransaction.is_next_subscribe = false;
             _context.SaveChanges();
 
             JSONResponse json = new JSONResponse(JSONResponseStatus.OK, new { });
