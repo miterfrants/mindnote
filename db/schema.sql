@@ -254,27 +254,27 @@ ALTER TABLE view_node_relationship OWNER TO webservice;
 -- Name: view_user; Type: VIEW; Schema: public; Owner: webservice
 --
 
-CREATE VIEW view_user AS (
-SELECT "user".*,
-        CASE
-            WHEN user_transaction.id IS NOT NULL THEN true
-            ELSE false
-        END AS is_subscribed,
+create view view_user as (
+SELECT 
+	"user".*,
+    (CASE WHEN user_transaction.id IS NOT NULL THEN true
+        ELSE false
+    END) AS is_subscribed,
     user_transaction.id AS transaction_id,
-	user_transaction.is_next_subscribe AS is_next_subscribe,
-    ( SELECT Count(*) AS count
+    (CASE WHEN user_transaction.is_next_subscribe is not null then user_transaction.is_next_subscribe else false end) as is_next_subscribe,
+    (SELECT count(*) AS count
            FROM board
           WHERE board.owner_id = "user".id AND board.deleted_at IS NULL) AS board_count
    FROM "user"
-     LEFT JOIN ( SELECT TRANSACTION.id,
-            TRANSACTION.paid_at,
-            TRANSACTION.owner_id,
-			is_next_subscribe
-           FROM TRANSACTION
-          WHERE TRANSACTION.status::text = 'PAID'::text AND TRANSACTION.paid_at IS NOT NULL AND TRANSACTION.deleted_at IS NULL
-          ORDER BY TRANSACTION.id DESC
-         limit 1) user_transaction ON "user".id = user_transaction.owner_id
-	)
+     LEFT JOIN ( SELECT transaction.id,
+            transaction.paid_at,
+            transaction.owner_id,
+            transaction.is_next_subscribe
+           FROM transaction
+          WHERE transaction.status::text = 'PAID'::text AND transaction.paid_at IS NOT NULL AND transaction.deleted_at IS NULL
+          ORDER BY transaction.id DESC
+         LIMIT 1) user_transaction ON "user".id = user_transaction.owner_id
+)
 
 
 ALTER TABLE public.view_user OWNER TO webservice;
