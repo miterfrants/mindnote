@@ -225,16 +225,17 @@ export const Route = {
             path: 'users/me/boards/{boardId}/',
             controller: UserBoard,
             dependency: [{
-                type: 'script',
-                url: "/mindmap/third-party/cyto/cytoscape.min.js",
+                url: '/mindmap/third-party/cyto/cytoscape.min.js',
                 checkVariable: 'cytoscape'
+            }, {
+                url: 'https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js',
+                checkVariable: 'markdownit'
             }]
         }, {
             path: 'boards/{boardId}/',
             controller: Board,
             dependency: [{
-                type: 'script',
-                url: "/mindmap/third-party/cyto/cytoscape.min.js",
+                url: '/mindmap/third-party/cyto/cytoscape.min.js',
                 checkVariable: 'cytoscape'
             }]
         }, {
