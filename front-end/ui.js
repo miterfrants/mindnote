@@ -305,7 +305,7 @@ export const UI = {
         const md = window.markdownit();
         const detail = md.render(description);
         const result = template.replace(/{title}/gi, title)
-            .replace(/{desc}/gi, detail).replace(/\n/gi, '<br/>');
+            .replace(/{desc}/gi, detail);
         newWindow.document.querySelector("body").innerHTML = result;
         newWindow.document.querySelector("head").innerHTML = "<title>" + title + "</title>"
 
