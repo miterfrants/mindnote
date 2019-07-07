@@ -19,6 +19,10 @@ import {
 } from '/mindmap/controller/user-boards.js';
 
 import {
+    Me
+} from '/mindmap/controller/me.js';
+
+import {
     Loader
 } from '/mindmap/loader.js';
 
@@ -80,6 +84,14 @@ export const Route = {
             return;
         }
     },
+    findMatchRoute: (currentPath, routingTable) => {
+        for (let i = 0; i < routingTable.length; i++) {
+            const regexp = Route.buildRegExp(routingTable[i]);
+            if (regexp.test(currentPath)) {
+                return routingTable[i];
+            }
+        }
+    },
     findMatchRouterAndRunController: async (currentPath, routingTable, context, args) => {
         for (let i = 0; i < routingTable.length; i++) {
             const regexp = Route.buildRegExp(routingTable[i]);
@@ -130,7 +142,7 @@ export const Route = {
                 });
                 document.querySelectorAll(`div[class^="router-"]:not(.router-${className})`).forEach((el) => {
                     el.addClass('hide');
-                })
+                });
 
                 if (instances.length === 0) {
                     // check pre function exists
@@ -147,8 +159,10 @@ export const Route = {
                     break;
                 }
 
+                // fix: 把 findeNextRoute 跟 runController 分成兩個 function
+                const routingRule = Route.findMatchRoute(currentPath, routingTable[i].RoutingTable);
                 // next level
-                if (isNextLevel) {
+                if (isNextLevel || routingRule.isRequiredParentPrepareData === false) {
                     Route.findMatchRouterAndRunController(currentPath, routingTable[i].RoutingTable, context, args)
                 }
                 break;
@@ -209,34 +223,37 @@ export const Route = {
                 });
                 if (resp.status === RESPONSE_STATUS.OK) {
                     return resp.data;
-                } else {
-                    if (resp.httpStatus === 401 || resp.httpStatus === 403) {
-                        Toaster.popup(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
-                    } else {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
-                    }
                 }
             }
         }],
         RoutingTable: [{
-            path: 'users/me/boards/',
-            controller: UserBoards
+            path: 'users/me/',
+            controller: Me,
+            isRequiredParentPrepareData: false,
+            RoutingTable: [{
+                path: 'boards/',
+                controller: UserBoards
+            }, {
+                path: 'boards/{boardId}/',
+                controller: UserBoard,
+                dependency: [{
+                    url: '/mindmap/third-party/cyto/cytoscape.min.js',
+                    checkVariable: 'cytoscape'
+                }, {
+                    url: 'https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js',
+                    checkVariable: 'markdownit'
+                }]
+            }]
         }, {
-            path: 'users/me/boards/{boardId}/',
-            controller: UserBoard,
+            path: 'boards/{boardId}/',
+            controller: Board,
+            isRequiredParentPrepareData: false,
             dependency: [{
                 url: '/mindmap/third-party/cyto/cytoscape.min.js',
                 checkVariable: 'cytoscape'
             }, {
                 url: 'https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js',
                 checkVariable: 'markdownit'
-            }]
-        }, {
-            path: 'boards/{boardId}/',
-            controller: Board,
-            dependency: [{
-                url: '/mindmap/third-party/cyto/cytoscape.min.js',
-                checkVariable: 'cytoscape'
             }]
         }, {
             path: 'checkout/',

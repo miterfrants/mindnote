@@ -39,15 +39,22 @@ export class Board {
         this.timerForTip;
         this.showTipCountDownDuration = 6000;
 
+        api.init(API, RESPONSE_STATUS);
+
+        const respForBoard = (await api.apiService.board.get({
+            boardId: this.boardId
+        }));
+
+        if (respForBoard.status !== RESPONSE_STATUS.OK) {
+            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForBoard.data.errorMsg);
+        }
+
         UI.header.generateNavigation([{
-            title: '我的分類',
-            link: '/mindmap/users/me/boards/'
+            title: respForBoard.data.title
         }]);
 
-        api.init(API, RESPONSE_STATUS);
         const respForNodes = (await api.apiService.nodes.get({
-            boardId: this.boardId,
-            token: this.token
+            boardId: this.boardId
         }));
 
         if (respForNodes.status !== RESPONSE_STATUS.OK) {
@@ -55,8 +62,7 @@ export class Board {
         }
 
         const respForRelationship = (await api.apiService.relationship.get({
-            boardId: this.boardId,
-            token: this.token
+            boardId: this.boardId
         }));
 
         if (respForRelationship.status !== RESPONSE_STATUS.OK) {

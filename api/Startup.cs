@@ -93,7 +93,7 @@ namespace Mindmap
                             status = JSONResponseStatus.FAILED,
                             data = new
                             {
-                                message = "Login required"
+                                message = "此頁面需要登入"
                             }
                         }));
                         return context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
@@ -107,7 +107,7 @@ namespace Mindmap
                             status = JSONResponseStatus.FAILED,
                             data = new
                             {
-                                message = "Aa error occurred processing your authentication"
+                                message = "憑證失效"
                             }
                         }));
                         return context.Response.Body.WriteAsync(bytes, 0, bytes.Length);
