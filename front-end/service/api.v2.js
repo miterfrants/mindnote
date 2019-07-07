@@ -272,6 +272,13 @@ export const api = {
         }
     },
     apiService: {
+        board: {
+            get: async (data) => {
+                let api = _API.ENDPOINT + _API.COMMON.BOARD;
+                api = api.bind(data);
+                return _handleRequest(api, {});
+            }
+        },
         nodes: {
             get: async (data) => {
                 let api = _API.ENDPOINT + _API.COMMON.NODES;

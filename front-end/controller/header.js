@@ -55,11 +55,9 @@ export class Header {
         if (args.me && !args.me.is_subscribed) {
             UI.unsubscribed();
         } else {
-            if (!args.me.is_next_subscribe) {
-                console.log('a');
+            if (args.me && !args.me.is_next_subscribe) {
                 UI.unsubscribing();
             } else {
-                console.log('b');
                 UI.subscribed();
             }
         }
@@ -137,7 +135,6 @@ export class Header {
                 } else {
                     UI.header.generateNavigation([])
                     UI.header.hideAuth();
-                    console.warn('error');
                     return;
                 }
             }
@@ -158,11 +155,8 @@ export class Header {
         } else {
             UI.header.hideAuth();
             UI.hideAuth();
-            UI.header.generateNavigation([]);
-            // refactor: 把所有 html 搬到 component 裡頭去 render
-            document.querySelectorAll(`div[class^="router-"]`).forEach((el) => {
-                el.addClass('hide');
-            })
+            // fix: check current page is need auth
+            // UI.header.generateNavigation([]);
         }
     }
 }
