@@ -250,5 +250,101 @@ export class UserBoard {
                 nodes: e.detail.nodes
             });
         });
+
+        document.body.addEventListener('dragenter', (e) => {
+            if (document.querySelector('.node-form').classExists('hide')) {
+                return;
+            }
+            document.querySelector('.node-form .drag-overlay').removeClass('hide');
+            e.stopPropagation();
+            e.preventDefault();
+        });
+
+
+        document.addEventListener('dragover', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            return;
+        });
+
+        document.querySelector('.node-form .drag-overlay').addEventListener('drop', async (e) => {
+            const files = e.dataTransfer.files;
+            const base64Files = await new Promise((resolve, reject) => {
+                let loadImageCount = 0;
+                const _base64Files = [];
+                for (var i = 0; i < files.length; i++) {
+                    const tempId = insertTempTag();
+                    const fileReader = new FileReader();
+                    fileReader.readAsDataURL(files[i]);
+                    fileReader.addEventListener('loadend', (e) => {
+                        loadImageCount += 1;
+                        if (loadImageCount === files.length) {
+                            resolve(_base64Files);
+                        }
+                        const imageResult = e.currentTarget.result.replace('data:', '');
+                        const contentType = imageResult.substring(0, imageResult.indexOf('base64,'));
+                        _base64Files.push({
+                            data: imageResult.replace(contentType, '').replace('base64,', ''),
+                            contentType: contentType.replace(';', ''),
+                            tempId
+                        });
+                    });
+                }
+            });
+
+            const resp = await api.authApiService.images.post({
+                base64Files,
+                token: this.token,
+            });
+
+            if (resp.status === RESPONSE_STATUS.OK) {
+                const elNodeDescriptoin = document.querySelector('.node-form #node-description');
+                let nodeDescription = elNodeDescriptoin.value;
+                for (var i = 0; i < resp.data.length; i++) {
+                    nodeDescription = nodeDescription.replace(
+                        `![#${resp.data[i].tempId} Uploading Image Title](Uploading Image URL)`,
+                        `![#${resp.data[i].newId}](https://sapiens-tools-mindmap.imgix.net/${resp.data[i].newId})`
+                    );
+                }
+                elNodeDescriptoin.value = nodeDescription;
+            } else {
+                //fix: errorMsg 改成 data.message
+                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+            }
+
+            function insertTempTag() {
+                const elNodeDescriptoin = document.querySelector('.node-form #node-description');
+                const nodeDescription = elNodeDescriptoin.value;
+                const tempImageId = guidGenerator();
+                const result = [
+                    nodeDescription.substring(0, elNodeDescriptoin.selectionStart),
+                    '\r',
+                    `![#${tempImageId} Uploading Image Title](Uploading Image URL)`,
+                    '\r',
+                    nodeDescription.substring(elNodeDescriptoin.selectionEnd)
+                ]
+                document.querySelector('.node-form #node-description').value = result.join('');
+                return tempImageId;
+            }
+
+            function guidGenerator() {
+                var S4 = function () {
+                    return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+                };
+                return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4());
+            }
+
+            document.querySelector('.node-form .drag-overlay').addClass('hide');
+            e.stopPropagation();
+            e.preventDefault();
+            return;
+        })
+
+        document.addEventListener('drop', (e) => {
+            document.querySelector('.node-form .drag-overlay').addClass('hide');
+            e.stopPropagation();
+            e.preventDefault();
+            return;
+        })
     }
 }

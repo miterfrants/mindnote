@@ -128,6 +128,21 @@
             border-radius: 10px;
             z-index: 5;
             box-shadow: 0 0 3px #666;
+            overflow: hidden;
+        }
+
+        .node-form .drag-overlay {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            line-height: 260px;
+            text-align: center;
+            font-size: 20px;
+            text-shadow: 0px 0px 20px white;
         }
 
         .node-form input,
@@ -483,7 +498,9 @@
     <div class="header vert-mid">
         <div class="container vert-mid">
             <div class="logo-container left">
-                <img class="logo" src="/mindmap/imgs/apple-icon-120x120.png" alt="logo" />
+                <a href="/mindmap/">
+                    <img class="logo" src="/mindmap/imgs/apple-icon-120x120.png" alt="logo" />
+                </a>
             </div>
             <div class="navigation dark">
             </div>
@@ -528,6 +545,7 @@
 
     <div class="controller">
         <div class="router-user-board hide">
+            <div id="demo"></div>
             <div class="cy-edit-mode"></div>
             <div class="mask hide"></div>
             <div class="function-buttons">
@@ -542,6 +560,7 @@
             </div>
 
             <div class="node-form hide">
+
                 <input class="node-id" type="hidden" />
                 <label for="node-title" class="vert-mid">
                     <input placeholder="標題" id="node-title" class="title" type="text" />
@@ -556,6 +575,7 @@
                     <i class="fas fa-trash"></i>
                 </button>
                 <button class="btn-close fa fa-times"></button>
+                <div class="drag-overlay hide">檔案拖到此處上傳</div>
             </div>
         </div>
         <div class="router-user-boards hide">

@@ -16,19 +16,11 @@ namespace Mindmap.Models
         }
 
         public virtual DbSet<board> board { get; set; }
+        public virtual DbSet<image> image { get; set; }
         public virtual DbSet<node> node { get; set; }
         public virtual DbSet<node_relationship> node_relationship { get; set; }
         public virtual DbSet<transaction> transaction { get; set; }
         public virtual DbSet<user> user { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseNpgsql("host=127.0.0.1;port=5432;database=mindmap;username=webservice;password=ck{'06OZdZKZ9ru5Ygl^upTpqzEW2~VVVfWV");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -57,6 +49,21 @@ namespace Mindmap.Models
                     .HasMaxLength(128);
 
                 entity.Property(e => e.uniquename).HasMaxLength(256);
+            });
+
+            modelBuilder.Entity<image>(entity =>
+            {
+                entity.Property(e => e.id).UseNpgsqlIdentityByDefaultColumn();
+
+                entity.Property(e => e.created_at)
+                    .HasColumnType("timestamp(6) with time zone")
+                    .HasDefaultValueSql("now()");
+
+                entity.Property(e => e.deleted_at).HasColumnType("timestamp(6) with time zone");
+
+                entity.Property(e => e.filename)
+                    .IsRequired()
+                    .HasMaxLength(64);
             });
 
             modelBuilder.Entity<node>(entity =>

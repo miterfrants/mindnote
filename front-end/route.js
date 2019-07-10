@@ -34,15 +34,6 @@ import {
     RESPONSE_STATUS
 } from '/mindmap/config.js';
 
-import {
-    MindmapError,
-    MINDMAP_ERROR_TYPE
-} from '/mindmap/util/mindmap-error.js';
-
-import {
-    Toaster
-} from '/mindmap/service/toaster.js';
-
 window['MindmapController'] = [];
 
 export const Route = {

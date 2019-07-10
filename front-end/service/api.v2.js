@@ -23,6 +23,25 @@ export const api = {
         _RESPONSE_STATUS = RESPONSE_STATUS;
     },
     authApiService: {
+        images: {
+            post: async (data, sendResponse) => {
+                let api = _API.ENDPOINT + _API.AUTHORIZED.IMAGES;
+                api = api.bind(data);
+
+                const requestBody = {
+                    base64Files: data.base64Files
+                }
+
+                const fetchOption = {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
+                    },
+                    body: JSON.stringify(requestBody)
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
+            }
+        },
         me: {
             get: async (data, sendResponse) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.ME;

@@ -12,7 +12,8 @@ export const API = {
         NODE: 'users/me/boards/{boardId}/nodes/{nodeId}/',
         RELATIONSHIP: 'users/me/boards/{boardId}/relationship/',
         TRANSACTION: 'transaction/',
-        ME: 'users/me/'
+        ME: 'users/me/',
+        IMAGES: 'users/me/images/'
     },
     COMMON: {
         BOARD: 'boards/{boardId}/',
