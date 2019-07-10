@@ -12,6 +12,8 @@ namespace Mindmap.Helpers
     {
         public Auth Auth { get; set; }
         public string TapPayEndpoint { get; set; }
+        public string GCPProjectId { get; set; }
+        public string GCSBucketName { get; set; }
     }
 
     public class Auth
@@ -24,5 +26,6 @@ namespace Mindmap.Helpers
         public string DBConnectionString { get; set; }
         public string JwtKey { get; set; }
         public string TapPayPartnerKey { get; set; }
+        public string GCSCredential { get; set; }
     }
 }

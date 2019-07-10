@@ -4,10 +4,12 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4" />
+    <PackageReference Include="Microsoft.AspNetCore.App"/>
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4"/>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.2.0"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.4"/>
+    <PackageReference Include="Google.Apis.Storage.v1" Version="1.40.2.1635"/>
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="2.3.0"/>
   </ItemGroup>
 </Project>

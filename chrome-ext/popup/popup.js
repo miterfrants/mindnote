@@ -188,12 +188,13 @@ document.querySelector('.btn-create').addEventListener('click', async (e) => {
             // alert('Please select a board which you want to add.')
             alert('請選擇你新增筆記的分類')
         }
-
-        const resp = await DATA.postNodeAsync(storage.selectedBoard.id, storage.selectedNode.id, title, description);
+        const resp = await DATA.postNodeAsync(storage.selectedBoard.id, storage.selectedNode ? storage.selectedNode.id : null, title, description);
         appendNodeHistory(resp.data, () => {
             window.close();
         });
-    } catch (error) {}
+    } catch (error) {
+        console.error(error);
+    }
 });
 
 /**
@@ -213,12 +214,11 @@ async function setupAutoComplete() {
             term = term.toLowerCase();
             var choices = clipboard;
             var matches = [];
-            if (choices) {
+            if (choices && choices.length) {
                 for (i = 0; i < choices.length; i++) {
                     if (choices[i] !== null && choices[i].length > 0 && ~choices[i].toLowerCase().indexOf(term)) matches.push(choices[i]);
                 }
             }
-
             suggest(matches);
         }
     });
@@ -230,8 +230,10 @@ async function setupAutoComplete() {
             term = term.toLowerCase();
             var choices = clipboard;
             var matches = [];
-            for (i = 0; i < choices.length; i++) {
-                if (choices[i] !== null && choices[i].length > 0 && ~choices[i].toLowerCase().indexOf(term)) matches.push(choices[i]);
+            if (choices && choices.length) {
+                for (i = 0; i < choices.length; i++) {
+                    if (choices[i] !== null && choices[i].length > 0 && ~choices[i].toLowerCase().indexOf(term)) matches.push(choices[i]);
+                }
             }
             suggest(matches);
         }
