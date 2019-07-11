@@ -96,6 +96,11 @@ export class UserBoard {
         document.querySelector('.btn-update').addEventListener('click', async (e) => {
             const title = document.querySelector('.title').value;
             const description = document.querySelector('.description').value;
+            if (description.indexOf('Uploading Image URL') !== -1) {
+                if (!confirm('檔案還沒傳完，你確定要更新現有資料嗎？')) {
+                    return;
+                }
+            }
             const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
             const resp = await api.authApiService.node.patch({
                 title,
@@ -265,6 +270,14 @@ export class UserBoard {
             e.preventDefault();
         });
 
+        document.querySelector('.node-form').addEventListener('dragenter', (e) => {
+            if (document.querySelector('.node-form').classExists('hide')) {
+                return;
+            }
+            document.querySelector('.node-form .drag-overlay').removeClass('hide');
+            e.stopPropagation();
+            e.preventDefault();
+        });
 
         document.addEventListener('dragover', (e) => {
             e.stopPropagation();
@@ -315,6 +328,8 @@ export class UserBoard {
                         `![#${resp.data[i].newId}](https://sapiens-tools-mindmap.imgix.net/${resp.data[i].newId})`
                     );
                 }
+                const lastData = resp.data[resp.data.length - 1];
+                this.cy.$(`#node-${lastData.nodeId}`).style('background-image', `https://sapiens-tools-mindmap.imgix.net/${lastData.newId}`);
                 elNodeDescriptoin.value = nodeDescription;
             } else {
                 //fix: errorMsg 改成 data.message

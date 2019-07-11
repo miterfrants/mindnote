@@ -196,13 +196,14 @@ export const Cyto = {
     prepareData: (nodes, relationship, borderWidth) => {
         const elements = [];
         for (let i = 0; i < nodes.length; i++) {
-            const style = {}
+            const style = {
+                'background-fit': 'cover cover',
+                'background-image-opacity': 0.8
+            };
             if (nodes[i].image_filename) {
                 style['background-image'] = [
                     `https://sapiens-tools-mindmap.imgix.net/${nodes[i].image_filename}`,
                 ]
-                style['background-fit'] = 'cover cover';
-                style['background-image-opacity'] = 0.8
             }
             elements.push({
                 data: {
