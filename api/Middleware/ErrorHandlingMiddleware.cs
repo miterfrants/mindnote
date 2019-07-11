@@ -36,6 +36,7 @@ public class ErrorHandlingMiddleware
                 code = mindMapEx.code;
             }
         }
+        //var result = new JSONResponse(JSONResponseStatus.FAILED, new { message = ex.Message, stackTrace = ex.StackTrace });
         var result = new JSONResponse(JSONResponseStatus.FAILED, new { message = ex.Message });
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)code.GetHashCode();

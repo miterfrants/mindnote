@@ -11,6 +11,11 @@ import {
     RESPONSE_STATUS
 } from '/mindmap/config.js';
 
+import {
+    MindmapError,
+    MINDMAP_ERROR_TYPE
+} from '/mindmap/util/mindmap-error.js';
+
 window['MindmapRoutingLocation'] = [];
 window['MindmapContinueDeleteCount'] = 0;
 window['MindmapContinueDeleteTimer'];
@@ -269,6 +274,9 @@ export class UserBoard {
 
         document.querySelector('.node-form .drag-overlay').addEventListener('drop', async (e) => {
             const files = e.dataTransfer.files;
+            const elNodeForm = document.querySelector('.node-form');
+            const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node\-/gi, ''));
+
             const base64Files = await new Promise((resolve, reject) => {
                 let loadImageCount = 0;
                 const _base64Files = [];
@@ -286,7 +294,8 @@ export class UserBoard {
                         _base64Files.push({
                             data: imageResult.replace(contentType, '').replace('base64,', ''),
                             contentType: contentType.replace(';', ''),
-                            tempId
+                            tempId,
+                            nodeId
                         });
                     });
                 }

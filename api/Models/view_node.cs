@@ -19,5 +19,7 @@ namespace Mindmap.Models
         public string username { get; set; }
         public int? x { get; set; }
         public int? y { get; set; }
+        public int? image_id { get; set; }
+        public string image_filename { get; set; }
     }
 }
