@@ -10,5 +10,6 @@ namespace Mindmap.Models
         public DateTime created_at { get; set; }
         public DateTime? deleted_at { get; set; }
         public int? owner_id { get; set; }
+        public int? node_id { get; set; }
     }
 }
