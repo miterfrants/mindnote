@@ -55,6 +55,12 @@ namespace Mindmap.Controllers
             {
                 node.y = requestBody.y;
             }
+
+            if (requestBody.cover != null)
+            {
+                node.cover = requestBody.cover;
+            }
+
             _context.SaveChanges();
             return node;
         }

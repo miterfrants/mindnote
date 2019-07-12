@@ -100,7 +100,7 @@ namespace Mindmap.Controllers
                 //check all file content type;
                 string base64Data = requestBody.base64Files[i].data.Value;
                 string contentType = requestBody.base64Files[i].contentType.Value;
-                string tempId = requestBody.base64Files[i].tempId.Value;
+                string clientSideFlagId = requestBody.base64Files[i].clientSideFlagId != null ? requestBody.base64Files[i].clientSideFlagId.Value : "";
                 int nodeId = (int)requestBody.base64Files[i].nodeId.Value;
                 string extensionFilename = ".jpg";
                 if (contentType == "image/jpg" || contentType == "image/jpeg")
@@ -138,8 +138,8 @@ namespace Mindmap.Controllers
                 result.Add(new
                 {
                     status = Enum.GetName(typeof(JSONResponseStatus), status),
-                    newId = resultFromGCS.Name,
-                    tempId = tempId,
+                    filename = resultFromGCS.Name,
+                    clientSideFlagId = clientSideFlagId ?? "",
                     nodeId = nodeId
                 });
             }
@@ -149,7 +149,7 @@ namespace Mindmap.Controllers
             {
                 if (result[i].status == Enum.GetName(typeof(JSONResponseStatus), JSONResponseStatus.OK))
                 {
-                    image image = new image { owner_id = userId, filename = result[i].newId, node_id = result[i].nodeId };
+                    image image = new image { owner_id = userId, filename = result[i].filename, node_id = result[i].nodeId };
                     _context.image.Add(image);
                 }
             }

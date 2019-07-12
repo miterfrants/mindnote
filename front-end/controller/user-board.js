@@ -20,6 +20,14 @@ import {
     Toaster
 } from '/mindmap/service/toaster.js';
 
+import {
+    MindmapFileReader
+} from '/mindmap/service/filereader.js';
+
+import {
+    Image
+} from '/mindmap/service/image.js';
+
 window['MindmapRoutingLocation'] = [];
 
 export class UserBoard {
@@ -74,6 +82,8 @@ export class UserBoard {
     }
 
     _bindEvent() {
+        const elController = document.querySelector('.router-user-board');
+        const elNodeForm = elController.querySelector('.node-form');
         document.querySelector('.btn-add').addEventListener('click', async (e) => {
             const title = document.querySelector('.title').value;
             const description = document.querySelector('.description').value;
@@ -357,58 +367,60 @@ export class UserBoard {
             });
         });
 
-        document.body.addEventListener('dragenter', (e) => {
-            if (document.querySelector('.node-form').classExists('hide')) {
+        // drag and drop event
+        document.addEventListener('dragenter', (e) => {
+            if (elNodeForm.classExists('hide')) {
                 return;
             }
-            document.querySelector('.node-form .drag-overlay').removeClass('hide');
+            UI.nodeForm.dragStart();
             e.stopPropagation();
             e.preventDefault();
         });
-
-        document.querySelector('.node-form').addEventListener('dragenter', (e) => {
-            if (document.querySelector('.node-form').classExists('hide')) {
-                return;
-            }
-            document.querySelector('.node-form .drag-overlay').removeClass('hide');
-            e.stopPropagation();
-            e.preventDefault();
-        });
-
+        document.addEventListener('dragleave', UI.nodeForm.resetDragDropState);
         document.addEventListener('dragover', (e) => {
             e.stopPropagation();
             e.preventDefault();
-            return;
+        });
+        document.addEventListener('drop', (e) => {
+            UI.nodeForm.resetDragDropState();
+            e.stopPropagation();
+            e.preventDefault();
         });
 
-        document.querySelector('.node-form .drag-overlay').addEventListener('drop', async (e) => {
+        elNodeForm.addEventListener('dragenter', (e) => {
+            UI.nodeForm.dragEnterDetail();
+            e.stopPropagation();
+            e.preventDefault();
+        });
+        elNodeForm.addEventListener('dragleave', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+        });
+
+        elNodeForm.querySelector('.drop-to-upload-cover')
+            .addEventListener('dragenter', UI.nodeForm.dragEnterUploadCover);
+        elNodeForm.querySelector('.drop-to-upload-cover')
+            .addEventListener('dragleave', UI.nodeForm.dragLeaveUploadCover);
+        elNodeForm.querySelector('.drop-to-upload-description')
+            .addEventListener('dragenter', UI.nodeForm.dragEnterUploadDescriptionImage);
+        elNodeForm.querySelector('.drop-to-upload-description')
+            .addEventListener('dragleave', UI.nodeForm.dragLeaveUploadDescriptionImage);
+
+
+        elNodeForm.querySelector('.drop-to-upload-description').addEventListener('drop', async (e) => {
             const files = e.dataTransfer.files;
             const elNodeForm = document.querySelector('.node-form');
+            const elNodeDescriptoin = document.querySelector('.node-form #node-description');
+            let nodeDescription = elNodeDescriptoin.value;
             const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node\-/gi, ''));
-
-            const base64Files = await new Promise((resolve, reject) => {
-                let loadImageCount = 0;
-                const _base64Files = [];
-                for (var i = 0; i < files.length; i++) {
-                    const tempId = insertTempTag();
-                    const fileReader = new FileReader();
-                    fileReader.readAsDataURL(files[i]);
-                    fileReader.addEventListener('loadend', (e) => {
-                        loadImageCount += 1;
-                        if (loadImageCount === files.length) {
-                            resolve(_base64Files);
-                        }
-                        const imageResult = e.currentTarget.result.replace('data:', '');
-                        const contentType = imageResult.substring(0, imageResult.indexOf('base64,'));
-                        _base64Files.push({
-                            data: imageResult.replace(contentType, '').replace('base64,', ''),
-                            contentType: contentType.replace(';', ''),
-                            tempId,
-                            nodeId
-                        });
-                    });
-                }
-            });
+            const base64Files = await MindmapFileReader.readFilesToBase64(files);
+            for (let i = 0; i < base64Files.length; i++) {
+                const injectResult = injectFlag(nodeDescription, elNodeDescriptoin.selectionStart, elNodeDescriptoin.selectionEnd);
+                nodeDescription = injectResult.content;
+                base64Files[i].clientSideFlagId = injectResult.flagId;
+                base64Files[i].nodeId = nodeId;
+            }
+            elNodeDescriptoin.value = nodeDescription
 
             const resp = await api.authApiService.images.post({
                 base64Files,
@@ -416,35 +428,33 @@ export class UserBoard {
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
-                const elNodeDescriptoin = document.querySelector('.node-form #node-description');
                 let nodeDescription = elNodeDescriptoin.value;
                 for (var i = 0; i < resp.data.length; i++) {
                     nodeDescription = nodeDescription.replace(
-                        `![#${resp.data[i].tempId} Uploading Image Title](Uploading Image URL)`,
-                        `![#${resp.data[i].newId}](https://sapiens-tools-mindmap.imgix.net/${resp.data[i].newId})`
+                        `![#${resp.data[i].clientSideFlagId} Uploading Image Title](Uploading Image URL)`,
+                        `![#${resp.data[i].filename}](${Image.generateImageUrl(resp.data[i].filename)})`
                     );
                 }
                 const lastData = resp.data[resp.data.length - 1];
-                this.cy.$(`#node-${lastData.nodeId}`).style('background-image', `https://sapiens-tools-mindmap.imgix.net/${lastData.newId}`);
                 elNodeDescriptoin.value = nodeDescription;
             } else {
                 //fix: errorMsg 改成 data.message
                 throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
             }
 
-            function insertTempTag() {
-                const elNodeDescriptoin = document.querySelector('.node-form #node-description');
-                const nodeDescription = elNodeDescriptoin.value;
-                const tempImageId = guidGenerator();
+            function injectFlag(content, start, end) {
+                const flagId = guidGenerator();
                 const result = [
-                    nodeDescription.substring(0, elNodeDescriptoin.selectionStart),
+                    content.substring(0, start),
                     '\r',
-                    `![#${tempImageId} Uploading Image Title](Uploading Image URL)`,
+                    `![#${flagId} Uploading Image Title](Uploading Image URL)`,
                     '\r',
-                    nodeDescription.substring(elNodeDescriptoin.selectionEnd)
+                    nodeDescription.substring(end)
                 ]
-                document.querySelector('.node-form #node-description').value = result.join('');
-                return tempImageId;
+                return {
+                    flagId,
+                    content: result.join('')
+                };
             }
 
             function guidGenerator() {
@@ -454,17 +464,48 @@ export class UserBoard {
                 return (S4() + S4() + S4() + S4() + S4() + S4() + S4() + S4());
             }
 
-            document.querySelector('.node-form .drag-overlay').addClass('hide');
+            UI.nodeForm.resetDragDropState();
             e.stopPropagation();
             e.preventDefault();
-            return;
-        })
+        });
+        elNodeForm.querySelector('.drop-to-upload-cover').addEventListener('drop', async (e) => {
+            const files = e.dataTransfer.files;
+            if (files.length > 1) {
+                Toaster.popup(MINDMAP_ERROR_TYPE.WARN, '封面只有一張，請謹慎挑選');
+                return;
+            }
+            const elNodeForm = document.querySelector('.node-form');
+            const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node\-/gi, ''));
+            const fileData = await MindmapFileReader.readFileToBase64(files[0]);
+            const respForUploadImage = await api.authApiService.images.post({
+                base64Files: [{
+                    ...fileData,
+                    nodeId
+                }],
+                token: this.token,
+            });
+            if (respForUploadImage.status === RESPONSE_STATUS.OK) {
+                const data = respForUploadImage.data[0];
+                UI.Cyto.updateBackgroundImage(this.cy, nodeId, Image.generateImageUrl(data.filename, 200));
+                const respForUpdateNode = await api.authApiService.node.patch({
+                    cover: data.filename,
+                    token: this.token,
+                    boardId: this.boardId,
+                    nodeId,
+                });
 
-        document.addEventListener('drop', (e) => {
-            document.querySelector('.node-form .drag-overlay').addClass('hide');
+                if (respForUpdateNode.status === RESPONSE_STATUS.OK) {
+                    Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '筆記封面已經更新囉');
+                } else {
+                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForUpdateNode.data.errorMsg);
+                }
+
+            } else {
+                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForUploadImage.data.errorMsg);
+            }
+            UI.nodeForm.resetDragDropState();
             e.stopPropagation();
             e.preventDefault();
-            return;
-        })
+        });
     }
 }

@@ -46,7 +46,7 @@
         }
 
         .btn-delete {
-            background: #e89b4b;
+            background: #fac32d;
             color: white;
             width: 40px;
             height: 40px;
@@ -130,7 +130,8 @@
             box-shadow: 0 0 3px #666;
         }
 
-        .node-form .drag-overlay {
+        .node-form .drag-overlay,
+        .node-form .drag-overlay-detail-section {
             display: block;
             position: absolute;
             top: 0;
@@ -143,6 +144,24 @@
             font-size: 20px;
             text-shadow: 0px 0px 20px white;
             border-radius: 10px;
+        }
+
+        .node-form .drag-overlay-detail-section>* {
+            height: 50%;
+            line-height: 130px;
+        }
+
+        .node-form .drag-overlay-detail-section>*.drag-enter {
+            background: #fac32d;
+        }
+
+        .node-form .drag-overlay-detail-section .drop-to-upload-cover {
+            border-bottom: 1px dashed #666;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .node-form .drag-overlay-detail-section .drop-to-upload-description {
+            border-radius: 0 0 10px 10px;
         }
 
         .node-form input,
@@ -335,7 +354,7 @@
         }
 
         .router-user-boards .board-card.private {
-            border-color: #e89b4b;
+            border-color: #fac32d;
         }
 
         .router-user-boards .board-card .fa-edit {
@@ -593,6 +612,10 @@
                 <button class="btn-update hide">更新</button>
                 <button class="btn-close fa fa-times"></button>
                 <div class="drag-overlay hide">檔案拖到此處上傳</div>
+                <div class="drag-overlay-detail-section hide">
+                    <div class="drop-to-upload-cover">上傳封面</div>
+                    <div class="drop-to-upload-description">上傳圖片到筆記內容</div>
+                </div>
             </div>
         </div>
         <div class="router-user-boards hide">

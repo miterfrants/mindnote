@@ -178,6 +178,7 @@ a {
     position: fixed;
     bottom: 20px;
     right: 100px;
+    z-index: 6;
 }
 
 .toaster-item {
