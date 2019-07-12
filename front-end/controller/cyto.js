@@ -228,7 +228,7 @@ export const Cyto = {
                     background: nodes[i].style.background,
                     size: nodes[i].style.size,
                     borderWidth: borderWidth,
-                    backgroundImage: nodes[i].image_filename ? [Image.generateImageUrl(nodes[i].image_filename, 200)] : []
+                    backgroundImage: nodes[i].cover ? [Image.generateImageUrl(nodes[i].cover, 200)] : []
                 },
                 position: {
                     x: nodes[i].x,
