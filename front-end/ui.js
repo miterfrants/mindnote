@@ -293,6 +293,7 @@ export const UI = {
         setTimeout(() => {
             mask.addClass('hide');
         }, 300);
+        UI.nodeForm.resetDragDropState();
     },
     openNodeWindow: (title, description) => {
         const w = 400;
