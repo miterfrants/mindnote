@@ -228,7 +228,7 @@ export const Route = {
                 path: 'boards/{boardId}/',
                 controller: UserBoard,
                 dependency: [{
-                    url: '/mindmap/third-party/cyto/cytoscape.min.js',
+                    url: '/mindmap/third-party/cyto/cytoscape.js',
                     checkVariable: 'cytoscape'
                 }, {
                     url: 'https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js',
