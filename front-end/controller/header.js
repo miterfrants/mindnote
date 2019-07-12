@@ -14,7 +14,7 @@ import {
 
 import {
     Route
-} from '/mindmap/route.js';
+} from '/mindmap/service/route.js';
 
 import {
     Toaster

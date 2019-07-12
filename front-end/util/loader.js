@@ -13,6 +13,16 @@ export function Loader() {
         await _load(dependency);
     }
 
+    this.loadHTML = async (url) => {
+        const resp = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'text/html; charset=utf-8'
+            }
+        });
+        return resp.text();
+    }
+
     async function _load(dependency) {
         for (let i = 0; i < dependency.length; i++) {
             if (!window[dependency[i].checkVariable] && window.MindMapLoaderCache.indexOf(dependency[i].url) === -1) {
