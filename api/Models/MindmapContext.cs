@@ -76,6 +76,8 @@ namespace Mindmap.Models
 
                 entity.Property(e => e.id).UseNpgsqlIdentityByDefaultColumn();
 
+                entity.Property(e => e.cover).HasMaxLength(512);
+
                 entity.Property(e => e.created_at)
                     .HasColumnType("timestamp(6) with time zone")
                     .HasDefaultValueSql("now()");
@@ -105,6 +107,12 @@ namespace Mindmap.Models
                     .IsUnique();
 
                 entity.Property(e => e.id).UseNpgsqlIdentityByDefaultColumn();
+
+                entity.Property(e => e.created_at)
+                    .HasColumnType("timestamp(6) with time zone")
+                    .HasDefaultValueSql("now()");
+
+                entity.Property(e => e.deleted_at).HasColumnType("timestamp(6) with time zone");
             });
 
             modelBuilder.Entity<transaction>(entity =>

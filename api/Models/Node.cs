@@ -15,6 +15,7 @@ namespace Mindmap.Models
         public int? board_id { get; set; }
         public decimal? x { get; set; }
         public decimal? y { get; set; }
+        public string cover { get; set; }
 
         public virtual board board_ { get; set; }
     }

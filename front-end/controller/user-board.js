@@ -16,9 +16,11 @@ import {
     MINDMAP_ERROR_TYPE
 } from '/mindmap/util/mindmap-error.js';
 
+import {
+    Toaster
+} from '/mindmap/service/toaster.js';
+
 window['MindmapRoutingLocation'] = [];
-window['MindmapContinueDeleteCount'] = 0;
-window['MindmapContinueDeleteTimer'];
 
 export class UserBoard {
     constructor(args, context) {
@@ -33,6 +35,7 @@ export class UserBoard {
         this.token = args.token;
         this.boardId = args.boardId;
         this.board;
+        this.deletedMode = false;
         if (this.token) {
             if (this.cy) {
                 this.cy.destroy();
@@ -52,6 +55,8 @@ export class UserBoard {
 
             const container = UI.getCytoEditContainer();
             this.cy = Cyto.init(container, nodes, relationship, true);
+            UI.switchToNormalMode();
+            UI.Cyto.switchToNormalMode(this.cy);
             UI.header.generateNavigation([{
                 title: '我的分類',
                 link: '/mindmap/users/me/boards/'
@@ -117,41 +122,78 @@ export class UserBoard {
                 UI.hideNodeForm();
             }
         });
-        document.querySelector('.btn-node-delete').addEventListener('click', async (e) => {
-            // 連續刪除超過兩次，就不跳 prompt 請使用者輸入
-            var result = 'DELETE'
-
-            if (window.MindmapContinueDeleteCount <= 2) {
-                result = prompt('如果需要刪除，請輸入 "DELETE"');
-            } else {
-                clearTimeout(window.MindmapContinueDeleteTimer);
+        document.querySelector('.btn-layout').addEventListener('click', (e) => {
+            if (e.currentTarget.classExists('disabled')) {
+                return;
             }
-
-            window.MindmapContinueDeleteCount += 1;
-            window.MindmapContinueDeleteTimer = setTimeout(() => {
-                window.MindmapContinueDeleteCount = 0;
-            }, 120 * 1000);
-
-            if (result === 'DELETE') {
-                const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
-                const resp = await api.authApiService.node.delete({
-                    token: this.token,
-                    boardId: this.boardId,
-                    nodeId
-                });
-
-                if (resp.status === RESPONSE_STATUS.OK) {
-                    this.cy.trigger('deleteNodeDone', [{
-                        id: nodeId
-                    }]);
-                    UI.hideNodeForm();
+            this.cy.trigger('re-arrange');
+        });
+        document.querySelector('.btn-switch-delete-mode').addEventListener('click', (e) => {
+            this.deletedMode = !this.deletedMode;
+            Cyto.isDisableConnecting = this.deletedMode;
+            if (this.deletedMode) {
+                const haveShownTip = localStorage.getItem('tip_of_delete_mode');
+                if (haveShownTip !== 'true') {
+                    Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '小提示: <br/> 1. 點選「藍線」或是「藍圈圈」，呈半透明狀態 <br/> 2. 確認後按下左上方的橘黃色按鈕「刪除資料」就完成囉～', 15000);
+                    localStorage.setItem('tip_of_delete_mode', 'true');
                 }
+                UI.switchToDeleteMode();
+                UI.Cyto.switchToDeleteMode(this.cy);
             } else {
-                alert('輸入文字不吻合');
+                UI.switchToNormalMode();
+                UI.Cyto.switchToNormalMode(this.cy);
             }
         });
-        document.querySelector('.btn-layout').addEventListener('click', () => {
-            this.cy.trigger('re-arrange');
+        document.querySelector('.btn-delete-change').addEventListener('click', async (e) => {
+            const nodeIds = this.cy.$('node.deleting').map((node) => {
+                return node.data('id').replace('node-', '');
+            });
+
+            const relationshipIds = this.cy.$('edge.deleting').map((edge) => {
+                return edge.data('id').replace('edge-', '');
+            });
+            if (nodeIds.length > 0) {
+                const respForDeleteNode = await api.authApiService.nodes.delete({
+                    token: this.token,
+                    boardId: this.boardId,
+                    nodeIds,
+                });
+                if (respForDeleteNode.status === RESPONSE_STATUS.OK) {
+                    if (respForDeleteNode.data !== nodeIds.length && respForDeleteNode.data.length > 0) {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, "部份刪除失敗");
+                    } else if (respForDeleteNode.data === 0) {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, "刪除失敗");
+                    } else {
+                        this.cy.$('node.deleting').remove();
+                    }
+                } else {
+                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForDeleteNode.data.errorMsg);
+                }
+            }
+
+            if (relationshipIds.length > 0) {
+                const respForDeleteRelationship = await api.authApiService.relationship.delete({
+                    token: this.token,
+                    boardId: this.boardId,
+                    relationshipIds,
+                });
+
+                if (respForDeleteRelationship.status === RESPONSE_STATUS.OK) {
+                    if (respForDeleteRelationship.data !== nodeIds.length && respForDeleteRelationship.data.length > 0) {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, "部份刪除失敗");
+                    } else if (respForDeleteRelationship.data === 0) {
+                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, "刪除失敗");
+                    } else {
+                        this.cy.$('edge.deleting').remove();
+                    }
+                } else {
+                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForDeleteRelationship.data.errorMsg);
+                }
+            }
+            this.deletedMode = !this.deletedMode;
+            Cyto.isDisableConnecting = this.deletedMode;
+            UI.switchToNormalMode();
+            UI.Cyto.switchToNormalMode(this.cy);
         });
         document.querySelector('.btn-close').addEventListener('click', UI.hideNodeForm);
         document.querySelector('.mask').addEventListener('click', UI.hideNodeForm);
@@ -169,11 +211,20 @@ export class UserBoard {
                     ...resp.data,
                     edgeInstance: e.detail.edgeInstance
                 }]);
+            } else if (resp.httpStatus === 417) {
+                e.detail.edgeInstance.remove();
+                throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+            } else {
+                e.detail.edgeInstance.remove();
+                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
             }
         });
         document.addEventListener('create-node-done', UI.hideNodeForm);
         document.addEventListener('update-node-done', UI.hideNodeForm);
         document.addEventListener('tap-canvas', (e) => {
+            if (this.deletedMode) {
+                return;
+            }
             const position = {
                 x: e.detail.position.x,
                 y: e.detail.position.y
@@ -181,16 +232,58 @@ export class UserBoard {
             UI.showNodeForm(this.cy, '', '', '', position);
         });
         document.addEventListener('double-tap-node', (e) => {
+            if (this.deletedMode) {
+                return;
+            }
             const title = e.detail.title;
             const desc = e.detail.description;
             UI.openNodeWindow(title, desc)
         });
         document.addEventListener('tap-node', (e) => {
+            if (this.deletedMode) {
+                if (e.detail.node.hasClass('deleting')) {
+                    const sourseEdges = this.cy.$(`edge[source="${e.detail.node.data('id')}"]`);
+                    const targetEdges = this.cy.$(`edge[target="${e.detail.node.data('id')}"]`);
+                    e.detail.node.removeClass('deleting');
+                    // 檢查 edge 是否有一個 node 是刪除的
+                    // 檢查 target
+                    for (let i = 0; i < sourseEdges.length; i++) {
+                        if (this.cy.$(`node#${sourseEdges[i].data('target')}`).hasClass('deleting')) {
+                            continue;
+                        }
+                        sourseEdges[i].removeClass('deleting');
+                    }
+                    // 檢查 source
+                    for (let i = 0; i < targetEdges.length; i++) {
+                        if (this.cy.$(`node#${targetEdges[i].data('source')}`).hasClass('deleting')) {
+                            continue;
+                        }
+                        targetEdges[i].removeClass('deleting');
+                    }
+
+                } else {
+                    this.cy.$(`edge[source="${e.detail.node.data('id')}"]`).addClass('deleting');
+                    this.cy.$(`edge[target="${e.detail.node.data('id')}"]`).addClass('deleting');
+                    e.detail.node.addClass('deleting');
+                }
+                return;
+            }
             const position = {
                 x: e.detail.position.x,
                 y: e.detail.position.y
             }
             UI.showNodeForm(this.cy, e.detail.title, e.detail.description, e.detail.id, position);
+        });
+
+        document.addEventListener('tap-edge', (e) => {
+            if (this.deletedMode) {
+                if (e.detail.edge.hasClass('deleting')) {
+                    e.detail.edge.removeClass('deleting');
+                } else {
+                    e.detail.edge.addClass('deleting');
+                }
+                return;
+            }
         });
         document.addEventListener('keyup', (e) => {
             // esc
@@ -227,6 +320,9 @@ export class UserBoard {
             });
         });
         document.querySelector('.btn-copy-shared-link').addEventListener('click', (e) => {
+            if (e.currentTarget.classExists('disabled')) {
+                return;
+            }
             const button = e.currentTarget;
             const tempElement = document.createElement('textarea');
             tempElement.value = `${location.origin}/mindmap/boards/${this.board.id }/`;

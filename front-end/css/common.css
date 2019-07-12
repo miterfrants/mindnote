@@ -76,6 +76,14 @@ button {
     margin-left: 10px;
 }
 
+.marg-l-20 {
+    margin-left: 20px;
+}
+
+.marg-t-20 {
+    margin-top: 20px;
+}
+
 .vert-mid {
     align-items: center;
     display: flex;
@@ -125,12 +133,12 @@ a {
     transition: background 0.26s, transform 0.26s;
 }
 
-.toggle-button.private {
-    border: 1px solid #e89b4b;
+.toggle-button.on {
+    border: 1px solid #fac32d;
 }
 
-.toggle-button.private:after {
-    background: #e89b4b;
+.toggle-button.on:after {
+    background: #fac32d;
     transform: translate(17px, 2px);
 }
 

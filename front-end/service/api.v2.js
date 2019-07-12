@@ -223,6 +223,22 @@ export const api = {
                     body: JSON.stringify(requestBody)
                 };
                 return _handleRequest(api, fetchOption, sendResponse);
+            },
+            delete: async (data, sendResponse) => {
+                let api = _API.ENDPOINT + _API.AUTHORIZED.NODES;
+                api = api.bind(data);
+                let requestBody = {
+                    nodeIds: data.nodeIds
+                };
+
+                let fetchOption = {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
+                    },
+                    body: JSON.stringify(requestBody)
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
             }
         },
         relationship: {
@@ -252,6 +268,23 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     },
                     body: JSON.stringify(postBody)
+                };
+                return _handleRequest(api, fetchOption, sendResponse);
+            },
+            delete: async (data, sendResponse) => {
+                let api = _API.ENDPOINT + _API.AUTHORIZED.RELATIONSHIP;
+                api = api.bind(data);
+
+                let requestBody = {
+                    relationshipIds: data.relationshipIds
+                };
+
+                let fetchOption = {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
+                    },
+                    body: JSON.stringify(requestBody)
                 };
                 return _handleRequest(api, fetchOption, sendResponse);
             }

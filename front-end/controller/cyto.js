@@ -6,6 +6,7 @@ export const Cyto = {
     _mousedown: false,
     _edgeSourceNode: null,
     _isConnecting: undefined,
+    isDisableConnecting: false,
     cy: null,
 
     _tappedBefore: null,
@@ -40,6 +41,9 @@ export const Cyto = {
                 selector: 'node',
                 style: {
                     'background-color': 'data(background)',
+                    'background-image': 'data(backgroundImage)',
+                    'background-fit': 'cover cover',
+                    'background-image-opacity': 1,
                     'label': 'data(title)',
                     'font-size': '10px',
                     'height': 'data(size)',
@@ -52,10 +56,25 @@ export const Cyto = {
                     'color': '#333'
                 }
             }, {
+                selector: 'node.delete-mode',
+                style: {
+                    'border-width': 0
+                }
+            }, {
+                selector: 'node.deleting',
+                style: {
+                    opacity: 0.2
+                }
+            }, {
                 selector: 'edge',
                 style: {
                     'width': 3,
                     'line-color': '#4ba6d8'
+                }
+            }, {
+                selector: 'edge.deleting',
+                style: {
+                    opacity: 0.2
                 }
             }, {
                 selector: '.touch-border',
@@ -97,7 +116,8 @@ export const Cyto = {
                 id: 'preview_source_node',
                 background: '#ffffff',
                 size: 1,
-                borderWidth: 0
+                borderWidth: 0,
+                backgroundImage: []
             },
             group: 'nodes',
             classes: 'hide',
@@ -109,7 +129,8 @@ export const Cyto = {
                 id: 'preview_target_node',
                 background: '#ffffff',
                 size: 1,
-                borderWidth: 0
+                borderWidth: 0,
+                backgroundImage: []
             },
             group: 'nodes',
             classes: 'hide',
@@ -196,15 +217,6 @@ export const Cyto = {
     prepareData: (nodes, relationship, borderWidth) => {
         const elements = [];
         for (let i = 0; i < nodes.length; i++) {
-            const style = {
-                'background-fit': 'cover cover',
-                'background-image-opacity': 0.8
-            };
-            if (nodes[i].image_filename) {
-                style['background-image'] = [
-                    `https://sapiens-tools-mindmap.imgix.net/${nodes[i].image_filename}`,
-                ]
-            }
             elements.push({
                 data: {
                     id: 'node-' + nodes[i].id,
@@ -213,12 +225,12 @@ export const Cyto = {
                     background: nodes[i].style.background,
                     size: nodes[i].style.size,
                     borderWidth: borderWidth,
+                    backgroundImage: nodes[i].image_filename ? [`https://sapiens-tools-mindmap.imgix.net/${nodes[i].image_filename}`] : []
                 },
                 position: {
                     x: nodes[i].x,
                     y: nodes[i].y
                 },
-                style,
                 group: "nodes",
                 grabbable: true
             });
@@ -241,7 +253,13 @@ export const Cyto = {
     saveEdgeDoneHandler: (e, data) => {
         data.edgeInstance.removeClass('saving');
         UI.Cyto.restorePreviewEdge(Cyto.cy);
-        data.edgeInstance.data('id', data.id);
+        // 複製一份新的 edge 把綠色換成藍色
+        const edgeConstructData = data.edgeInstance.json();
+        edgeConstructData.data.id = 'edge-' + data.id;
+        Cyto.cy.add([
+            edgeConstructData
+        ]);
+        Cyto.cy.remove(data.edgeInstance);
     },
     createNodeHandler: (e, title, description) => {
         // fix: 這個會有問題，當create node 很快或是網路很慢，就會造成後面動作產生的 node 取代掉現有的 _createNode 
@@ -345,10 +363,25 @@ export const Cyto = {
                     id: data.id,
                     title: data.title,
                     description: data.description,
+                    node: e.target,
                     position: {
                         x: e.originalEvent.clientX,
                         y: e.originalEvent.clientY
                     }
+                }
+            });
+            Cyto.cy.container().dispatchEvent(event);
+        } else if (Cyto.isEdge(e)) {
+            const data = e.target.data();
+            var event = new CustomEvent('tap-edge', {
+                bubbles: true,
+                cancelable: true,
+                // refactor: 修改為 node 位置
+                detail: {
+                    id: data.id,
+                    edge: e.target,
+                    source: data.source,
+                    target: data.target
                 }
             });
             Cyto.cy.container().dispatchEvent(event);
@@ -400,7 +433,7 @@ export const Cyto = {
         UI.Cyto.hidePreviewEdge(Cyto.cy);
     },
     mousemoveInEditModeHandler: (e) => {
-        if (Cyto._isConnecting) {
+        if (Cyto._isConnecting && !Cyto.isDisableConnecting) {
             const sourceId = Cyto._edgeSourceNode._private.data.id;
             UI.Cyto.updatePreviewEdge(Cyto.cy, sourceId, e.position);
             UI.Cyto.showPreviewEdge(Cyto.cy);
@@ -426,5 +459,10 @@ export const Cyto = {
         return (e.target &&
             e.target.isNode &&
             e.target.isNode());
+    },
+    isEdge: (e) => {
+        return (e.target &&
+            e.target.isEdge &&
+            e.target.isEdge());
     }
 };

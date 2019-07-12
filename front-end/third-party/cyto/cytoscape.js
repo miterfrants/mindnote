@@ -29546,7 +29546,23 @@
 
 
         var bgImgProp = node.pstyle('background-image');
-        var urls = bgImgProp.value;
+        var tempUrls = bgImgProp.value;
+        var urls = [];
+
+        // 先做一次檢查看 background-image 裡頭是不是有 data 資料 peter modify
+        for (var i = 0; i < tempUrls.length; i++) {
+            var url = tempUrls[i];
+            if (url.indexOf('data(') === 0) {
+                var dataFieldName = url.replace(/data\(/gi, '').replace(/"/gi, '').replace(/'/gi, '').replace(/\)/gi, '');
+                var originalImages = node.data(dataFieldName);
+                for (var j = 0; j < originalImages.length; j++) {
+                    urls.push(originalImages[j]);
+                }
+            } else {
+                urls.push(url);
+            }
+        }
+
         var urlDefined = new Array(urls.length);
         var image = new Array(urls.length);
         var numImages = 0;
@@ -29556,6 +29572,7 @@
             var defd = urlDefined[i] = url != null && url !== 'none';
 
             if (defd) {
+
                 var bgImgCrossOrigin = node.cy().style().getIndexedStyle(node, 'background-image-crossorigin', 'value', i);
                 numImages++; // get image, and if not loaded then ask to redraw when later loaded
 
@@ -29566,7 +29583,6 @@
             }
         } //
         // setup styles
-
 
         var darkness = node.pstyle('background-blacken').value;
         var borderWidth = node.pstyle('border-width').pfValue;

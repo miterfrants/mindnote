@@ -139,6 +139,14 @@ export const UI = {
                 isForce: true
             });
             layout.run();
+        },
+        switchToDeleteMode: (cy) => {
+            cy.nodes().addClass('delete-mode');
+            cy.edges().addClass('delete-mode');
+        },
+        switchToNormalMode: (cy) => {
+            cy.nodes().removeClass('delete-mode');
+            cy.edges().removeClass('delete-mode');
         }
     },
     header: {
@@ -195,13 +203,6 @@ export const UI = {
         },
         hideToggleButton: () => {
             document.querySelector('.toggle-button').addClass('hide');
-        },
-        setupToggleButtton: (isPublic) => {
-            if (isPublic) {
-                document.querySelector('.toggle-button').removeClass('private');
-            } else {
-                document.querySelector('.toggle-button').addClass('private');
-            }
         }
     },
     showAuth: () => {
@@ -358,11 +359,11 @@ export const UI = {
     setBoardPublicPermission: (elBoardCard, isPublic) => {
         if (isPublic) {
             elBoardCard.removeClass('private');
-            elBoardCard.querySelector('.btn-toggle-permission').removeClass('private');
+            elBoardCard.querySelector('.btn-toggle-permission').removeClass('on');
             elBoardCard.querySelector('.permission').innerHTML = '公開';
         } else {
             elBoardCard.addClass('private');
-            elBoardCard.querySelector('.btn-toggle-permission').addClass('private');
+            elBoardCard.querySelector('.btn-toggle-permission').addClass('on');
             elBoardCard.querySelector('.permission').innerHTML = '隱藏';
         }
     },
@@ -400,5 +401,23 @@ export const UI = {
     subscribed: () => {
         document.querySelector('.header .btn-unsubscribe').removeClass('hide');
         document.querySelector('.header .btn-subscribe').addClass('hide');
+    },
+    switchToDeleteMode: () => {
+        const elContainer = document.querySelector('.router-user-board');
+        elContainer.addClass('delete-mode');
+        elContainer.querySelector('.btn-delete-change').removeClass('hide');
+        elContainer.querySelector('.btn-layout').addClass('disabled');
+        elContainer.querySelector('.btn-copy-shared-link').addClass('disabled');
+        document.querySelector('.btn-switch-delete-mode').addClass('on');
+        elContainer.querySelector('.mode-name').innerHTML = '刪除模式';
+    },
+    switchToNormalMode: () => {
+        const elContainer = document.querySelector('.router-user-board');
+        elContainer.removeClass('delete-mode');
+        elContainer.querySelector('.btn-delete-change').addClass('hide');
+        elContainer.querySelector('.btn-layout').removeClass('disabled');
+        elContainer.querySelector('.btn-copy-shared-link').removeClass('disabled');
+        document.querySelector('.btn-switch-delete-mode').removeClass('on');
+        elContainer.querySelector('.mode-name').innerHTML = '一般模式';
     }
 }
