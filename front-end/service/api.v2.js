@@ -149,6 +149,9 @@ export const api = {
                 if (data.y !== null && data.y !== undefined) {
                     requestBody.y = data.y;
                 }
+                if (data.cover !== null && data.cover !== undefined) {
+                    requestBody.cover = data.cover;
+                }
 
                 const fetchOption = {
                     method: 'PATCH',

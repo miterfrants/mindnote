@@ -1,6 +1,9 @@
 import {
     UI
 } from '/mindmap/ui.js';
+import {
+    Image
+} from '/mindmap/service/image.js';
 export const Cyto = {
     _isEditMode: false,
     _mousedown: false,
@@ -225,7 +228,7 @@ export const Cyto = {
                     background: nodes[i].style.background,
                     size: nodes[i].style.size,
                     borderWidth: borderWidth,
-                    backgroundImage: nodes[i].image_filename ? [`https://sapiens-tools-mindmap.imgix.net/${nodes[i].image_filename}`] : []
+                    backgroundImage: nodes[i].image_filename ? [Image.generateImageUrl(nodes[i].image_filename, 200)] : []
                 },
                 position: {
                     x: nodes[i].x,

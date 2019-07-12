@@ -147,6 +147,9 @@ export const UI = {
         switchToNormalMode: (cy) => {
             cy.nodes().removeClass('delete-mode');
             cy.edges().removeClass('delete-mode');
+        },
+        updateBackgroundImage: (cy, nodeId, url) => {
+            cy.$(`#node-${nodeId}`).style('background-image', url);
         }
     },
     header: {
@@ -419,5 +422,33 @@ export const UI = {
         elContainer.querySelector('.btn-copy-shared-link').removeClass('disabled');
         document.querySelector('.btn-switch-delete-mode').removeClass('on');
         elContainer.querySelector('.mode-name').innerHTML = '一般模式';
+    },
+    nodeForm: {
+        resetDragDropState: () => {
+            document.querySelector('.node-form .drag-overlay').addClass('hide');
+            document.querySelector('.node-form .drag-overlay-detail-section').addClass('hide');
+            document.querySelector('.node-form .drag-overlay-detail-section .drop-to-upload-cover').removeClass('drag-enter');
+            document.querySelector('.node-form .drag-overlay-detail-section .drop-to-upload-description').removeClass('drag-enter');
+        },
+        dragStart: () => {
+            document.querySelector('.node-form .drag-overlay').removeClass('hide');
+            document.querySelector('.node-form .drag-overlay-detail-section').addClass('hide');
+        },
+        dragEnterDetail: () => {
+            document.querySelector('.node-form .drag-overlay').addClass('hide');
+            document.querySelector('.node-form .drag-overlay-detail-section').removeClass('hide');
+        },
+        dragEnterUploadCover: () => {
+            document.querySelector('.node-form .drop-to-upload-cover').addClass('drag-enter');
+        },
+        dragLeaveUploadCover: () => {
+            document.querySelector('.node-form .drop-to-upload-cover').removeClass('drag-enter');
+        },
+        dragEnterUploadDescriptionImage: () => {
+            document.querySelector('.node-form .drop-to-upload-description').addClass('drag-enter');
+        },
+        dragLeaveUploadDescriptionImage: () => {
+            document.querySelector('.node-form .drop-to-upload-description').removeClass('drag-enter');
+        }
     }
 }
