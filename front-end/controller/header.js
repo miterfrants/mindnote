@@ -72,7 +72,6 @@ export class Header {
             UI.hideAuth();
             UI.header.hideAuth();
             UI.header.generateNavigation([]);
-            Route.runFromController(this.context, location.pathname, Header);
         });
 
         document.querySelector('.header .btn-unsubscribe').addEventListener('click', async () => {
@@ -158,5 +157,6 @@ export class Header {
             // fix: check current page is need auth
             // UI.header.generateNavigation([]);
         }
+        Route.runFromController(this.context, location.pathname, Header);
     }
 }
