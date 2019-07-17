@@ -62,12 +62,23 @@ docker run -d \
 -v /srv/pgadmin/volume \
 postgres
 
-docker run \                                                                                                    
+docker run \
 -e ASPNETCORE_URLS=http://\*:8081 \
 --network pgnetwork \
 -d \
 --rm \
--v /srv/mindnote:/app/volume \
+-v /srv/mindnote-api:/app/volume \
 --name mindnote-api-server \
 -p 8081:8081 mindnote-api-server
 ```
+
+```
+docker run -d \
+-p 8082:80 \
+-v ~/project/mindnote/front-end:/usr/share/nginx/html \
+-v /srv/mindnote-front-end/conf.d/default.conf:/etc/nginx/conf.d/default.conf \
+--name mindnote-front-end \
+--rm \
+nginx
+```
+
