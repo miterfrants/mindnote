@@ -1,9 +1,9 @@
 import {
     UI
-} from '/mindmap/ui.js';
+} from '/mindnote/ui.js';
 import {
     Image
-} from '/mindmap/service/image.js';
+} from '/mindnote/service/image.js';
 export const Cyto = {
     _isEditMode: false,
     _mousedown: false,

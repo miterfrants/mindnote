@@ -1,4 +1,4 @@
-export const MindmapFileReader = {
+export const MindnoteFileReader = {
     readFileToBase64: (file) => {
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();

@@ -4,19 +4,19 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
-using Mindmap.Models;
-using Mindmap.Services;
-using Mindmap.Constants;
+using Mindnote.Models;
+using Mindnote.Services;
+using Mindnote.Constants;
 
-namespace Mindmap.Controllers
+namespace Mindnote.Controllers
 {
-    [Route("mindmap/api/v1/boards/")]
+    [Route("mindnote/api/v1/boards/")]
     [ApiController]
     public class BoardController : ControllerBase
     {
-        private readonly MindmapContext _context;
-        private readonly MindmapContextForView _contextForView;
-        public BoardController(MindmapContext context, MindmapContextForView contextForView, UserService userService)
+        private readonly MindnoteContext _context;
+        private readonly MindnoteContextForView _contextForView;
+        public BoardController(MindnoteContext context, MindnoteContextForView contextForView, UserService userService)
         {
             _context = context;
             _contextForView = contextForView;
@@ -37,11 +37,11 @@ namespace Mindmap.Controllers
                 x.id == boardId && x.deleted_at == null);
             if (result == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             else if (!result.is_public)
             {
-                throw new MindMapException("這個分類被作者隱藏起來了～～", HttpStatusCode.Unauthorized);
+                throw new MindnoteException("這個分類被作者隱藏起來了～～", HttpStatusCode.Unauthorized);
             }
             else
             {
@@ -57,11 +57,11 @@ namespace Mindmap.Controllers
                 x.id == boardId && x.deleted_at == null);
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             else if (!board.is_public)
             {
-                throw new MindMapException("這個分類被作者隱藏起來了～～", HttpStatusCode.Unauthorized);
+                throw new MindnoteException("這個分類被作者隱藏起來了～～", HttpStatusCode.Unauthorized);
             }
             else
             {
@@ -77,11 +77,11 @@ namespace Mindmap.Controllers
                 x.id == boardId);
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             else if (!board.is_public)
             {
-                throw new MindMapException("這個分類被作者隱藏起來了～～", HttpStatusCode.Unauthorized);
+                throw new MindnoteException("這個分類被作者隱藏起來了～～", HttpStatusCode.Unauthorized);
             }
             else
             {

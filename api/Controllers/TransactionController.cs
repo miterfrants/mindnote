@@ -11,26 +11,26 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Threading;
 
-using Mindmap.Util;
-using Mindmap.Models;
-using Mindmap.Services;
-using Mindmap.Constants;
-using Mindmap.Helpers;
+using Mindnote.Util;
+using Mindnote.Models;
+using Mindnote.Services;
+using Mindnote.Constants;
+using Mindnote.Helpers;
 
-namespace Mindmap.Controllers
+namespace Mindnote.Controllers
 {
     [Authorize]
-    [Route("mindmap/api/v1/")]
+    [Route("mindnote/api/v1/")]
     [ApiController]
     public class CheckoutController : ControllerBase
     {
 
-        private readonly MindmapContext _context;
-        private readonly MindmapContextForView _contextForView;
+        private readonly MindnoteContext _context;
+        private readonly MindnoteContextForView _contextForView;
         private readonly UserService _userService;
         private readonly String _tapPayPartnerKey;
         private readonly String _tapPayEndpoint;
-        public CheckoutController(IOptions<AppSettings> appSetting, MindmapContext context, UserService userService, MindmapContextForView contextForView)
+        public CheckoutController(IOptions<AppSettings> appSetting, MindnoteContext context, UserService userService, MindnoteContextForView contextForView)
         {
             _context = context;
             _userService = userService;
@@ -52,13 +52,13 @@ namespace Mindmap.Controllers
 
             if (!user.is_subscribed)
             {
-                throw new MindMapException("痾～你好像不是訂閱用戶", HttpStatusCode.ExpectationFailed);
+                throw new MindnoteException("痾～你好像不是訂閱用戶", HttpStatusCode.ExpectationFailed);
             }
 
             transaction existedTransaction = _context.transaction.FirstOrDefault(x => x.id == user.transaction_id);
             if (!existedTransaction.is_next_subscribe)
             {
-                throw new MindMapException("已經取消訂閱囉～下一期我們將停止扣款");
+                throw new MindnoteException("已經取消訂閱囉～下一期我們將停止扣款");
             }
 
             // transaction existedTransaction = new transaction { id = user.transaction_id ?? -1 };
@@ -82,7 +82,7 @@ namespace Mindmap.Controllers
             view_user view_user = _contextForView.view_user.FirstOrDefault(x => x.id == userId);
             if (view_user.is_subscribed)
             {
-                throw new MindMapException("你已經是我們的訂閱用戶", HttpStatusCode.ExpectationFailed);
+                throw new MindnoteException("你已經是我們的訂閱用戶", HttpStatusCode.ExpectationFailed);
             }
             transaction newTransaction = null;
             try
@@ -105,7 +105,7 @@ namespace Mindmap.Controllers
             }
             catch (System.Exception ex)
             {
-                throw new MindMapException("交易失敗:" + ex.Message, HttpStatusCode.InternalServerError);
+                throw new MindnoteException("交易失敗:" + ex.Message, HttpStatusCode.InternalServerError);
             }
 
             // send transaction data to tap pay
@@ -116,7 +116,7 @@ namespace Mindmap.Controllers
                 prime = requestBody.prime,
                 partner_key = _tapPayPartnerKey,
                 merchant_id = "hahow_CTBC",
-                details = "Mindmap Subscription",
+                details = "Mindnote Subscription",
                 amount = 99,
                 cardholder = new
                 {
@@ -151,7 +151,7 @@ namespace Mindmap.Controllers
 
                 if (resultObjFromTapPay.status != 0)
                 {
-                    throw new MindMapException(resultObjFromTapPay.msg.Value, HttpStatusCode.InternalServerError);
+                    throw new MindnoteException(resultObjFromTapPay.msg.Value, HttpStatusCode.InternalServerError);
                 }
 
 

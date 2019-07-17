@@ -1,4 +1,4 @@
-window['MindMapLoaderCache'] = []
+window['MindnoteLoaderCache'] = []
 export function Loader() {
     this.max = 10000;
     this.checkCount = 0;
@@ -25,11 +25,11 @@ export function Loader() {
 
     async function _load(dependency) {
         for (let i = 0; i < dependency.length; i++) {
-            if (!window[dependency[i].checkVariable] && window.MindMapLoaderCache.indexOf(dependency[i].url) === -1) {
+            if (!window[dependency[i].checkVariable] && window.MindnoteLoaderCache.indexOf(dependency[i].url) === -1) {
                 const script = document.createElement('script');
                 script.src = dependency[i].url;
                 document.body.appendChild(script);
-                window.MindMapLoaderCache.push(dependency[i].url);
+                window.MindnoteLoaderCache.push(dependency[i].url);
             }
         }
 

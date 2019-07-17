@@ -5,21 +5,21 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-using Mindmap.Models;
-using Mindmap.Services;
-using Mindmap.Util;
+using Mindnote.Models;
+using Mindnote.Services;
+using Mindnote.Util;
 
-namespace Mindmap.Controllers
+namespace Mindnote.Controllers
 {
     [Authorize]
-    [Route("mindmap/api/v1/users/me/boards/{boardId}/")]
+    [Route("mindnote/api/v1/users/me/boards/{boardId}/")]
     [ApiController]
     public class UserBoardController : ControllerBase
     {
-        private readonly MindmapContext _context;
-        private readonly MindmapContextForView _contextForView;
+        private readonly MindnoteContext _context;
+        private readonly MindnoteContextForView _contextForView;
         private readonly UserService _userService;
-        public UserBoardController(MindmapContext context, MindmapContextForView contextForView, UserService userService)
+        public UserBoardController(MindnoteContext context, MindnoteContextForView contextForView, UserService userService)
         {
             _context = context;
             _contextForView = contextForView;
@@ -35,7 +35,7 @@ namespace Mindmap.Controllers
             board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             return board;
         }
@@ -50,7 +50,7 @@ namespace Mindmap.Controllers
             board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             board.deleted_at = DateTime.Now;
             _context.SaveChanges();
@@ -69,7 +69,7 @@ namespace Mindmap.Controllers
             board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             if (requestBody.is_public != null)

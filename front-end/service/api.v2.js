@@ -1,10 +1,10 @@
 let _API, _RESPONSE_STATUS;
 import {
     extendStringProtoType
-} from '/mindmap/util/extended-prototype.js';
+} from '/mindnote/util/extended-prototype.js';
 extendStringProtoType();
 
-window['MindMapApiCache'] = {};
+window['MindnoteApiCache'] = {};
 
 export const api = {
     /**
@@ -388,10 +388,10 @@ const _handleRequest = (api, fetchOption, sendResponse) => {
         let result;
         if (
             fetchOption.method === 'GET' &&
-            MindMapApiCache[api] !== undefined &&
-            MindMapApiCache[api][JSON.stringify(fetchOption)] !== undefined
+            MindnoteApiCache[api] !== undefined &&
+            MindnoteApiCache[api][JSON.stringify(fetchOption)] !== undefined
         ) {
-            result = MindMapApiCache[api][JSON.stringify(fetchOption)];
+            result = MindnoteApiCache[api][JSON.stringify(fetchOption)];
             if (sendResponse) {
                 sendResponse(result);
             }
@@ -403,7 +403,7 @@ const _handleRequest = (api, fetchOption, sendResponse) => {
             fetchOption.method !== 'GET'
         ) {
             // refactor 現在的做法是只要發生 http method 不是 get 就把整個 cache 清掉，未來的作法應該是 API Response 會對應到 client 端 DB
-            MindMapApiCache = {};
+            MindnoteApiCache = {};
         }
         let resp
         try {
@@ -429,8 +429,8 @@ const _handleRequest = (api, fetchOption, sendResponse) => {
                 data: jsonData
             };
             if (fetchOption.method === 'GET') {
-                MindMapApiCache[api] = MindMapApiCache[api] || {};
-                MindMapApiCache[api][JSON.stringify(fetchOption)] = result;
+                MindnoteApiCache[api] = MindnoteApiCache[api] || {};
+                MindnoteApiCache[api][JSON.stringify(fetchOption)] = result;
             }
         } else {
             const jsonData = await resp.json();

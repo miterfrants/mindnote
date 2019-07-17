@@ -1,7 +1,7 @@
 import {
     extendHTMLElementProtoType,
     extendStringProtoType
-} from '/mindmap/util/extended-prototype.js';
+} from '/mindnote/util/extended-prototype.js';
 extendHTMLElementProtoType();
 extendStringProtoType();
 
@@ -180,7 +180,7 @@ export const UI = {
 
             const template = document.querySelector('.header .boards .menu-item.template').outerHTML;
             for (let i = 0; i < boards.length; i++) {
-                boards[i]['link'] = ['/mindmap/users/me/boards/', boards[i].id, '/'].join('');
+                boards[i]['link'] = ['/mindnote/users/me/boards/', boards[i].id, '/'].join('');
                 const el = template.bind(boards[i]).toDom()
                 el.removeClass('template');
                 boardsContainer.appendChild(el);
@@ -199,7 +199,7 @@ export const UI = {
             }
             document.querySelector('.navigation').innerHTML = arrayNav.join(' > ');
 
-            document.title = arrayTitle.join(' > ') + ' - Mindmap';
+            document.title = arrayTitle.join(' > ') + ' - Mindnote';
         },
         showToggleButton: () => {
             document.querySelector('.toggle-button').removeClass('hide');
@@ -305,7 +305,7 @@ export const UI = {
         const systemZoom = width / window.screen.availWidth;
         const left = (width - w) / 2 / systemZoom + dualScreenLeft
         const top = 0
-        const newWindow = window.open('', title, 'id=popup-mindmap, scrollbars=yes, width=' + w / systemZoom + ', height=' + height / systemZoom + ', top=' + top + ', left=' + left);
+        const newWindow = window.open('', title, 'id=popup-mindnote, scrollbars=yes, width=' + w / systemZoom + ', height=' + height / systemZoom + ', top=' + top + ', left=' + left);
         const template = '<style>img {width: 100%}</style><h1>{title}</h1><p style="line-height: 1.6em; letter-spacing: 0.05em; word-break: break-word;">{desc}</p>'
         const md = window.markdownit();
         const detail = md.render(description);
@@ -333,7 +333,7 @@ export const UI = {
 
         const template = containerEle.querySelector('.template').outerHTML;
         for (let i = 0; i < boards.length; i++) {
-            boards[i].link = `/mindmap/users/me/boards/${boards[i].id}/`;
+            boards[i].link = `/mindnote/users/me/boards/${boards[i].id}/`;
             const newItem = template.bind(boards[i]).toDom();
             newItem.removeClass('template');
             containerEle.appendChild(newItem);
@@ -345,7 +345,7 @@ export const UI = {
         const boardsEle = document.querySelector('.router-user-boards')
         const containerEle = boardsEle.querySelector('.container .row');
         const template = containerEle.querySelector('.template').outerHTML;
-        board.link = `/mindmap/users/me/boards/${board.id}/`;
+        board.link = `/mindnote/users/me/boards/${board.id}/`;
         const newItem = template.bind(board).toDom();
         newItem.removeClass('template');
         containerEle.insertBefore(newItem, containerEle.childNodes[2]);

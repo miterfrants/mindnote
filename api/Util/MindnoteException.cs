@@ -1,9 +1,9 @@
 using System.Net;
 using System;
-public class MindMapException : Exception
+public class MindnoteException : Exception
 {
     public HttpStatusCode code;
-    public MindMapException(string message, HttpStatusCode code = HttpStatusCode.OK)
+    public MindnoteException(string message, HttpStatusCode code = HttpStatusCode.OK)
         : base(message)
     {
         this.code = code;

@@ -4,13 +4,13 @@ export const remoteEndpoint = env === 'dev' ? 'https://dev.sapiens.tools/' : 'ht
 
 export const NODE_HISTORY_LIMIT = 5;
 export const CLIPBOARD_LIMIT = 10;
-export const REMOTE_LIB_API_SERVICE = remoteEndpoint + 'mindmap/service/api.v2.js';
+export const REMOTE_LIB_API_SERVICE = remoteEndpoint + 'mindnote/service/api.v2.js';
 export const RESPONSE_STATUS = {
     OK: 'OK',
     FAILED: 'FAILED',
 };
 export const API = {
-    ENDPOINT: apiEndPoint + 'mindmap/api/v1/',
+    ENDPOINT: apiEndPoint + 'mindnote/api/v1/',
     AUTHORIZED: {
         USER: 'users/',
         BOARDS: 'users/me/boards/',

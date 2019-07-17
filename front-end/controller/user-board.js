@@ -1,34 +1,32 @@
 import {
     UI
-} from '/mindmap/ui.js';
+} from '/mindnote/ui.js';
 import {
     Cyto
-} from '/mindmap/controller/cyto.js';
+} from '/mindnote/controller/cyto.js';
 import {
     api
-} from '/mindmap/service/api.v2.js';
+} from '/mindnote/service/api.v2.js';
 import {
     RESPONSE_STATUS
-} from '/mindmap/config.js';
+} from '/mindnote/config.js';
 
 import {
-    MindmapError,
-    MINDMAP_ERROR_TYPE
-} from '/mindmap/util/mindmap-error.js';
+    MindnoteError,
+    MINDNOTE_ERROR_TYPE
+} from '/mindnote/util/mindnote-error.js';
 
 import {
     Toaster
-} from '/mindmap/service/toaster.js';
+} from '/mindnote/service/toaster.js';
 
 import {
-    MindmapFileReader
-} from '/mindmap/service/filereader.js';
+    MindnoteFileReader
+} from '/mindnote/service/filereader.js';
 
 import {
     Image
-} from '/mindmap/service/image.js';
-
-window['MindmapRoutingLocation'] = [];
+} from '/mindnote/service/image.js';
 
 export class UserBoard {
     constructor(args, context) {
@@ -67,7 +65,7 @@ export class UserBoard {
             UI.Cyto.switchToNormalMode(this.cy);
             UI.header.generateNavigation([{
                 title: '我的分類',
-                link: '/mindmap/users/me/boards/'
+                link: '/mindnote/users/me/boards/'
             }, {
                 title: this.board.title
             }]);
@@ -144,7 +142,7 @@ export class UserBoard {
             if (this.deletedMode) {
                 const haveShownTip = localStorage.getItem('tip_of_delete_mode');
                 if (haveShownTip !== 'true') {
-                    Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '小提示: <br/> 1. 點選「藍線」或是「藍圈圈」，呈半透明狀態 <br/> 2. 確認後按下左上方的橘黃色按鈕「刪除資料」就完成囉～', 15000);
+                    Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '小提示: <br/> 1. 點選「藍線」或是「藍圈圈」，呈半透明狀態 <br/> 2. 確認後按下左上方的橘黃色按鈕「刪除資料」就完成囉～', 15000);
                     localStorage.setItem('tip_of_delete_mode', 'true');
                 }
                 UI.switchToDeleteMode();
@@ -170,14 +168,14 @@ export class UserBoard {
                 });
                 if (respForDeleteNode.status === RESPONSE_STATUS.OK) {
                     if (respForDeleteNode.data !== nodeIds.length && respForDeleteNode.data.length > 0) {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, "部份刪除失敗");
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, "部份刪除失敗");
                     } else if (respForDeleteNode.data === 0) {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, "刪除失敗");
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, "刪除失敗");
                     } else {
                         this.cy.$('node.deleting').remove();
                     }
                 } else {
-                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForDeleteNode.data.errorMsg);
+                    throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, respForDeleteNode.data.errorMsg);
                 }
             }
 
@@ -190,14 +188,14 @@ export class UserBoard {
 
                 if (respForDeleteRelationship.status === RESPONSE_STATUS.OK) {
                     if (respForDeleteRelationship.data !== nodeIds.length && respForDeleteRelationship.data.length > 0) {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, "部份刪除失敗");
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, "部份刪除失敗");
                     } else if (respForDeleteRelationship.data === 0) {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, "刪除失敗");
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, "刪除失敗");
                     } else {
                         this.cy.$('edge.deleting').remove();
                     }
                 } else {
-                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForDeleteRelationship.data.errorMsg);
+                    throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, respForDeleteRelationship.data.errorMsg);
                 }
             }
             this.deletedMode = !this.deletedMode;
@@ -223,10 +221,10 @@ export class UserBoard {
                 }]);
             } else if (resp.httpStatus === 417) {
                 e.detail.edgeInstance.remove();
-                throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg);
             } else {
                 e.detail.edgeInstance.remove();
-                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
             }
         });
         document.addEventListener('create-node-done', UI.hideNodeForm);
@@ -335,7 +333,7 @@ export class UserBoard {
             }
             const button = e.currentTarget;
             const tempElement = document.createElement('textarea');
-            tempElement.value = `${location.origin}/mindmap/boards/${this.board.id }/`;
+            tempElement.value = `${location.origin}/mindnote/boards/${this.board.id }/`;
             tempElement.style.opacity = 0;
             tempElement.style.position = 'fixed';
             tempElement.style.top = 0;
@@ -413,7 +411,7 @@ export class UserBoard {
             const elNodeDescriptoin = document.querySelector('.node-form #node-description');
             let nodeDescription = elNodeDescriptoin.value;
             const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node\-/gi, ''));
-            const base64Files = await MindmapFileReader.readFilesToBase64(files);
+            const base64Files = await MindnoteFileReader.readFilesToBase64(files);
             for (let i = 0; i < base64Files.length; i++) {
                 const injectResult = injectFlag(nodeDescription, elNodeDescriptoin.selectionStart, elNodeDescriptoin.selectionEnd);
                 nodeDescription = injectResult.content;
@@ -439,7 +437,7 @@ export class UserBoard {
                 elNodeDescriptoin.value = nodeDescription;
             } else {
                 //fix: errorMsg 改成 data.message
-                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
             }
 
             function injectFlag(content, start, end) {
@@ -471,12 +469,12 @@ export class UserBoard {
         elNodeForm.querySelector('.drop-to-upload-cover').addEventListener('drop', async (e) => {
             const files = e.dataTransfer.files;
             if (files.length > 1) {
-                Toaster.popup(MINDMAP_ERROR_TYPE.WARN, '封面只有一張，請謹慎挑選');
+                Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '封面只有一張，請謹慎挑選');
                 return;
             }
             const elNodeForm = document.querySelector('.node-form');
             const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node\-/gi, ''));
-            const fileData = await MindmapFileReader.readFileToBase64(files[0]);
+            const fileData = await MindnoteFileReader.readFileToBase64(files[0]);
             const respForUploadImage = await api.authApiService.images.post({
                 base64Files: [{
                     ...fileData,
@@ -495,13 +493,13 @@ export class UserBoard {
                 });
 
                 if (respForUpdateNode.status === RESPONSE_STATUS.OK) {
-                    Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '筆記封面已經更新囉');
+                    Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '筆記封面已經更新囉');
                 } else {
-                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForUpdateNode.data.errorMsg);
+                    throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, respForUpdateNode.data.errorMsg);
                 }
 
             } else {
-                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForUploadImage.data.errorMsg);
+                throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, respForUploadImage.data.errorMsg);
             }
             UI.nodeForm.resetDragDropState();
             e.stopPropagation();

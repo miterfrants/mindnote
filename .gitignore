@@ -42,11 +42,11 @@ msbuild.wrn
 
 # Visual Studio 2015
 .vs/
-api-server/obj/Mindmap.csproj.nuget.cache
-api-server/obj/Mindmap.csproj.nuget.cache
-api-server/obj/Mindmap.csproj.nuget.cache
-api-server/obj/Mindmap.csproj.nuget.g.props
-api-server/obj/Mindmap.csproj.nuget.g.props
-api-server/obj/Mindmap.csproj.nuget.g.targets
-api-server/obj/Mindmap.csproj.nuget.cache
+api-server/obj/Mindnote.csproj.nuget.cache
+api-server/obj/Mindnote.csproj.nuget.cache
+api-server/obj/Mindnote.csproj.nuget.cache
+api-server/obj/Mindnote.csproj.nuget.g.props
+api-server/obj/Mindnote.csproj.nuget.g.props
+api-server/obj/Mindnote.csproj.nuget.g.targets
+api-server/obj/Mindnote.csproj.nuget.cache
 api-server/obj/project.assets.json

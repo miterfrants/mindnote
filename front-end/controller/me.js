@@ -1,10 +1,10 @@
 import {
     Toaster
-} from '/mindmap/service/toaster.js';
+} from '/mindnote/service/toaster.js';
 
 import {
-    MINDMAP_ERROR_TYPE
-} from '/mindmap/util/mindmap-error.js';
+    MINDNOTE_ERROR_TYPE
+} from '/mindnote/util/mindnote-error.js';
 
 export class Me {
     constructor(args, context) {
@@ -17,7 +17,7 @@ export class Me {
     async run(args, context) {
         args.me;
         if (args.me === null || args.me === undefined) {
-            Toaster.popup(MINDMAP_ERROR_TYPE.WARN, '此頁面需要登入');
+            Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '此頁面需要登入');
         }
     }
 }
