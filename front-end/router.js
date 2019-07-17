@@ -23,14 +23,6 @@ import {
 } from '/mindnote/controller/me.js';
 
 import {
-    Test
-} from '/mindnote/controller/test/test.js';
-
-import {
-    TestBoard
-} from '/mindnote/controller/test/board/board.js';
-
-import {
     api
 } from '/mindnote/service/api.v2.js';
 
@@ -97,14 +89,5 @@ export const Router = [{
             url: 'https://js.tappaysdk.com/tpdirect/v5.1.0',
             checkVariable: 'TPDirect'
         }],
-    }, {
-        path: 'test/',
-        controller: Test,
-        html: '/mindnote/controller/test/test.html',
-        Router: [{
-            path: 'board/',
-            controller: TestBoard,
-            html: '/mindnote/controller/test/board/board.html',
-        }]
     }]
 }]
