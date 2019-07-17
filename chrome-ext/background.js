@@ -58,7 +58,7 @@ chrome.runtime.onMessage.addListener((req, sender, sendResponse) => {
     window[req.service][req.module][req.action]({
       ...req.data,
       ...data
-    }, sendResponse);
+    }, sendResponse, true);
   });
   return true;
 });

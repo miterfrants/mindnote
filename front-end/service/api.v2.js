@@ -24,7 +24,7 @@ export const api = {
     },
     authApiService: {
         images: {
-            post: async (data, sendResponse) => {
+            post: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.IMAGES;
                 api = api.bind(data);
 
@@ -39,11 +39,11 @@ export const api = {
                     },
                     body: JSON.stringify(requestBody)
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             }
         },
         me: {
-            get: async (data, sendResponse) => {
+            get: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.ME;
                 api = api.bind(data);
 
@@ -53,11 +53,11 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             }
         },
         boards: {
-            post: async (data, sendResponse) => {
+            post: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.BOARDS;
                 api = api.bind(data);
                 const postBody = {
@@ -71,9 +71,9 @@ export const api = {
                     },
                     body: JSON.stringify(postBody)
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             },
-            get: async (data, sendResponse) => {
+            get: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.BOARDS;
                 api = api.bind(data);
 
@@ -87,11 +87,11 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             }
         },
         board: {
-            get: async (data, sendResponse) => {
+            get: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.BOARD;
                 api = api.bind(data);
                 const fetchOption = {
@@ -100,9 +100,9 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             },
-            delete: async (data, sendResponse) => {
+            delete: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.BOARD;
                 api = api.bind(data);
                 const fetchOption = {
@@ -111,9 +111,9 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             },
-            patch: async (data, sendResponse) => {
+            patch: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.BOARD;
                 api = api.bind(data);
                 const fetchOption = {
@@ -127,11 +127,11 @@ export const api = {
                         is_public: data.is_public
                     })
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             }
         },
         node: {
-            patch: async (data, sendResponse) => {
+            patch: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.NODE;
                 api = api.bind(data);
 
@@ -160,9 +160,9 @@ export const api = {
                     },
                     body: JSON.stringify(requestBody)
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             },
-            delete: async (data, sendResponse) => {
+            delete: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.NODE;
                 api = api.bind(data);
                 const fetchOption = {
@@ -171,11 +171,11 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             }
         },
         nodes: {
-            get: async (data, sendResponse) => {
+            get: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.NODES;
                 api = api.bind(data);
                 let fetchOption = {
@@ -184,9 +184,9 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             },
-            post: async (data, sendResponse) => {
+            post: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.NODES;
                 api = api.bind(data);
                 let postBody = {
@@ -205,9 +205,9 @@ export const api = {
                     },
                     body: JSON.stringify(postBody)
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             },
-            patch: async (data, sendResponse) => {
+            patch: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.NODES;
                 api = api.bind(data);
                 let requestBody = {
@@ -225,9 +225,9 @@ export const api = {
                     },
                     body: JSON.stringify(requestBody)
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             },
-            delete: async (data, sendResponse) => {
+            delete: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.NODES;
                 api = api.bind(data);
                 let requestBody = {
@@ -241,11 +241,11 @@ export const api = {
                     },
                     body: JSON.stringify(requestBody)
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             }
         },
         relationship: {
-            get: async (data, sendResponse) => {
+            get: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.RELATIONSHIP;
                 api = api.bind(data);
                 let fetchOption = {
@@ -254,9 +254,9 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             },
-            post: async (data, sendResponse) => {
+            post: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.RELATIONSHIP;
                 api = api.bind(data);
 
@@ -272,9 +272,9 @@ export const api = {
                     },
                     body: JSON.stringify(postBody)
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             },
-            delete: async (data, sendResponse) => {
+            delete: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.RELATIONSHIP;
                 api = api.bind(data);
 
@@ -289,11 +289,11 @@ export const api = {
                     },
                     body: JSON.stringify(requestBody)
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             }
         },
         transaction: {
-            post: async (data, sendResponse) => {
+            post: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.TRANSACTION;
                 api = api.bind(data);
 
@@ -311,9 +311,9 @@ export const api = {
                     },
                     body: JSON.stringify(postBody)
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             },
-            delete: async (data, sendResponse) => {
+            delete: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.TRANSACTION;
 
                 let fetchOption = {
@@ -322,7 +322,7 @@ export const api = {
                         'Authorization': 'Bearer ' + data.token
                     }
                 };
-                return _handleRequest(api, fetchOption, sendResponse);
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             }
         }
     },
@@ -364,7 +364,7 @@ export const api = {
     }
 }
 
-const _fetch = (url, option, withCatch) => {
+const _fetch = (url, option) => {
     if (option.cache) {
         console.warn('Cound not declate cache in option params');
     }
@@ -375,22 +375,19 @@ const _fetch = (url, option, withCatch) => {
             'Content-Type': 'application/json'
         }
     }
-    if (!withCatch) {
-        newOption['cache'] = 'no-cache';
-    } else {
-        newOption['cache'] = 'cache';
-    }
     return fetch(url, newOption);
 };
 
-const _handleRequest = (api, fetchOption, sendResponse) => {
+const _handleRequest = (api, fetchOption, sendResponse, withoutCache) => {
     return new Promise(async (resolve, reject) => {
         let result;
         if (
             fetchOption.method === 'GET' &&
             MindnoteApiCache[api] !== undefined &&
-            MindnoteApiCache[api][JSON.stringify(fetchOption)] !== undefined
+            MindnoteApiCache[api][JSON.stringify(fetchOption)] !== undefined &&
+            withoutCache !== true
         ) {
+
             result = MindnoteApiCache[api][JSON.stringify(fetchOption)];
             if (sendResponse) {
                 sendResponse(result);
@@ -407,7 +404,7 @@ const _handleRequest = (api, fetchOption, sendResponse) => {
         }
         let resp
         try {
-            resp = await _fetch(api, fetchOption);
+            resp = await _fetch(api, fetchOption, withoutCache);
         } catch (error) {
             result = {
                 status: _RESPONSE_STATUS.FAILED,
