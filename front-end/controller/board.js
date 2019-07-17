@@ -1,25 +1,25 @@
 import {
     api
-} from '/mindmap/service/api.v2.js';
+} from '/mindnote/service/api.v2.js';
 import {
     Cyto
-} from '/mindmap/controller/cyto.js';
+} from '/mindnote/controller/cyto.js';
 import {
     API,
     RESPONSE_STATUS
-} from '/mindmap/config.js';
+} from '/mindnote/config.js';
 import {
     UI
-} from '/mindmap/ui.js';
+} from '/mindnote/ui.js';
 
 import {
-    MindmapError,
-    MINDMAP_ERROR_TYPE
-} from '/mindmap/util/mindmap-error.js';
+    MindnoteError,
+    MINDNOTE_ERROR_TYPE
+} from '/mindnote/util/mindnote-error.js';
 
 import {
     Toaster
-} from '/mindmap/service/toaster.js';
+} from '/mindnote/service/toaster.js';
 
 export class Board {
     constructor(args, context) {
@@ -46,7 +46,7 @@ export class Board {
         }));
 
         if (respForBoard.status !== RESPONSE_STATUS.OK) {
-            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForBoard.data.errorMsg);
+            throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, respForBoard.data.errorMsg);
         }
 
         UI.header.generateNavigation([{
@@ -58,7 +58,7 @@ export class Board {
         }));
 
         if (respForNodes.status !== RESPONSE_STATUS.OK) {
-            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForNodes.data.errorMsg);
+            throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, respForNodes.data.errorMsg);
         }
 
         const respForRelationship = (await api.apiService.relationship.get({
@@ -66,7 +66,7 @@ export class Board {
         }));
 
         if (respForRelationship.status !== RESPONSE_STATUS.OK) {
-            throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, respForRelationship.data.errorMsg);
+            throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, respForRelationship.data.errorMsg);
         }
 
         const nodes = respForNodes.data;
@@ -95,7 +95,7 @@ export class Board {
 
     showTip() {
         this.timerForTip = setTimeout(() => {
-            Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '小提示: 如果需要看詳細內容，請對藍色圈圈連點兩次', 5000)
+            Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '小提示: 如果需要看詳細內容，請對藍色圈圈連點兩次', 5000)
             this.showTip();
         }, this.showTipCountDownDuration)
         this.showTipCountDownDuration *= 3;

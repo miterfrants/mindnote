@@ -1,22 +1,22 @@
 import {
     UI
-} from '/mindmap/ui.js';
+} from '/mindnote/ui.js';
 
 import {
     api
-} from '/mindmap/service/api.v2.js';
+} from '/mindnote/service/api.v2.js';
 
 import {
     RESPONSE_STATUS
-} from '/mindmap/config.js';
+} from '/mindnote/config.js';
 
 import {
-    MindmapError,
-    MINDMAP_ERROR_TYPE
-} from '/mindmap/util/mindmap-error.js';
+    MindnoteError,
+    MINDNOTE_ERROR_TYPE
+} from '/mindnote/util/mindnote-error.js';
 import {
     Toaster
-} from '/mindmap/service/toaster.js';
+} from '/mindnote/service/toaster.js';
 
 export class UserBoards {
     constructor(args, context) {
@@ -34,9 +34,9 @@ export class UserBoards {
 
         if (resp.status === RESPONSE_STATUS.FAILED) {
             if (resp.httpStatus === 417) {
-                throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg);
             } else {
-                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
             }
         }
 
@@ -65,9 +65,9 @@ export class UserBoards {
         if (resp.status === RESPONSE_STATUS.FAILED) {
             UI.setBoardPublicPermission(elBoardCard, !isPublic);
             if (resp.httpStatus === 417) {
-                throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg);
             } else {
-                throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
             }
         }
         elBoardCard.dataset['is_public'] = resp.data.is_public;
@@ -120,9 +120,9 @@ export class UserBoards {
                 if (resp.status === RESPONSE_STATUS.FAILED) {
                     elButtonUpdateBoard.removeClass('disabled');
                     if (resp.httpStatus === 417) {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg);
                     } else {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
                     }
                 }
 
@@ -169,9 +169,9 @@ export class UserBoards {
                 elButtonDel.removeClass('disabled');
                 if (resp.status === RESPONSE_STATUS.FAILED) {
                     if (resp.httpStatus === 417) {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg);
                     } else {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
                     }
                 }
                 UI.removeBoard(boardId);
@@ -198,10 +198,10 @@ export class UserBoards {
                 if (resp.status === RESPONSE_STATUS.FAILED) {
                     elBtnAddBoard.removeClass('disabled');
                     if (resp.httpStatus === 417) {
-                        Toaster.popup(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg, 5000, '/mindmap/checkout/');
+                        Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg, 5000, '/mindnote/checkout/');
                         return;
                     } else {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg);
                     }
                 }
 

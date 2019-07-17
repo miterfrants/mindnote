@@ -1,5 +1,5 @@
 {
-  "name": "Mindmap",
+  "name": "Mindnote",
   "version": "0.0.5",
   "description": "A chrome extension which quickly collect idea and knowledge on web",
   "manifest_version": 2,

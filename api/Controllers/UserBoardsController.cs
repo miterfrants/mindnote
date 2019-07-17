@@ -7,26 +7,26 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-using Mindmap.Models;
-using Mindmap.Services;
-using Mindmap.Util;
+using Mindnote.Models;
+using Mindnote.Services;
+using Mindnote.Util;
 
 using Newtonsoft.Json.Linq;
 
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 
-namespace Mindmap.Controllers
+namespace Mindnote.Controllers
 {
     [Authorize]
-    [Route("mindmap/api/v1/users/me/boards/")]
+    [Route("mindnote/api/v1/users/me/boards/")]
     [ApiController]
     public class UserBoardsController : ControllerBase
     {
-        private readonly MindmapContext _context;
-        private readonly MindmapContextForView _contextForView;
+        private readonly MindnoteContext _context;
+        private readonly MindnoteContextForView _contextForView;
         private readonly UserService _userService;
-        public UserBoardsController(MindmapContext context, MindmapContextForView contextForView, UserService userService)
+        public UserBoardsController(MindnoteContext context, MindnoteContextForView contextForView, UserService userService)
         {
             _context = context;
             _contextForView = contextForView;
@@ -62,8 +62,8 @@ namespace Mindmap.Controllers
 
             if (user.board_count >= 2 && !user.is_subscribed)
             {
-                // throw new MindMapException("Add board deny, because free account only have two boards. If you need to create new board, join us just pay $3 per month to subscribe our service.", HttpStatusCode.ExpectationFailed);
-                throw new MindMapException("因為免費使用者只有兩個分類可以使用，所以新增分類失敗，如果你需要更多的分類來整理筆記，一個月只需要 $ 99 元，就能使用無限多的分類，請點擊這則訊息進入到付款流程。", HttpStatusCode.ExpectationFailed);
+                // throw new MindnoteException("Add board deny, because free account only have two boards. If you need to create new board, join us just pay $3 per month to subscribe our service.", HttpStatusCode.ExpectationFailed);
+                throw new MindnoteException("因為免費使用者只有兩個分類可以使用，所以新增分類失敗，如果你需要更多的分類來整理筆記，一個月只需要 $ 99 元，就能使用無限多的分類，請點擊這則訊息進入到付款流程。", HttpStatusCode.ExpectationFailed);
             }
 
             board newBoard = new board { title = body.title, uniquename = body.uniquename, owner_id = userId };

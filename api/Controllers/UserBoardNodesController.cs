@@ -6,22 +6,22 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-using Mindmap.Models;
-using Mindmap.Services;
+using Mindnote.Models;
+using Mindnote.Services;
 
 using Newtonsoft.Json.Linq;
 
-namespace Mindmap.Controllers
+namespace Mindnote.Controllers
 {
     [Authorize]
-    [Route("mindmap/api/v1/users/me/boards/{boardId}/nodes/")]
+    [Route("mindnote/api/v1/users/me/boards/{boardId}/nodes/")]
     [ApiController]
     public class UserBoardNodesController : ControllerBase
     {
-        private readonly MindmapContext _context;
-        private readonly MindmapContextForView _contextForView;
+        private readonly MindnoteContext _context;
+        private readonly MindnoteContextForView _contextForView;
         private readonly UserService _userService;
-        public UserBoardNodesController(MindmapContext context, MindmapContextForView contextForView, UserService userService)
+        public UserBoardNodesController(MindnoteContext context, MindnoteContextForView contextForView, UserService userService)
         {
             _context = context;
             _contextForView = contextForView;
@@ -38,7 +38,7 @@ namespace Mindmap.Controllers
 
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             List<view_node> nodes = _contextForView.view_node.Where(x => x.board_id == board.id && x.deleted_at == null).ToList();
@@ -57,7 +57,7 @@ namespace Mindmap.Controllers
 
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             node newNode = new node { title = node.title, description = node.description, owner_id = userId, board_id = board.id };
@@ -86,7 +86,7 @@ namespace Mindmap.Controllers
 
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             var nodes = ((JArray)requestBody.nodes).ToList();
             List<Int32> nodeIds = new List<Int32>();
@@ -112,7 +112,7 @@ namespace Mindmap.Controllers
             board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             int[] nodeIds = requestBody.nodeIds.ToObject<int[]>();

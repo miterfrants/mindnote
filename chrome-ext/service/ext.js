@@ -96,7 +96,7 @@ export const extService = {
         checkout: (data) => {
             chrome.tabs.create({
                 active: true,
-                url: remoteEndpoint + 'mindmap/checkout/?waiting=true'
+                url: remoteEndpoint + 'mindnote/checkout/?waiting=true'
             }, function (tab) {
                 chrome.tabs.executeScript(tab.id, {
                     code: `localStorage.setItem("token","${data.token}"); localStorage.setItem("profile_url","${data.profile_url}")`

@@ -4,7 +4,7 @@ export const RESPONSE_STATUS = {
 };
 
 export const API = {
-    ENDPOINT: 'https://sapiens.tools/mindmap/api/v1/',
+    ENDPOINT: 'https://sapiens.tools/mindnote/api/v1/',
     AUTHORIZED: {
         BOARDS: 'users/me/boards/',
         BOARD: 'users/me/boards/{boardId}/',

@@ -1,45 +1,37 @@
 import {
     UserBoard
-} from '/mindmap/controller/user-board.js';
+} from '/mindnote/controller/user-board.js';
 
 import {
     Header
-} from '/mindmap/controller/header.js';
+} from '/mindnote/controller/header.js';
 
 import {
     Board
-} from '/mindmap/controller/board.js';
+} from '/mindnote/controller/board.js';
 
 import {
     Checkout
-} from '/mindmap/controller/checkout.js';
+} from '/mindnote/controller/checkout.js';
 
 import {
     UserBoards
-} from '/mindmap/controller/user-boards.js';
+} from '/mindnote/controller/user-boards.js';
 
 import {
     Me
-} from '/mindmap/controller/me.js';
-
-import {
-    Test
-} from '/mindmap/controller/test/test.js';
-
-import {
-    TestBoard
-} from '/mindmap/controller/test/board/board.js';
+} from '/mindnote/controller/me.js';
 
 import {
     api
-} from '/mindmap/service/api.v2.js';
+} from '/mindnote/service/api.v2.js';
 
 import {
     RESPONSE_STATUS
-} from '/mindmap/config.js';
+} from '/mindnote/config.js';
 
 export const Router = [{
-    path: '/mindmap/',
+    path: '/mindnote/',
     controller: Header,
     dependency: [{
         url: 'https://apis.google.com/js/api.js',
@@ -71,7 +63,7 @@ export const Router = [{
             path: 'boards/{boardId}/',
             controller: UserBoard,
             dependency: [{
-                url: '/mindmap/third-party/cyto/cytoscape.min.js',
+                url: '/mindnote/third-party/cyto/cytoscape.min.js',
                 checkVariable: 'cytoscape'
             }, {
                 url: 'https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js',
@@ -82,7 +74,7 @@ export const Router = [{
         path: 'boards/{boardId}/',
         controller: Board,
         dependency: [{
-            url: '/mindmap/third-party/cyto/cytoscape.min.js',
+            url: '/mindnote/third-party/cyto/cytoscape.min.js',
             checkVariable: 'cytoscape'
         }, {
             url: 'https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js',
@@ -97,14 +89,5 @@ export const Router = [{
             url: 'https://js.tappaysdk.com/tpdirect/v5.1.0',
             checkVariable: 'TPDirect'
         }],
-    }, {
-        path: 'test/',
-        controller: Test,
-        html: '/mindmap/controller/test/test.html',
-        Router: [{
-            path: 'board/',
-            controller: TestBoard,
-            html: '/mindmap/controller/test/board/board.html',
-        }]
     }]
 }]

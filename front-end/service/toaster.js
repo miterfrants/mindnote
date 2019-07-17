@@ -1,7 +1,7 @@
 import {
     extendStringProtoType,
     extendHTMLElementProtoType
-} from '/mindmap/util/extended-prototype.js';
+} from '/mindnote/util/extended-prototype.js';
 
 extendStringProtoType();
 extendHTMLElementProtoType();

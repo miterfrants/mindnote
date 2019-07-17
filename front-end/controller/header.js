@@ -1,29 +1,29 @@
 import {
     UI
-} from '/mindmap/ui.js';
+} from '/mindnote/ui.js';
 
 import {
     GOOGLE,
     API,
     RESPONSE_STATUS
-} from '/mindmap/config.js';
+} from '/mindnote/config.js';
 
 import {
     api
-} from '/mindmap/service/api.v2.js';
+} from '/mindnote/service/api.v2.js';
 
 import {
     Route
-} from '/mindmap/service/route.js';
+} from '/mindnote/service/route.js';
 
 import {
     Toaster
-} from '/mindmap/service/toaster.js';
+} from '/mindnote/service/toaster.js';
 
 import {
-    MindmapError,
-    MINDMAP_ERROR_TYPE
-} from '/mindmap/util/mindmap-error.js';
+    MindnoteError,
+    MINDNOTE_ERROR_TYPE
+} from '/mindnote/util/mindnote-error.js';
 
 export class Header {
     constructor(args, context) {
@@ -88,14 +88,14 @@ export class Header {
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
-                Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '已完成退訂閱，下一期我們會停止扣款', 5000);
+                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '已完成退訂閱，下一期我們會停止扣款', 5000);
                 UI.unsubscribing();
                 return;
             } else {
                 if (resp.httpStatus === 417) {
-                    throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                    throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg);
                 } else {
-                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                    throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
                 }
             }
         });

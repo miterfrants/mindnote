@@ -8,28 +8,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-using Mindmap.Models;
-using Mindmap.Services;
-using Mindmap.Util;
-using Mindmap.Helpers;
+using Mindnote.Models;
+using Mindnote.Services;
+using Mindnote.Util;
+using Mindnote.Helpers;
 
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 
-namespace Mindmap.Controllers
+namespace Mindnote.Controllers
 {
     [Authorize]
-    [Route("mindmap/api/v1/users/")]
+    [Route("mindnote/api/v1/users/")]
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly MindmapContext _context;
-        private readonly MindmapContextForView _contextForView;
+        private readonly MindnoteContext _context;
+        private readonly MindnoteContextForView _contextForView;
         private readonly UserService _userService;
         private readonly string _GCPProjectId;
         private readonly string _GCSBucketName;
         private readonly string _GCSCredential;
-        public UserController(IOptions<AppSettings> appSetting, MindmapContext context, MindmapContextForView contextForView, UserService userService)
+        public UserController(IOptions<AppSettings> appSetting, MindnoteContext context, MindnoteContextForView contextForView, UserService userService)
         {
             _context = context;
             _contextForView = contextForView;
@@ -52,7 +52,7 @@ namespace Mindmap.Controllers
             view_user user = _contextForView.view_user.FirstOrDefault(x => x.id == userId);
             if (user == null)
             {
-                throw new MindMapException("你不是帳號的擁有者", HttpStatusCode.NotFound);
+                throw new MindnoteException("你不是帳號的擁有者", HttpStatusCode.NotFound);
             }
             else
             {
@@ -79,7 +79,7 @@ namespace Mindmap.Controllers
             view_user user = _contextForView.view_user.FirstOrDefault(x => x.id == userId);
             if (user == null)
             {
-                throw new MindMapException("你不是帳號的擁有者", HttpStatusCode.NotFound);
+                throw new MindnoteException("你不是帳號的擁有者", HttpStatusCode.NotFound);
             }
             GoogleCredential gc = GoogleCredential.FromJson(_GCSCredential);
             StorageClient client = StorageClient.Create(gc);
@@ -89,7 +89,7 @@ namespace Mindmap.Controllers
                 string contentType = requestBody.base64Files[i].contentType.Value;
                 if (!contentType.StartsWith("image/"))
                 {
-                    throw new MindMapException("你上傳了非圖片的檔案");
+                    throw new MindnoteException("你上傳了非圖片的檔案");
                 }
             }
 

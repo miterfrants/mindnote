@@ -5,15 +5,15 @@ const fs = require('fs');
 
 var fileServer = new staticAlias.Server('./', {
   alias: [{
-    match: /\/mindmap\/([a-z|A-Z|\-|_|0-9]+\/){0,}$/,
+    match: /\/mindnote\/([a-z|A-Z|\-|_|0-9]+\/){0,}$/,
     serve: 'index.html'
   }, {
-    match: /\/mindmap\/config.js$/,
+    match: /\/mindnote\/config.js$/,
     serve: 'config.dev.js'
   }, {
-    match: /\/mindmap\/([^\/]+\/)*([^\/]+)\.(js|css|png|woff2|woff|ttf)$/,
+    match: /\/mindnote\/([^\/]+\/)*([^\/]+)\.(js|css|png|woff2|woff|ttf)$/,
     serve: function (params) {
-      return params.reqPath.replace(/mindmap\//gi, '').substring(1);
+      return params.reqPath.replace(/mindnote\//gi, '').substring(1);
     },
   }]
 });

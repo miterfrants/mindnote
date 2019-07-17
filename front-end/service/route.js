@@ -1,12 +1,12 @@
 import {
     Loader
-} from '/mindmap/util/loader.js';
+} from '/mindnote/util/loader.js';
 
 import {
     Router
-} from '/mindmap/router.js';
+} from '/mindnote/router.js';
 
-window['MindmapController'] = [];
+window['MindnoteController'] = [];
 
 export const Route = {
     init: (context) => {
@@ -102,7 +102,7 @@ export const Route = {
     },
     executeController: (controller, args, context) => {
         // 如果已經有 instance 就不要在執行 initalize
-        const instances = window.MindmapController.filter((instance) => {
+        const instances = window.MindnoteController.filter((instance) => {
             return instance instanceof controller
         })
         // refactor: 修改成 controller 有自己的 html 
@@ -117,7 +117,7 @@ export const Route = {
         if (instances.length === 0) {
             // check pre function exists
             const controllerInstance = new controller(args, context);
-            window.MindmapController.push(controllerInstance);
+            window.MindnoteController.push(controllerInstance);
         } else {
             // refactor data from route?
             if (instances[0].run) {

@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System;
 using System.Net;
-using Mindmap.Util;
+using Mindnote.Util;
 
 public class ErrorHandlingMiddleware
 {
@@ -28,12 +28,12 @@ public class ErrorHandlingMiddleware
     private static Task HandleExceptionAsync(HttpContext context, Exception ex)
     {
         var code = HttpStatusCode.InternalServerError;
-        if (ex.GetType() == typeof(MindMapException))
+        if (ex.GetType() == typeof(MindnoteException))
         {
-            var mindMapEx = (MindMapException)ex;
-            if (mindMapEx.code != HttpStatusCode.OK)
+            var mindnoteEx = (MindnoteException)ex;
+            if (mindnoteEx.code != HttpStatusCode.OK)
             {
-                code = mindMapEx.code;
+                code = mindnoteEx.code;
             }
         }
         var result = new JSONResponse(JSONResponseStatus.FAILED, new { message = ex.Message, stackTrace = ex.StackTrace });

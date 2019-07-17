@@ -1,6 +1,6 @@
 using System;
 
-namespace Mindmap.Helpers
+namespace Mindnote.Helpers
 {
     public class AppSettings
     {

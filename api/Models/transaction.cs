@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Mindmap.Models
+namespace Mindnote.Models
 {
     public partial class transaction
     {

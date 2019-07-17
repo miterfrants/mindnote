@@ -1,21 +1,21 @@
 import {
     api
-} from '/mindmap/service/api.v2.js';
+} from '/mindnote/service/api.v2.js';
 import {
     RESPONSE_STATUS
-} from '/mindmap/config.js';
+} from '/mindnote/config.js';
 import {
-    MindmapError,
-    MINDMAP_ERROR_TYPE
-} from '/mindmap/util/mindmap-error.js';
+    MindnoteError,
+    MINDNOTE_ERROR_TYPE
+} from '/mindnote/util/mindnote-error.js';
 
 import {
     UI
-} from '/mindmap/ui.js';
+} from '/mindnote/ui.js';
 
 import {
     Toaster
-} from '/mindmap/service/toaster.js';
+} from '/mindnote/service/toaster.js';
 
 export class Checkout {
     constructor(args, context) {
@@ -67,16 +67,16 @@ export class Checkout {
     async run(args, context) {
         const me = args.me;
         if (me.is_subscribed) {
-            history.pushState({}, '', '/mindmap/users/me/boards/');
+            history.pushState({}, '', '/mindnote/users/me/boards/');
             if (me.is_next_subscribe) {
-                Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '你已經是訂閱用戶')
+                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '你已經是訂閱用戶')
             } else {
-                Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '目前你還是訂閱用戶，將在下一期取消訂閱')
+                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '目前你還是訂閱用戶，將在下一期取消訂閱')
             }
         }
         UI.header.generateNavigation([{
             title: '我的分類',
-            link: '/mindmap/users/me/boards/'
+            link: '/mindnote/users/me/boards/'
         }]);
         const container = document.querySelector('.router-checkout');
         container.querySelector('#card_holder').value = me.fullname;
@@ -104,11 +104,11 @@ export class Checkout {
             // 確認是否可以 getPrime
             if (tappayStatus.canGetPrime === false) {
                 if (tappayStatus.status.number !== 0) {
-                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, '信用卡卡號錯誤')
+                    Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '信用卡卡號錯誤')
                 } else if (tappayStatus.status.expiry !== 0) {
-                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, '不正確的過期時間')
+                    Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '不正確的過期時間')
                 } else if (tappayStatus.status.ccv !== 0) {
-                    Toaster.popup(MINDMAP_ERROR_TYPE.WARN, '卡片背面三碼錯誤')
+                    Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '卡片背面三碼錯誤')
                 }
                 elBtnSubscribe.removeClass('disabled');
                 elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';
@@ -121,7 +121,7 @@ export class Checkout {
                     elBtnSubscribe.removeClass('disabled');
                     elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';
                     clearTimeout(this.appendDOtCycleTimer);
-                    throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, result.msg);
+                    throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, result.msg);
                 }
 
                 const card_holder = document.querySelector('#card_holder').value;
@@ -140,13 +140,13 @@ export class Checkout {
                 elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';
                 clearTimeout(this.appendDOtCycleTimer);
                 if (resp.status === RESPONSE_STATUS.OK) {
-                    history.pushState({}, '', '/mindmap/users/me/boards/');
-                    Toaster.popup(MINDMAP_ERROR_TYPE.INFO, '感謝你的訂閱');
+                    history.pushState({}, '', '/mindnote/users/me/boards/');
+                    Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '感謝你的訂閱');
                 } else {
                     if (resp.httpStatus === 417) {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.WARN, resp.data.errorMsg);
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg);
                     } else {
-                        throw new MindmapError(MINDMAP_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
                     }
                 }
             });

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-using Mindmap.Models;
+using Mindnote.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
@@ -11,19 +11,19 @@ using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using Mindmap.Services;
+using Mindnote.Services;
 
-namespace Mindmap.Controllers
+namespace Mindnote.Controllers
 {
     [Authorize]
-    [Route("mindmap/api/v1/auth/")]
+    [Route("mindnote/api/v1/auth/")]
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly MindmapContext _context;
+        private readonly MindnoteContext _context;
         private readonly UserService _userService;
 
-        public AuthController(MindmapContext context, UserService userService)
+        public AuthController(MindnoteContext context, UserService userService)
         {
             _context = context;
             _userService = userService;

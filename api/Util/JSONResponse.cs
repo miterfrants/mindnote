@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 using System;
-namespace Mindmap.Util
+namespace Mindnote.Util
 {
     public class JSONResponse
     {

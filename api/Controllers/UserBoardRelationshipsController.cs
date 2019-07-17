@@ -8,21 +8,21 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 
-using Mindmap.Models;
-using Mindmap.Services;
-using Mindmap.Util;
+using Mindnote.Models;
+using Mindnote.Services;
+using Mindnote.Util;
 
-namespace Mindmap.Controllers
+namespace Mindnote.Controllers
 {
     [Authorize]
-    [Route("mindmap/api/v1/users/me/boards/{boardId}/relationship/")]
+    [Route("mindnote/api/v1/users/me/boards/{boardId}/relationship/")]
     [ApiController]
     public class UserBoardRelationshipsController : ControllerBase
     {
-        private readonly MindmapContext _context;
-        private readonly MindmapContextForView _contextForView;
+        private readonly MindnoteContext _context;
+        private readonly MindnoteContextForView _contextForView;
         private readonly UserService _userService;
-        public UserBoardRelationshipsController(MindmapContext context, MindmapContextForView contextForView, UserService userService)
+        public UserBoardRelationshipsController(MindnoteContext context, MindnoteContextForView contextForView, UserService userService)
         {
             _context = context;
             _contextForView = contextForView;
@@ -39,7 +39,7 @@ namespace Mindmap.Controllers
 
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             return _contextForView.view_node_relationship.Where(x => x.board_id == board.id).ToList();
@@ -55,7 +55,7 @@ namespace Mindmap.Controllers
 
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
 
             int[] relationshipIds = requestBody.relationshipIds.ToObject<int[]>();
@@ -78,7 +78,7 @@ namespace Mindmap.Controllers
 
             if (board == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             int parentNodeId = (int)body.parent_node_id;
             int childNodeId = (int)body.child_node_id;
@@ -86,7 +86,7 @@ namespace Mindmap.Controllers
 
             if (isExists)
             {
-                throw new MindMapException("關聯建立失敗，不能重複建立連線", HttpStatusCode.ExpectationFailed);
+                throw new MindnoteException("關聯建立失敗，不能重複建立連線", HttpStatusCode.ExpectationFailed);
             }
 
             node_relationship nodeRelationship = new node_relationship { parent_node_id = body.parent_node_id, child_node_id = body.child_node_id };

@@ -2,15 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Mindmap.Models
+namespace Mindnote.Models
 {
-    public partial class MindmapContext : DbContext
+    public partial class MindnoteContext : DbContext
     {
-        public MindmapContext()
+        public MindnoteContext()
         {
         }
 
-        public MindmapContext(DbContextOptions<MindmapContext> options)
+        public MindnoteContext(DbContextOptions<MindnoteContext> options)
             : base(options)
         {
         }

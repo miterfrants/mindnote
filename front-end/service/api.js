@@ -1,7 +1,7 @@
 let _API, _RESPONSE_STATUS;
 import {
     extendStringProtoType
-} from '/mindmap/util/extended-prototype.js';
+} from '/mindnote/util/extended-prototype.js';
 extendStringProtoType();
 
 export const authApiService = {

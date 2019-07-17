@@ -6,21 +6,21 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
-using Mindmap.Models;
-using Mindmap.Services;
-using Mindmap.Util;
+using Mindnote.Models;
+using Mindnote.Services;
+using Mindnote.Util;
 
-namespace Mindmap.Controllers
+namespace Mindnote.Controllers
 {
     [Authorize]
-    [Route("mindmap/api/v1/users/me/boards/{boardId}/nodes/{nodeId}/")]
+    [Route("mindnote/api/v1/users/me/boards/{boardId}/nodes/{nodeId}/")]
     [ApiController]
     public class UserBoardNodeController : ControllerBase
     {
-        private readonly MindmapContext _context;
-        private readonly MindmapContextForView _contextForView;
+        private readonly MindnoteContext _context;
+        private readonly MindnoteContextForView _contextForView;
         private readonly UserService _userService;
-        public UserBoardNodeController(MindmapContext context, MindmapContextForView contextForView, UserService userService)
+        public UserBoardNodeController(MindnoteContext context, MindnoteContextForView contextForView, UserService userService)
         {
             _context = context;
             _contextForView = contextForView;
@@ -37,7 +37,7 @@ namespace Mindmap.Controllers
 
             if (node == null)
             {
-                throw new MindMapException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             if (requestBody.title != null)
             {
@@ -76,7 +76,7 @@ namespace Mindmap.Controllers
 
             if (node is null)
             {
-                throw new MindMapException("筆記已經找不到了 Q_Q", HttpStatusCode.NotFound);
+                throw new MindnoteException("筆記已經找不到了 Q_Q", HttpStatusCode.NotFound);
             }
             else
             {

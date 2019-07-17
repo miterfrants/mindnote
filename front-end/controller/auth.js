@@ -1,6 +1,6 @@
 import {
     UI
-} from '/mindmap/ui.js';
+} from '/mindnote/ui.js';
 export const Auth = (controller, args, context) => {
     const init = async () => {
         const token = localStorage.getItem('token');

@@ -12,7 +12,7 @@
 
 ## Build a Docker Image
 ```
-docker build -t mindmap
+docker build -t mindnote
 ```
 
 ## Launch Docker container
@@ -24,8 +24,8 @@ docker run \
 -d \
 --rm \
 -v ${your secrets.json folder}:/app/volume \
---name mindmap-api-server \
--p 8081:8081 mindmap-api-server \
+--name mindnote-api-server \
+-p 8081:8081 mindnote-api-server \
 --use-database-names
 ```
 
@@ -67,7 +67,7 @@ docker run \
 --network pgnetwork \
 -d \
 --rm \
--v /srv/mindmap:/app/volume \
---name mindmap-api-server \
--p 8081:8081 mindmap-api-server
+-v /srv/mindnote:/app/volume \
+--name mindnote-api-server \
+-p 8081:8081 mindnote-api-server
 ```

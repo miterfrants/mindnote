@@ -1,4 +1,4 @@
-namespace Mindmap.Constants
+namespace Mindnote.Constants
 {
     public static class CustomClaimTypes
     {
