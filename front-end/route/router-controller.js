@@ -1,7 +1,6 @@
 window['MindnoteStylesheet'] = [];
 export class RouterController {
     constructor(elHTML, parentController, args, context) {
-        console.log('constructor: ' + this.constructor.name);
         this.elHTML = elHTML;
         this.args = args;
         this.context = context;
@@ -13,7 +12,6 @@ export class RouterController {
         }
     }
     enter(args) {
-        console.log('enter: ' + this.constructor.name);
         this.args = args;
         if (this.elHTML !== null) {
             revertOriginalChildRouter(this);
