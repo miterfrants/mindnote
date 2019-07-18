@@ -28,20 +28,25 @@ import {
     Image
 } from '/mindnote/service/image.js';
 
-export class UserBoard {
-    constructor(args, context) {
-        this.init(args, context);
-        this.run(args, context);
-    }
-    async init(args, context) {
-        this.cy = null;
-        this._bindEvent();
-    }
-    async run(args, context) {
+import {
+    RouterController
+} from '/mindnote/route/router-controller.js';
+
+export class MyBoard extends RouterController {
+    constructor(elHTML, parentController, args, context) {
+        super(elHTML, parentController, args, context);
         this.token = args.token;
         this.boardId = args.boardId;
-        this.board;
+        this.board = null;
         this.deletedMode = false;
+        this.md = window.markdownit();;
+        this.cy = null;
+        this.bindEvent();
+    }
+
+    async enter(args) {
+        super.enter(args);
+        this.boardId = this.args.boardId;
         if (this.token) {
             if (this.cy) {
                 this.cy.destroy();
@@ -79,9 +84,24 @@ export class UserBoard {
         }
     }
 
-    _bindEvent() {
+    bindEvent() {
         const elController = document.querySelector('.router-user-board');
         const elNodeForm = elController.querySelector('.node-form');
+        this.elHTML.querySelector('textarea').addEventListener('keyup', (e) => {
+            const detail = this.md.render(e.currentTarget.value);
+            this.elHTML.querySelector('.markdown-container').innerHTML = detail;
+        });
+
+        this.elHTML.querySelector('.btn-fullscreen').addEventListener('click', (e) => {
+            if (this.elHTML.querySelector('.node-form').classExists('fullscreen')) {
+                UI.nodeForm.exitFullscreen(this.elHTML);
+            } else {
+                const detail = this.md.render(this.elHTML.querySelector('textarea').value);
+                this.elHTML.querySelector('.markdown-container').innerHTML = detail;
+                UI.nodeForm.enterFullscreen(this.elHTML);
+            }
+        });
+
         document.querySelector('.btn-add').addEventListener('click', async (e) => {
             const title = document.querySelector('.title').value;
             const description = document.querySelector('.description').value;
@@ -153,12 +173,28 @@ export class UserBoard {
             }
         });
         document.querySelector('.btn-delete-change').addEventListener('click', async (e) => {
-            const nodeIds = this.cy.$('node.deleting').map((node) => {
+            let nodeIds = this.cy.$('node.deleting').map((node) => {
                 return node.data('id').replace('node-', '');
             });
 
-            const relationshipIds = this.cy.$('edge.deleting').map((edge) => {
+            let relationshipIds = this.cy.$('edge.deleting').map((edge) => {
                 return edge.data('id').replace('edge-', '');
+            });
+
+            nodeIds = nodeIds.filter((id) => {
+                if (id.indexOf('preview') !== -1) {
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+
+            relationshipIds = relationshipIds.filter((id) => {
+                if (id.indexOf('preview') !== -1) {
+                    return false;
+                } else {
+                    return true;
+                }
             });
             if (nodeIds.length > 0) {
                 const respForDeleteNode = await api.authApiService.nodes.delete({

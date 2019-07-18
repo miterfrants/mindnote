@@ -1,6 +1,6 @@
 import {
     Route
-} from '/mindnote/service/route.js';
+} from '/mindnote/route/route.js';
 
 import {
     RESPONSE_STATUS,

@@ -233,11 +233,9 @@ export const UI = {
         if (nodeId.length > 0) {
             document.querySelector('.btn-update').removeClass('hide');
             document.querySelector('.btn-add').addClass('hide');
-            document.querySelector('.btn-delete').removeClass('hide');
         } else {
             document.querySelector('.btn-update').addClass('hide');
             document.querySelector('.btn-add').removeClass('hide');
-            document.querySelector('.btn-delete').addClass('hide');
         }
         let estimateTop = position.y - document.querySelector('.node-form').offsetHeight - 10;;
         let estimateLeft = position.x - document.querySelector('.node-form').offsetWidth / 2;
@@ -281,12 +279,12 @@ export const UI = {
     },
     hideNodeForm: () => {
         document.querySelector('.btn-add').addClass('hide');
-        document.querySelector('.btn-delete').addClass('hide');
         document.querySelector('.node-form').addClass('hide');
         document.querySelector('.btn-update').addClass('hide');
         document.querySelector('.title').value = '';
         document.querySelector('.description').value = '';
-        document.querySelector('.node-id').value = ''
+        document.querySelector('.node-id').value = '';
+        UI.nodeForm.exitFullscreen(document.querySelector('.my-board'));
 
         const mask = document.querySelector('.mask');
         mask.style.opacity = 0;
@@ -296,7 +294,7 @@ export const UI = {
         UI.nodeForm.resetDragDropState();
     },
     openNodeWindow: (title, description) => {
-        const w = 400;
+        const w = 600;
         const dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : window.screenX;
 
         const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
@@ -306,10 +304,17 @@ export const UI = {
         const left = (width - w) / 2 / systemZoom + dualScreenLeft
         const top = 0
         const newWindow = window.open('', title, 'id=popup-mindnote, scrollbars=yes, width=' + w / systemZoom + ', height=' + height / systemZoom + ', top=' + top + ', left=' + left);
-        const template = '<style>img {width: 100%}</style><h1>{title}</h1><p style="line-height: 1.6em; letter-spacing: 0.05em; word-break: break-word;">{desc}</p>'
+        const template = [
+            '<link rel="stylesheet" type="text/css" href="' + location.origin + '/mindnote/css/common.css">',
+            '<div class="md">',
+            '<h1>{title}</h1>',
+            '{desc}',
+            '</div>'
+        ].join('');
         const md = window.markdownit();
         const detail = md.render(description);
-        const result = template.replace(/{title}/gi, title)
+        const result = template
+            .replace(/{title}/gi, title)
             .replace(/{desc}/gi, detail);
         newWindow.document.querySelector("body").innerHTML = result;
         newWindow.document.querySelector("head").innerHTML = "<title>" + title + "</title>"
@@ -325,7 +330,7 @@ export const UI = {
     },
     generateUserBoards: (boards) => {
         const eles = [];
-        const boardsEle = document.querySelector('.router-user-boards')
+        const boardsEle = document.querySelector('.my-boards')
         const containerEle = boardsEle.querySelector('.container .row');
         boardsEle.querySelectorAll('.container .row > div:not(.template):not(.btn-virtual-add-board)').forEach((el) => {
             containerEle.removeChild(el);
@@ -342,7 +347,7 @@ export const UI = {
         return eles;
     },
     addBoard: (board) => {
-        const boardsEle = document.querySelector('.router-user-boards')
+        const boardsEle = document.querySelector('.my-boards')
         const containerEle = boardsEle.querySelector('.container .row');
         const template = containerEle.querySelector('.template').outerHTML;
         board.link = `/mindnote/users/me/boards/${board.id}/`;
@@ -450,6 +455,16 @@ export const UI = {
         },
         dragLeaveUploadDescriptionImage: () => {
             document.querySelector('.node-form .drop-to-upload-description').removeClass('drag-enter');
+        },
+        enterFullscreen: (container) => {
+            container.querySelector('.node-form').addClass('fullscreen');
+            container.querySelector('.btn-fullscreen').removeClass('fa-expand-arrows-alt');
+            container.querySelector('.btn-fullscreen').addClass('fa-compress-arrows-alt');
+        },
+        exitFullscreen: (container) => {
+            container.querySelector('.node-form').removeClass('fullscreen');
+            container.querySelector('.btn-fullscreen').addClass('fa-expand-arrows-alt');
+            container.querySelector('.btn-fullscreen').removeClass('fa-compress-arrows-alt');
         }
     }
 }

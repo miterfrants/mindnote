@@ -14,22 +14,27 @@ import {
     MindnoteError,
     MINDNOTE_ERROR_TYPE
 } from '/mindnote/util/mindnote-error.js';
+
 import {
     Toaster
 } from '/mindnote/service/toaster.js';
 
-export class UserBoards {
-    constructor(args, context) {
-        this.init(args, context);
-        this.run(args, context);
+import {
+    RouterController
+} from '/mindnote/route/router-controller.js';
+
+export class MyBoards extends RouterController {
+    constructor(elHTML, parentController, args, context) {
+        super(elHTML, parentController, args, context);
+        this.token = args.token;
+        this.bindEvent();
     }
-    async init(args, context) {
-        this._bindEvent();
-    }
-    async run(args, context) {
+
+    async enter(args) {
+        super.enter(args);
         this.continueDeleteCount = 0;
         const resp = await api.authApiService.boards.get({
-            ...args,
+            ...this.args,
         });
 
         if (resp.status === RESPONSE_STATUS.FAILED) {
@@ -40,7 +45,6 @@ export class UserBoards {
             }
         }
 
-        this.token = args.token;
         UI.header.generateNavigation([{
             title: '我的分類'
         }]);
@@ -49,7 +53,7 @@ export class UserBoards {
         });
     }
 
-    _bindEvent() {
+    bindEvent() {
         this.initBoardCard(document.querySelector('.btn-virtual-add-board'));
     }
 
@@ -57,7 +61,7 @@ export class UserBoards {
         let isPublic = !(elBoardCard.dataset['is_public'] === 'true');
         UI.setBoardPublicPermission(elBoardCard, isPublic);
         let resp = await api.authApiService.board.patch({
-            token: this.token,
+            token: this.args.token,
             boardId: elBoardCard.dataset['id'],
             is_public: isPublic
         });
@@ -234,7 +238,7 @@ export class UserBoards {
                     }
 
                 } else if (e.keyCode === 27 && isComposing === false) {
-                    UI.hideBoardForm();
+                    UI.hideBoardForm(elBoardCard);
                 }
                 if (e.isComposing) {
                     e.currentTarget.dataset['isComposing'] = true;

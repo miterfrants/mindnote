@@ -1,0 +1,42 @@
+.cy-edit-mode,
+.cy {
+    height: calc(100% - 52px);
+    width: 100%;
+}
+
+.function-buttons {
+    position: fixed;
+    z-index: 2;
+    left: 15px;
+    top: 50;
+}
+
+.function-buttons>* {
+    margin-top: 20px;
+}
+
+.function-buttons button {
+    display: block;
+    background: #24c0c1;
+    color: white;
+    border-radius: 30px;
+    border: none;
+    padding: 10px 20px;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.function-buttons .btn-copy-shared-link {
+    width: 160px;
+    overflow: hidden;
+    height: 37px;
+}
+
+.function-buttons .btn-copy-shared-link.copied {
+    background: #fac32d;
+}
+
+.function-buttons .btn-delete-change {
+    background: #fac32d;
+}

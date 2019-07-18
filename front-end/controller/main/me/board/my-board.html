@@ -1,0 +1,46 @@
+<div class="router-user-board my-board">
+    <link rel="stylesheet" type="text/css" href="/mindnote/controller/main/me/board/my-board.css">
+    <link rel="stylesheet" type="text/css" href="/mindnote/css/cyto.css">
+    <div class="cy-edit-mode"></div>
+    <div class="mask hide"></div>
+    <div class="function-buttons">
+        <div class="switch-delete-mode ">
+            <div class="vert-mid">
+                <div class="btn-switch-delete-mode toggle-button ">
+                </div>
+                <span class="mode-name marg-l-10">一般模式</span>
+            </div>
+            <button class="btn-delete-change hide marg-t-20" type="button">
+                <i class="fas fa-eraser"></i>
+                <span>刪除資料</span>
+            </button>
+        </div>
+        <button class="btn-layout auth" type="button">
+            <i class="fas fa-share-alt"></i>
+            重新排列
+        </button>
+        <button class="auth btn-copy-shared-link" type="button">
+            <i class="fas fa-share-square"></i>
+            <span>複製公開連結</span>
+        </button>
+    </div>
+
+    <div class="node-form hide">
+        <button class="btn-fullscreen fas fa-expand-arrows-alt">
+        </button>
+        <button class="btn-close fa fa-times"></button>
+        <input class="node-id" type="hidden" />
+        <input placeholder="標題" id="node-title" class="title" type="text" />
+        <div class="markdown relative">
+            <textarea placeholder="內容" id="node-description" class="description marg-t-10"></textarea>
+            <div class="markdown-container md marg-t-10"></div>
+        </div>
+        <button class="btn-add hide">新增</button>
+        <button class="btn-update hide">更新</button>
+        <div class="drag-overlay hide">檔案拖到此處上傳</div>
+        <div class="drag-overlay-detail-section hide">
+            <div class="drop-to-upload-cover">上傳封面</div>
+            <div class="drop-to-upload-description">上傳圖片到筆記內容</div>
+        </div>
+    </div>
+</div>

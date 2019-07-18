@@ -4,7 +4,7 @@ import {
 
 import {
     Router
-} from '/mindnote/router.js';
+} from '/mindnote/route/router.js';
 
 window['MindnoteController'] = [];
 
@@ -47,7 +47,7 @@ export const Route = {
             return;
         }
     },
-    routing: async (path, routingTable, context, args, pMatchRouter) => {
+    routing: async (path, routingTable, context, args, pMatchRouter, pParentController) => {
         const matchRouter = pMatchRouter ? pMatchRouter : Route.findMatchRoute(path, routingTable);
         const isEnd = matchRouter.Router === undefined
         const regexp = Route.buildRegExp(matchRouter.path, isEnd);
@@ -74,7 +74,12 @@ export const Route = {
         }
 
         // execute controller
-        Route.executeController(matchRouter.controller, args, context)
+        let htmlPath = null;
+        if (matchRouter.html) {
+            htmlPath = matchRouter.html;
+        }
+        // assign parent controller to next level controller instance
+        const parentController = await Route.executeController(matchRouter.controller, args, context, htmlPath, pParentController)
 
         // next routing
         const currentPath = path.replace(regexp, '');
@@ -87,7 +92,7 @@ export const Route = {
             !nextMatchRouter.isRequiredParentPrepareData ||
             (nextMatchRouter.isRequiredParentPrepareData === true && !someThingWrongInPrepareData)
         ) {
-            Route.routing(currentPath, matchRouter.Router, context, args, nextMatchRouter)
+            Route.routing(currentPath, matchRouter.Router, context, args, nextMatchRouter, parentController)
         }
     },
     findMatchRoute: (currentPath, routingTable) => {
@@ -100,30 +105,27 @@ export const Route = {
             }
         }
     },
-    executeController: (controller, args, context) => {
+    executeController: async (controller, args, context, htmlPath, parentController) => {
         // 如果已經有 instance 就不要在執行 initalize
         const instances = window.MindnoteController.filter((instance) => {
             return instance instanceof controller
         })
-        // refactor: 修改成 controller 有自己的 html 
-        const className = controller.name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
-        document.querySelectorAll(`.router-${className}`).forEach((el) => {
-            el.removeClass('hide');
-        });
-        document.querySelectorAll(`div[class^="router-"]:not(.router-${className})`).forEach((el) => {
-            el.addClass('hide');
-        });
-
+        let controllerInstance = null;
+        let elHTML = null;
         if (instances.length === 0) {
-            // check pre function exists
-            const controllerInstance = new controller(args, context);
+            if (htmlPath) {
+                const resp = await fetch(htmlPath);
+                const html = await resp.text();
+                elHTML = html.toDom();
+            }
+            controllerInstance = new controller(elHTML, parentController, args, context);
             window.MindnoteController.push(controllerInstance);
         } else {
             // refactor data from route?
-            if (instances[0].run) {
-                instances[0].run(args, instances[0].context);
-            }
+            controllerInstance = instances[0];
         }
+        controllerInstance.enter(args);
+        return controllerInstance;
     },
     prepareData: async (prepareFuncs, args) => {
         return new Promise(async (resolve, reject) => {
