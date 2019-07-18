@@ -85,6 +85,9 @@ export const Route = {
         const currentPath = path.replace(regexp, '');
         if (currentPath.length === 0) {
             // exit routing
+            document.querySelectorAll('.child-router').forEach((el) => {
+                el.style.display = '';
+            })
             return;
         }
         const nextMatchRouter = Route.findMatchRoute(currentPath, matchRouter.Router);
