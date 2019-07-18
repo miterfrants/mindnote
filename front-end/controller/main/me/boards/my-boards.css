@@ -1,0 +1,135 @@
+.my-boards .container .row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.my-boards .container .row .btn-virtual-add-board {
+    width: 200px;
+    height: 200px;
+    margin: 10px 10px;
+    border: 1px dashed #ccc;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 30px;
+    color: #24c0c2;
+    padding: 0;
+    display: block;
+    overflow: hidden;
+}
+
+.my-boards .container .row .btn-virtual-add-board .inner>.btn-switch-edit-mode {
+    width: 100%;
+}
+
+.my-boards .container .row .btn-virtual-add-board .inner>.btn-switch-edit-mode::before {
+    display: block;
+    height: 200px;
+    line-height: 200px;
+    text-align: center;
+}
+
+.my-boards .board-card {
+    display: block;
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    text-align: center;
+    margin: 10px 10px;
+    position: relative;
+    transition: border-color 0.3s;
+}
+
+.my-boards .board-card.private::after {
+    display: block;
+    content: '';
+}
+
+.my-boards .board-card.private {
+    border-color: #fac32d;
+}
+
+.my-boards .board-card .fa-edit {
+    font-size: 23px;
+    padding: 10px;
+    border: none;
+    color: #24c0c2;
+    background: transparent;
+}
+
+.my-boards .board-card .title {
+    display: block;
+    padding-top: 15px;
+    height: 120px;
+    overflow: hidden;
+    background: #EEE;
+}
+
+.my-boards .board-card .btn-toggle-permission {
+    margin-left: 10px;
+}
+
+.my-boards .show-form .inner {
+    top: -198px;
+}
+
+.my-boards .show-form .board-form {
+    display: block;
+}
+
+.my-boards .hide-form .inner {
+    top: 0;
+}
+
+.my-boards .board-form {
+    position: absolute;
+    display: none;
+    height: 100%;
+    width: 100%;
+}
+
+.my-boards .board-form input {
+    padding: 10px 10px;
+    width: calc(100% - 20px);
+    background: transparent;
+    border-radius: 5px;
+    box-shadow: none;
+    border: 1px solid #ccc;
+    margin-top: 20px;
+    display: block;
+    margin: 8px auto;
+}
+
+.my-boards .board-form .btn-add-board,
+.my-boards .board-form .btn-update-board {
+    position: absolute;
+    bottom: 0;
+    width: 202px;
+    left: 0;
+    padding: 10px;
+    background: rgb(35, 192, 193);
+    color: white;
+    margin-left: -1px;
+}
+
+.my-boards .board-form .btn-delete-board {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    margin: 10px 15px;
+}
+
+.my-boards .inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: top 0.30s;
+    top: 0px;
+}
+
+.my-borads .inner>* {
+    width: 200px;
+    height: 200px;
+    display: block;
+}

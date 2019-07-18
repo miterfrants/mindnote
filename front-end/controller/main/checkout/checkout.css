@@ -1,0 +1,51 @@
+.checkout label {
+    display: block;
+    width: 302px;
+    margin: 20px auto;
+}
+
+.checkout label .label-title {
+    color: #2a2a2a;
+    padding-left: 18px;
+}
+
+.checkout label input,
+.checkout label .tpfield {
+    width: 302px;
+    border: 1px solid #ccc;
+    border-radius: 36px;
+    font-size: 14px;
+    padding: 15px 20px;
+    color: #2a2a2a;
+    margin: 5px 0;
+}
+
+.checkout label .tpfield {
+    height: 28px;
+    border: 1px solid #ccc;
+    margin: 5px 0;
+    padding: 10px 20px;
+    width: 259px;
+}
+
+.checkout label input::placeholder {
+    color: #ccc;
+}
+
+.checkout .btn-subscribe {
+    background: #24c0c1;
+    width: 300px;
+    padding: 19px 10px;
+    position: relative;
+    overflow: hidden;
+    margin: 60px auto;
+    display: block;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-weight: bold;
+}
+
+.checkout .btn-subscribe.disabled {
+    background: #ccc;
+}

@@ -1,26 +1,26 @@
 import {
-    UserBoard
-} from '/mindnote/controller/user-board.js';
-
-import {
-    Header
-} from '/mindnote/controller/header.js';
-
-import {
-    Board
-} from '/mindnote/controller/board.js';
-
-import {
-    Checkout
-} from '/mindnote/controller/checkout.js';
-
-import {
-    UserBoards
-} from '/mindnote/controller/user-boards.js';
+    Main
+} from '/mindnote/controller/main/main.js';
 
 import {
     Me
-} from '/mindnote/controller/me.js';
+} from '/mindnote/controller/main/me/me.js';
+
+import {
+    MyBoards
+} from '/mindnote/controller/main/me/boards/my-boards.js';
+
+import {
+    MyBoard
+} from '/mindnote/controller/main/me/board/my-board.js';
+
+import {
+    Board
+} from '/mindnote/controller/main/board/board.js';
+
+import {
+    Checkout
+} from '/mindnote/controller/main/checkout/checkout.js';
 
 import {
     api
@@ -32,7 +32,8 @@ import {
 
 export const Router = [{
     path: '/mindnote/',
-    controller: Header,
+    controller: Main,
+    html: '/mindnote/controller/main/main.html',
     dependency: [{
         url: 'https://apis.google.com/js/api.js',
         checkVariable: 'gapi'
@@ -58,10 +59,12 @@ export const Router = [{
         controller: Me,
         Router: [{
             path: 'boards/',
-            controller: UserBoards
+            controller: MyBoards,
+            html: '/mindnote/controller/main/me/boards/my-boards.html'
         }, {
             path: 'boards/{boardId}/',
-            controller: UserBoard,
+            controller: MyBoard,
+            html: '/mindnote/controller/main/me/board/my-board.html',
             dependency: [{
                 url: '/mindnote/third-party/cyto/cytoscape.min.js',
                 checkVariable: 'cytoscape'
@@ -73,6 +76,7 @@ export const Router = [{
     }, {
         path: 'boards/{boardId}/',
         controller: Board,
+        html: '/mindnote/controller/main/board/board.html',
         dependency: [{
             url: '/mindnote/third-party/cyto/cytoscape.min.js',
             checkVariable: 'cytoscape'
@@ -83,6 +87,7 @@ export const Router = [{
     }, {
         path: 'checkout/',
         controller: Checkout,
+        html: '/mindnote/controller/main/checkout/checkout.html',
         // 如果 parent prepareData funcs 發生錯誤，這個 controller 就不會執行
         isRequiredParentPrepareData: true,
         dependency: [{

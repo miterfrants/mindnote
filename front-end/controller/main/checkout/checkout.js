@@ -17,12 +17,16 @@ import {
     Toaster
 } from '/mindnote/service/toaster.js';
 
-export class Checkout {
-    constructor(args, context) {
-        this.init(args, context);
-        this.run(args, context);
-    }
-    async init(args, context) {
+import {
+    RouterController
+} from '/mindnote/route/router-controller.js';
+
+export class Checkout extends RouterController {
+    constructor(elHTML, parentController, args, context) {
+        super(elHTML, parentController, args, context);
+        this.token = args.token;
+        this.me = args.me;
+        this.appendDotCycleTimer;
         TPDirect.setupSDK(13848, 'app_N9VZ8fjo8HLgqx882iYUeaH7BgXlIW8TeZ8CF4wlvKo0mP82CKxAKLT50rRq', 'sandbox');
         var fields = {
             number: {
@@ -32,7 +36,7 @@ export class Checkout {
             },
             expirationDate: {
                 // DOM object
-                element: document.getElementById('card-expiration-date'),
+                element: this.elHTML.querySelector('#card-expiration-date'),
                 placeholder: 'MM / YY'
             },
             ccv: {
@@ -60,15 +64,13 @@ export class Checkout {
                 }
             }
         });
-        this._bindEvent();
-        this.token = args.token;
-        this.appendDOtCycleTimer;
+        this.bindEvent();
     }
-    async run(args, context) {
-        const me = args.me;
-        if (me.is_subscribed) {
+    async enter(args) {
+        super.enter(args);
+        if (this.me.is_subscribed) {
             history.pushState({}, '', '/mindnote/users/me/boards/');
-            if (me.is_next_subscribe) {
+            if (this.me.is_next_subscribe) {
                 Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '你已經是訂閱用戶')
             } else {
                 Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '目前你還是訂閱用戶，將在下一期取消訂閱')
@@ -78,16 +80,15 @@ export class Checkout {
             title: '我的分類',
             link: '/mindnote/users/me/boards/'
         }]);
-        const container = document.querySelector('.router-checkout');
-        container.querySelector('#card_holder').value = me.fullname;
-        container.querySelector('#email').value = me.email;
-        container.querySelector('#phone').value = me.phone;
+        const container = this.elHTML;
+        container.querySelector('#card_holder').value = this.me.fullname;
+        container.querySelector('#email').value = this.me.email;
+        container.querySelector('#phone').value = this.me.phone;
         container.querySelector('.btn-subscribe').removeClass('disabled');
-
     }
 
-    _bindEvent() {
-        const container = document.querySelector('.router-checkout');
+    bindEvent() {
+        const container = this.elHTML;
         container.querySelector('.btn-subscribe').addEventListener('click', (e) => {
             const elBtnSubscribe = e.currentTarget;
             elBtnSubscribe.innerHTML = '訂閱中...';
@@ -112,7 +113,7 @@ export class Checkout {
                 }
                 elBtnSubscribe.removeClass('disabled');
                 elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';
-                clearTimeout(this.appendDOtCycleTimer);
+                clearTimeout(this.appendDotCycleTimer);
                 return
             }
             // Get prime
@@ -120,13 +121,13 @@ export class Checkout {
                 if (result.status !== 0) {
                     elBtnSubscribe.removeClass('disabled');
                     elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';
-                    clearTimeout(this.appendDOtCycleTimer);
+                    clearTimeout(this.appendDotCycleTimer);
                     throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, result.msg);
                 }
 
-                const card_holder = document.querySelector('#card_holder').value;
-                const phone = document.querySelector('#phone').value;
-                const email = document.querySelector('#email').value;
+                const card_holder = this.elHTML.querySelector('#card_holder').value;
+                const phone = this.elHTML.querySelector('#phone').value;
+                const email = this.elHTML.querySelector('#email').value;
 
                 const resp = await api.authApiService.transaction.post({
                     token: this.token,
@@ -138,7 +139,7 @@ export class Checkout {
 
                 elBtnSubscribe.removeClass('disabled');
                 elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';
-                clearTimeout(this.appendDOtCycleTimer);
+                clearTimeout(this.appendDotCycleTimer);
                 if (resp.status === RESPONSE_STATUS.OK) {
                     history.pushState({}, '', '/mindnote/users/me/boards/');
                     Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '感謝你的訂閱');
@@ -155,7 +156,7 @@ export class Checkout {
     }
     appendDotCycle(element) {
         element.innerHTML = element.innerHTML + '.';
-        this.appendDOtCycleTimer = setTimeout(() => {
+        this.appendDotCycleTimer = setTimeout(() => {
             this.appendDotCycle(element);
         }, 500);
     }

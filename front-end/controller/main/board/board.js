@@ -1,13 +1,15 @@
 import {
     api
 } from '/mindnote/service/api.v2.js';
+
 import {
     Cyto
 } from '/mindnote/controller/cyto.js';
+
 import {
-    API,
     RESPONSE_STATUS
 } from '/mindnote/config.js';
+
 import {
     UI
 } from '/mindnote/ui.js';
@@ -21,16 +23,14 @@ import {
     Toaster
 } from '/mindnote/service/toaster.js';
 
-export class Board {
-    constructor(args, context) {
-        this.init(args, context);
-        this.run(args, context);
-    }
-    async init(args, context) {
+import {
+    RouterController
+} from '/mindnote/route/router-controller.js';
+
+export class Board extends RouterController {
+    constructor(elHTML, parentController, args, context) {
+        super(elHTML, parentController, args, context);
         this.cy = null;
-        this._bindEvent();
-    }
-    async run(args, context) {
         this.username = args.username;
         this.token = args.token;
         this.boardId = args.boardId;
@@ -38,9 +38,10 @@ export class Board {
         this.context = context;
         this.timerForTip;
         this.showTipCountDownDuration = 6000;
-
-        api.init(API, RESPONSE_STATUS);
-
+        this._bindEvent();
+    }
+    async enter(args) {
+        super.enter(args);
         const respForBoard = (await api.apiService.board.get({
             boardId: this.boardId
         }));

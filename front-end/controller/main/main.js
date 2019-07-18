@@ -4,7 +4,6 @@ import {
 
 import {
     GOOGLE,
-    API,
     RESPONSE_STATUS
 } from '/mindnote/config.js';
 
@@ -14,7 +13,7 @@ import {
 
 import {
     Route
-} from '/mindnote/service/route.js';
+} from '/mindnote/route/route.js';
 
 import {
     Toaster
@@ -25,13 +24,17 @@ import {
     MINDNOTE_ERROR_TYPE
 } from '/mindnote/util/mindnote-error.js';
 
-export class Header {
-    constructor(args, context) {
-        this.init(args, context);
-        this.run(args, context);
-    }
-    // Header
-    async init(args, context) {
+import {
+    RouterController
+} from '/mindnote/route/router-controller.js';
+
+export class Main extends RouterController {
+    constructor(elHTML, parentController, args, context) {
+        super(elHTML, parentController, args, context);
+        this.token = args.token;
+        this.context = context;
+        this.me = args.me;
+        this.updateSigninStatusByUserBehavior = false;
         gapi.load('client:auth2', async () => {
             await gapi.client.init({
                 'apiKey': GOOGLE.AUTH.API_KEY,
@@ -39,23 +42,20 @@ export class Header {
                 'scope': GOOGLE.AUTH.SCOPE
             });
             this.context.GoogleAuth = gapi.auth2.getAuthInstance();
-            this.context.GoogleAuth.isSignedIn.listen((context) => {
-                this._updateSigninStatus(context)
+            this.context.GoogleAuth.isSignedIn.listen(() => {
+                this._updateSigninStatus()
             });
-            this._updateSigninStatus(context);
+            this._updateSigninStatus();
         });
-        api.init(API, RESPONSE_STATUS);
         this._bindEvent();
     }
 
-    async run(args, context) {
-        this.context = context;
-        this.token = args.token;
-        this.me = args.me;
-        if (args.me && !args.me.is_subscribed) {
+    async enter(args) {
+        super.enter(args)
+        if (this.me && !this.me.is_subscribed) {
             UI.unsubscribed();
         } else {
-            if (args.me && !args.me.is_next_subscribe) {
+            if (this.me && !this.me.is_next_subscribe) {
                 UI.unsubscribing();
             } else {
                 UI.subscribed();
@@ -65,6 +65,7 @@ export class Header {
 
     _bindEvent() {
         document.querySelector('.btn-logout').addEventListener('click', () => {
+            this.updateSigninStatusByUserBehavior = true;
             this.context.GoogleAuth.signOut()
             localStorage.setItem('token', '');
             localStorage.setItem('username', '');
@@ -99,9 +100,12 @@ export class Header {
             }
         });
 
-        document.querySelector('.auth-google').addEventListener('click', () => {
-            this.context.GoogleAuth.signIn()
-        });
+        document.querySelectorAll('.auth-google').forEach((el) => {
+            el.addEventListener('click', () => {
+                this.updateSigninStatusByUserBehavior = true;
+                this.context.GoogleAuth.signIn()
+            });
+        })
 
         document.querySelector('.profile').addEventListener('click', () => {
             const menu = document.querySelector('.menu');
@@ -130,7 +134,6 @@ export class Header {
                     localStorage.setItem('username', result.data.username);
                     token = result.data.token;
                     username = result.data.username;
-                    Route.runFromController(this.context, location.pathname, Header);
                 } else {
                     UI.header.generateNavigation([])
                     UI.header.hideAuth();
@@ -141,12 +144,6 @@ export class Header {
             UI.setupProfile(user.getBasicProfile().getImageUrl(), user.getBasicProfile().getName())
             UI.header.showAuth();
             UI.showAuth();
-            // generate boards
-            // const boards = await api.authApiService.boards.get({
-            //     token,
-            //     limit: 5
-            // });
-            // UI.header.generateBoards(boards.data);
         } else if (token) {
             UI.setupProfile(profile, this.me.fullname);
             UI.header.showAuth();
@@ -154,9 +151,10 @@ export class Header {
         } else {
             UI.header.hideAuth();
             UI.hideAuth();
-            // fix: check current page is need auth
-            // UI.header.generateNavigation([]);
         }
-        Route.runFromController(this.context, location.pathname, Header);
+        if (this.updateSigninStatusByUserBehavior) {
+            Route.runFromController(this.context, location.pathname, Main);
+        }
+        this.updateSigninStatusByUserBehavior = false;
     }
 }

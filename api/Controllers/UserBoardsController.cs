@@ -2,19 +2,12 @@ using System;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 
 using Mindnote.Models;
 using Mindnote.Services;
-using Mindnote.Util;
-
-using Newtonsoft.Json.Linq;
-
-using Google.Apis.Auth.OAuth2;
-using Google.Cloud.Storage.V1;
 
 namespace Mindnote.Controllers
 {

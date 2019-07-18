@@ -34,6 +34,16 @@ button {
     cursor: pointer;
 }
 
+.btn-delete {
+    background: #fac32d;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 13px;
+    border: 5px solid white;
+}
+
 .description,
 .content {
     font-size: 0.6em;

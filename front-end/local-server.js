@@ -11,7 +11,7 @@ var fileServer = new staticAlias.Server('./', {
     match: /\/mindnote\/config.js$/,
     serve: 'config.dev.js'
   }, {
-    match: /\/mindnote\/([^\/]+\/)*([^\/]+)\.(js|css|png|woff2|woff|ttf)$/,
+    match: /\/mindnote\/([^\/]+\/)*([^\/]+)\.(js|css|png|woff2|woff|ttf|html)$/,
     serve: function (params) {
       return params.reqPath.replace(/mindnote\//gi, '').substring(1);
     },
