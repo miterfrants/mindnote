@@ -7,6 +7,9 @@ export class RouterController {
         this.elOriginalChildNodes = [];
         this.parentController = parentController;
         if (elHTML !== null) {
+            if (this.elHTML.querySelector('.child-router')) {
+                this.elHTML.querySelector('.child-router').style.display = 'none';
+            }
             saveOriginalChildRouter(this);
             setupHTML(this);
         }
@@ -14,6 +17,9 @@ export class RouterController {
     enter(args) {
         this.args = args;
         if (this.elHTML !== null) {
+            if (this.elHTML.querySelector('.child-router')) {
+                this.elHTML.querySelector('.child-router').style.display = 'none';
+            }
             revertOriginalChildRouter(this);
             setupHTML(this);
         }
