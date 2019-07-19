@@ -162,9 +162,9 @@ export class MyBoard extends RouterController {
                     resp.data
                 ]);
                 if (Swissknife.Tutorial.isTutorialMode()) {
-                    if (Swissknife.Tutorial.getCurrentStep() === '修改筆記') {
+                    if (Swissknife.Tutorial.getCurrentStep().id === '修改筆記') {
                         Swissknife.Tutorial.gotoTutorialStep('建立連線');
-                    } else if (Swissknife.Tutorial.getCurrentStep() === '上傳圖片') {
+                    } else if (Swissknife.Tutorial.getCurrentStep().id === '上傳圖片') {
                         Swissknife.Tutorial.gotoTutorialStep('預覽筆記內容');
                     }
                 }
