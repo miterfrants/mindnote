@@ -165,7 +165,7 @@ export const Route = {
             }
         }
         if (isEnd) {
-            return new RegExp('^' + arrayRegString.join('\\/') + '$');
+            return new RegExp('^' + arrayRegString.join('\\/') + '(\\?.*)?$');
         } else {
             return new RegExp('^' + arrayRegString.join('\\/'));
         }
@@ -174,8 +174,11 @@ export const Route = {
         const keys = routingPath.match(regexp);
         const values = Array.isArray(currentPath) ? currentPath.join('/').match(regexp) : currentPath.match(regexp);
         const args = {};
-        if (keys.length > 1 && keys.length === values.length) {
+        if (keys !== undefined && keys.length > 1 && keys.length === values.length) {
             for (let j = 1; j < keys.length; j++) {
+                if (keys[j] === undefined) {
+                    continue;
+                }
                 const key = keys[j].replace(/{/gi, '').replace(/}/gi, '');
                 const value = values[j];
                 args[key] = value;
