@@ -160,3 +160,9 @@
     left: 0;
     padding: 10px;
 }
+
+.my-board .tutorial-anchor {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}

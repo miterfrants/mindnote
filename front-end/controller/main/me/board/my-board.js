@@ -32,6 +32,14 @@ import {
     RouterController
 } from '/mindnote/route/router-controller.js';
 
+import {
+    Swissknife
+} from '/mindnote/service/swissknife.js';
+
+import {
+    MyBoardTutorialStepsClass
+} from '/mindnote/controller/main/me/board/tutorial-steps.js'
+
 export class MyBoard extends RouterController {
     constructor(elHTML, parentController, args, context) {
         super(elHTML, parentController, args, context);
@@ -46,6 +54,9 @@ export class MyBoard extends RouterController {
 
     async enter(args) {
         super.enter(args);
+        if (Swissknife.Tutorial.isTutorialMode()) {
+            super.showTutorial(MyBoardTutorialStepsClass, false);
+        }
         this.boardId = this.args.boardId;
         if (this.token) {
             if (this.cy) {
@@ -123,6 +134,9 @@ export class MyBoard extends RouterController {
                 this.cy.trigger('createNodeDone', [
                     resp.data
                 ]);
+                if (Swissknife.Tutorial.isTutorialMode()) {
+                    Swissknife.Tutorial.gotoTutorialStep('展開修改筆記表單')
+                }
                 UI.hideNodeForm();
             }
         });
@@ -147,6 +161,13 @@ export class MyBoard extends RouterController {
                 this.cy.trigger('updateNodeDone', [
                     resp.data
                 ]);
+                if (Swissknife.Tutorial.isTutorialMode()) {
+                    if (Swissknife.Tutorial.getCurrentStep() === '修改筆記') {
+                        Swissknife.Tutorial.gotoTutorialStep('建立連線');
+                    } else if (Swissknife.Tutorial.getCurrentStep() === '上傳圖片') {
+                        Swissknife.Tutorial.gotoTutorialStep('預覽筆記內容');
+                    }
+                }
                 UI.hideNodeForm();
             }
         });
@@ -155,21 +176,22 @@ export class MyBoard extends RouterController {
                 return;
             }
             this.cy.trigger('re-arrange');
+            if (Swissknife.Tutorial.isTutorialMode()) {
+                Swissknife.Tutorial.gotoTutorialStep('刪除資料');
+            }
         });
         document.querySelector('.btn-switch-delete-mode').addEventListener('click', (e) => {
             this.deletedMode = !this.deletedMode;
             Cyto.isDisableConnecting = this.deletedMode;
             if (this.deletedMode) {
-                const haveShownTip = localStorage.getItem('tip_of_delete_mode');
-                if (haveShownTip !== 'true') {
-                    Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '小提示: <br/> 1. 點選「藍線」或是「藍圈圈」，呈半透明狀態 <br/> 2. 確認後按下左上方的橘黃色按鈕「刪除資料」就完成囉～', 15000);
-                    localStorage.setItem('tip_of_delete_mode', 'true');
-                }
                 UI.switchToDeleteMode();
                 UI.Cyto.switchToDeleteMode(this.cy);
             } else {
                 UI.switchToNormalMode();
                 UI.Cyto.switchToNormalMode(this.cy);
+                if (Swissknife.Tutorial.isTutorialMode()) {
+                    Swissknife.Tutorial.gotoTutorialStep('上傳圖片 - 展開編輯筆記表單');
+                }
             }
         });
         document.querySelector('.btn-delete-change').addEventListener('click', async (e) => {
@@ -237,6 +259,9 @@ export class MyBoard extends RouterController {
             this.deletedMode = !this.deletedMode;
             Cyto.isDisableConnecting = this.deletedMode;
             UI.switchToNormalMode();
+            if (Swissknife.Tutorial.isTutorialMode()) {
+                Swissknife.Tutorial.gotoTutorialStep('上傳圖片 - 展開編輯筆記表單');
+            }
             UI.Cyto.switchToNormalMode(this.cy);
         });
         document.querySelector('.btn-close').addEventListener('click', UI.hideNodeForm);
@@ -255,6 +280,9 @@ export class MyBoard extends RouterController {
                     ...resp.data,
                     edgeInstance: e.detail.edgeInstance
                 }]);
+                if (Swissknife.Tutorial.isTutorialMode()) {
+                    Swissknife.Tutorial.gotoTutorialStep('重新排列');
+                }
             } else if (resp.httpStatus === 417) {
                 e.detail.edgeInstance.remove();
                 throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg);
@@ -273,11 +301,19 @@ export class MyBoard extends RouterController {
                 x: e.detail.position.x,
                 y: e.detail.position.y
             }
+
             UI.showNodeForm(this.cy, '', '', '', position);
+            if (Swissknife.Tutorial.isTutorialMode()) {
+                Swissknife.Tutorial.gotoTutorialStep('新增筆記')
+            }
         });
         document.addEventListener('double-tap-node', (e) => {
             if (this.deletedMode) {
                 return;
+            }
+
+            if (Swissknife.Tutorial.isTutorialMode()) {
+                Swissknife.Tutorial.endTour();
             }
             const title = e.detail.title;
             const desc = e.detail.description;
@@ -315,6 +351,13 @@ export class MyBoard extends RouterController {
             const position = {
                 x: e.detail.position.x,
                 y: e.detail.position.y
+            }
+            if (Swissknife.Tutorial.isTutorialMode()) {
+                if (Swissknife.Tutorial.getCurrentStep().id === '展開新增筆記表單') {
+                    Swissknife.Tutorial.gotoTutorialStep('修改筆記');
+                } else if (Swissknife.Tutorial.getCurrentStep().id === '上傳圖片 - 展開編輯筆記表單') {
+                    Swissknife.Tutorial.gotoTutorialStep('上傳圖片');
+                }
             }
             UI.showNodeForm(this.cy, e.detail.title, e.detail.description, e.detail.id, position);
         });

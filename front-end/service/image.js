@@ -5,6 +5,5 @@ export const Image = {
         } else {
             return `https://sapiens-tools-mindnote.imgix.net/${imgFilename}`;
         }
-
     }
 }
