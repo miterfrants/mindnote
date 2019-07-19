@@ -65,7 +65,7 @@ export const Router = [{
     Router: [{
         path: 'require-login/',
         controller: RequireLogin,
-        html: '/controller/main/util/redirect/require-login.html'
+        html: '/mindnote/controller/main/util/redirect/require-login.html'
     }, {
         path: 'require-boards/',
         controller: RequireBoards
