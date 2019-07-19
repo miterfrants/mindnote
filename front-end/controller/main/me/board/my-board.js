@@ -353,7 +353,7 @@ export class MyBoard extends RouterController {
                 y: e.detail.position.y
             }
             if (Swissknife.Tutorial.isTutorialMode()) {
-                if (Swissknife.Tutorial.getCurrentStep().id === '展開新增筆記表單') {
+                if (Swissknife.Tutorial.getCurrentStep().id === '展開修改筆記表單') {
                     Swissknife.Tutorial.gotoTutorialStep('修改筆記');
                 } else if (Swissknife.Tutorial.getCurrentStep().id === '上傳圖片 - 展開編輯筆記表單') {
                     Swissknife.Tutorial.gotoTutorialStep('上傳圖片');
