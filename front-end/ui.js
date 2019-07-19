@@ -146,7 +146,9 @@ export const UI = {
         },
         switchToNormalMode: (cy) => {
             cy.nodes().removeClass('delete-mode');
+            cy.nodes().removeClass('deleting');
             cy.edges().removeClass('delete-mode');
+            cy.edges().removeClass('deleting');
         },
         updateBackgroundImage: (cy, nodeId, url) => {
             cy.$(`#node-${nodeId}`).style('background-image', url);
