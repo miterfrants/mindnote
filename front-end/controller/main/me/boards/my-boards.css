@@ -10,7 +10,6 @@
     border: 1px dashed #ccc;
     background: transparent;
     border-radius: 10px;
-    font-size: 30px;
     color: #24c0c2;
     padding: 0;
     display: block;
@@ -26,6 +25,7 @@
     height: 200px;
     line-height: 200px;
     text-align: center;
+    font-size: 30px;
 }
 
 .my-boards .board-card {
@@ -64,10 +64,18 @@
     height: 120px;
     overflow: hidden;
     background: #EEE;
+    color: #666 !important;
 }
 
 .my-boards .board-card .btn-toggle-permission {
     margin-left: 10px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.my-boards .board-card .btn-toggle-permission .toggle-button {
+    display: inline-block;
 }
 
 .my-boards .show-form .inner {

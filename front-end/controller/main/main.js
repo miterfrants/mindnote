@@ -52,6 +52,7 @@ export class Main extends RouterController {
 
     async enter(args) {
         super.enter(args)
+        UI.header.generateNavigation([]);
         if (this.me && !this.me.is_subscribed) {
             UI.unsubscribed();
         } else {

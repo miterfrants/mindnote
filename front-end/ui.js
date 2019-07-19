@@ -368,11 +368,11 @@ export const UI = {
     setBoardPublicPermission: (elBoardCard, isPublic) => {
         if (isPublic) {
             elBoardCard.removeClass('private');
-            elBoardCard.querySelector('.btn-toggle-permission').removeClass('on');
+            elBoardCard.querySelector('.btn-toggle-permission .toggle-button').removeClass('on');
             elBoardCard.querySelector('.permission').innerHTML = '公開';
         } else {
             elBoardCard.addClass('private');
-            elBoardCard.querySelector('.btn-toggle-permission').addClass('on');
+            elBoardCard.querySelector('.btn-toggle-permission .toggle-button').addClass('on');
             elBoardCard.querySelector('.permission').innerHTML = '隱藏';
         }
     },

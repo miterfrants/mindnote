@@ -152,9 +152,28 @@ a {
     text-decoration: none;
 }
 
+/* text */
+
+input {
+    font-size: 1.0em;
+}
+
 .desc {
     color: #666 !important;
     font-size: 0.6em;
+}
+
+.highlight {
+    color: #ffae00;
+    font-size: bolder;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.highlight-coral {
+    color: #24c0c1;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .toggle-button {
@@ -299,4 +318,10 @@ a.toaster-item::after {
 
 .md {
     padding: 10px;
+}
+
+/* overwrite */
+.shepherd-text {
+    text-align: left;
+    line-height: 1.8em !important;
 }
