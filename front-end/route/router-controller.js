@@ -1,10 +1,10 @@
 import {
     Swissknife
-} from '/service/swissknife.js';
+} from '/mindnote/service/swissknife.js';
 
 import {
     Loader
-} from '/util/loader.js';
+} from '/mindnote/util/loader.js';
 
 export class RouterController {
     constructor(elHTML, parentController, args, context) {
