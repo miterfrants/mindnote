@@ -30,6 +30,14 @@ import {
     RESPONSE_STATUS
 } from '/mindnote/config.js';
 
+import {
+    RequireLogin
+} from '/mindnote/controller/main/util/redirect/require-login.js';
+
+import {
+    RequireBoards
+} from '/mindnote/controller/main/util/redirect/require-boards.js';
+
 export const Router = [{
     path: '/mindnote/',
     controller: Main,
@@ -55,6 +63,13 @@ export const Router = [{
         }
     }],
     Router: [{
+        path: 'require-login/',
+        controller: RequireLogin,
+        html: '/controller/main/util/redirect/require-login.html'
+    }, {
+        path: 'require-boards/',
+        controller: RequireBoards
+    }, {
         path: 'users/me/',
         controller: Me,
         Router: [{

@@ -325,3 +325,14 @@ a.toaster-item::after {
     text-align: left;
     line-height: 1.8em !important;
 }
+
+.psudo-circle {
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background: #3897f0;
+    content: ';';
+    display: inline-block;
+    vertical-align: middle;
+    border: 3px solid #ffde83;
+}

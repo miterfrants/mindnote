@@ -11,6 +11,7 @@ window['MindnoteController'] = [];
 export const Route = {
     init: (context) => {
         window.addEventListener("popstate", function (e) {
+            this.console.log('popstate');
             Route.routing(location.pathname, Router, context);
         });
 
@@ -20,6 +21,13 @@ export const Route = {
                 return original.apply(this, arguments);
             };
         })(history.pushState);
+
+        (function (original) {
+            history.replaceState = function (data, title, newPath) {
+                Route.routing(newPath, Router, context);
+                return original.apply(this, arguments);
+            };
+        })(history.replaceState);
 
         Route.routing(location.pathname, Router, context);
 

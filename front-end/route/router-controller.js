@@ -1,4 +1,11 @@
-window['MindnoteStylesheet'] = [];
+import {
+    Swissknife
+} from '/service/swissknife.js';
+
+import {
+    Loader
+} from '/util/loader.js';
+
 export class RouterController {
     constructor(elHTML, parentController, args, context) {
         this.elHTML = elHTML;
@@ -6,7 +13,7 @@ export class RouterController {
         this.context = context;
         this.elOriginalChildNodes = [];
         this.parentController = parentController;
-        if (elHTML !== null) {
+        if (elHTML) {
             if (this.elHTML.querySelector('.child-router')) {
                 this.elHTML.querySelector('.child-router').style.display = 'none';
             }
@@ -14,15 +21,30 @@ export class RouterController {
             setupHTML(this);
         }
     }
-    enter(args) {
+    async enter(args) {
         this.args = args;
-        if (this.elHTML !== null) {
+        if (this.elHTML) {
             if (this.elHTML.querySelector('.child-router')) {
                 this.elHTML.querySelector('.child-router').style.display = 'none';
             }
             revertOriginalChildRouter(this);
             setupHTML(this);
         }
+    }
+    async showTutorial(stepsClass, useModalOverlay) {
+        const loader = new Loader();
+        await loader.load([{
+            url: '/mindnote/third-party/shepherd/shepherd.min.js',
+            checkVariable: 'Shepherd'
+        }]);
+        const stylesheet = '<link rel="stylesheet" type="text/css" href="/mindnote/third-party/shepherd/shepherd-theme-default.css">'.toDom();
+        Swissknife.appendStylesheetToHead(stylesheet);
+        const tour = Swissknife.Tutorial.getTutorialSingleton(stepsClass, useModalOverlay);
+        setTimeout(() => {
+            if (location.search.indexOf('action=tutorial') !== -1) {
+                tour.start();
+            }
+        }, 1000);
     }
 }
 
@@ -36,11 +58,8 @@ function saveOriginalChildRouter(controllerInstance) {
     });
 
     for (let i = 0; i < stylesheets.length; i++) {
-        if (window.MindnoteStylesheet.indexOf(stylesheets[i].href) === -1) {
-            controllerInstance.elHTML.removeChild(stylesheets[i]);
-            document.head.appendChild(stylesheets[i]);
-            window.MindnoteStylesheet.push(stylesheets[i].href);
-        }
+        controllerInstance.elHTML.removeChild(stylesheets[i]);
+        Swissknife.appendStylesheetToHead(stylesheets[i]);
     }
 
     // save original elHTML childNodes

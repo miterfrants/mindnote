@@ -466,5 +466,10 @@ export const UI = {
             container.querySelector('.btn-fullscreen').addClass('fa-expand-arrows-alt');
             container.querySelector('.btn-fullscreen').removeClass('fa-compress-arrows-alt');
         }
+    },
+    requireLogin: {
+        showLoginButton: (container) => {
+            container.querySelector('.auth-google').removeClass('hide');
+        },
     }
 }
