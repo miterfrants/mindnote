@@ -1,9 +1,9 @@
-window['MindnoteLoaderCache'] = []
+window['MindnoteLoaderCache'] = [];
 export function Loader() {
     this.max = 10000;
     this.checkCount = 0;
     const self = this;
-    this.load = async (dependency, max) => {
+    this.load = async (dependency) => {
         for (let i = 0; i < dependency.length; i++) {
             if (dependency[i].dependency) {
                 const loader = new Loader();
@@ -11,7 +11,7 @@ export function Loader() {
             }
         }
         await _load(dependency);
-    }
+    };
 
     this.loadHTML = async (url) => {
         const resp = await fetch(url, {
@@ -21,7 +21,7 @@ export function Loader() {
             }
         });
         return resp.text();
-    }
+    };
 
     async function _load(dependency) {
         for (let i = 0; i < dependency.length; i++) {
@@ -34,9 +34,8 @@ export function Loader() {
         }
 
         return new Promise((resolve, reject) => {
-            let isReady = true;
             _check(dependency, resolve, reject);
-        })
+        });
     }
 
     async function _check(dependency, resolve, reject) {

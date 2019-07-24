@@ -29,7 +29,7 @@ import {
 
 import {
     MyBoardsTutorialStepsClass
-} from '/mindnote/controller/main/me/boards/tutorial-steps.js'
+} from '/mindnote/controller/main/me/boards/tutorial-steps.js';
 
 export class MyBoards extends RouterController {
     constructor(elHTML, parentController, args, context) {
@@ -87,7 +87,7 @@ export class MyBoards extends RouterController {
                 throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
             }
         }
-        elBoardCard.dataset['is_public'] = resp.data.is_public;
+        return resp.data.is_public;
     }
 
     initBoardCard(elBoardCard) {
@@ -112,11 +112,12 @@ export class MyBoards extends RouterController {
 
         if (elBtnTogglePermission) {
             elBtnTogglePermission.addEventListener('click', async (e) => {
-                this._setPermission(elBoardCard);
+                const newPermission = await this._setPermission(elBoardCard);
+                elBoardCard.dataset['is_public'] = newPermission; // eslint-disable-line
                 e.stopPropagation();
                 e.preventDefault();
                 return;
-            })
+            });
         }
 
         if (elBtnUpdateBoard) {
@@ -181,7 +182,7 @@ export class MyBoards extends RouterController {
                 const resp = await api.authApiService.board.delete({
                     token: this.token,
                     boardId
-                })
+                });
 
                 elButtonDel.removeClass('disabled');
                 if (resp.status === RESPONSE_STATUS.FAILED) {
@@ -199,7 +200,7 @@ export class MyBoards extends RouterController {
         }
 
         if (elBtnAddBoard) {
-            elBtnAddBoard.addEventListener('click', async (e) => {
+            elBtnAddBoard.addEventListener('click', async () => {
                 const elAddBoardCard = document.querySelector('.btn-virtual-add-board');
                 const boardTitle = elAddBoardCard.querySelector('.board-title').value;
                 if (elBtnAddBoard.classExists('disabled')) {

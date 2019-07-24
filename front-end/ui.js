@@ -24,7 +24,7 @@ export const UI = {
                     x,
                     y
                 },
-                group: "nodes",
+                group: 'nodes',
                 grabbable: true
             }]);
             return nodes[0];
@@ -41,41 +41,41 @@ export const UI = {
                 grabbable: false,
                 classes: 'saving'
             }]);
-            return edges[0]
+            return edges[0];
         },
         getStyle: (description) => {
             if (description === undefined || description === '') {
                 return {
                     background: '#3897f0',
                     size: 50
-                }
+                };
             }
             const length = description.length;
             if (length > 0 && length <= 60) {
                 return {
                     background: '#3897f0',
                     size: 50
-                }
+                };
             } else if (length > 60 && length <= 360) {
                 return {
                     background: '#57aeff',
                     size: 70
-                }
+                };
             } else if (length > 360 && length <= 1200) {
                 return {
                     background: '#88c6ff',
                     size: 90
-                }
+                };
             } else if (length > 1200 && length <= 4000) {
                 return {
                     background: '#a8d3fb',
                     size: 110
-                }
+                };
             } else if (length > 4000) {
                 return {
                     background: '#d1e9ff',
                     size: 130
-                }
+                };
             }
         },
         isMouseInBorder: (node, position) => {
@@ -93,7 +93,6 @@ export const UI = {
             cy.$('#preview_edge').addClass('hide');
         },
         showPreviewEdge: (cy) => {
-            //console.log(cy.$('#preview_edge'));
             cy.$('#preview_edge').removeClass('hide');
         },
         updatePreviewEdge: (cy, sourceNodeId, position) => {
@@ -178,12 +177,12 @@ export const UI = {
                 if (el.className.split(' ').indexOf('template') === -1) {
                     boardsContainer.removeChild(el);
                 }
-            })
+            });
 
             const template = document.querySelector('.header .boards .menu-item.template').outerHTML;
             for (let i = 0; i < boards.length; i++) {
                 boards[i]['link'] = ['/mindnote/users/me/boards/', boards[i].id, '/'].join('');
-                const el = template.bind(boards[i]).toDom()
+                const el = template.bind(boards[i]).toDom();
                 el.removeClass('template');
                 boardsContainer.appendChild(el);
             }
@@ -239,7 +238,7 @@ export const UI = {
             document.querySelector('.btn-update').addClass('hide');
             document.querySelector('.btn-add').removeClass('hide');
         }
-        let estimateTop = position.y - document.querySelector('.node-form').offsetHeight - 10;;
+        let estimateTop = position.y - document.querySelector('.node-form').offsetHeight - 10;
         let estimateLeft = position.x - document.querySelector('.node-form').offsetWidth / 2;
         let targetTop, targetLeft, panX, panY;
         const currPosition = cy.pan();
@@ -247,7 +246,7 @@ export const UI = {
             targetTop = 0;
             panY = currPosition.y - estimateTop;
         } else {
-            targetTop = estimateTop
+            targetTop = estimateTop;
             panY = currPosition.y;
         }
         if (estimateLeft < 0) {
@@ -272,7 +271,7 @@ export const UI = {
 
         document.querySelector('.title').value = title;
         document.querySelector('.description').value = description;
-        document.querySelector('.node-id').value = nodeId
+        document.querySelector('.node-id').value = nodeId;
         document.querySelector('.title').focus();
 
         const mask = document.querySelector('.mask');
@@ -303,8 +302,8 @@ export const UI = {
         const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
 
         const systemZoom = width / window.screen.availWidth;
-        const left = (width - w) / 2 / systemZoom + dualScreenLeft
-        const top = 0
+        const left = (width - w) / 2 / systemZoom + dualScreenLeft;
+        const top = 0;
         const newWindow = window.open('', title, 'id=popup-mindnote, scrollbars=yes, width=' + w / systemZoom + ', height=' + height / systemZoom + ', top=' + top + ', left=' + left);
         const template = [
             '<link rel="stylesheet" type="text/css" href="' + location.origin + '/mindnote/css/common.css">',
@@ -315,11 +314,33 @@ export const UI = {
         ].join('');
         const md = window.markdownit();
         const detail = md.render(description);
-        const result = template
+        const result = '<div>' + template
             .replace(/{title}/gi, title)
-            .replace(/{desc}/gi, detail);
-        newWindow.document.querySelector("body").innerHTML = result;
-        newWindow.document.querySelector("head").innerHTML = "<title>" + title + "</title>"
+            .replace(/{desc}/gi, detail) + '</div>';
+        const body = result.toDom();
+        const imgSrcs = [];
+        let i = 1;
+        body.querySelectorAll('img').forEach((elImg) => {
+            const src = elImg.src;
+            elImg.src = elImg.src + '?w=10';
+            elImg.outerHTML = '<div class="img-container blur" id="img-' + i + '">' + elImg.outerHTML + '</div>';
+            imgSrcs.push({
+                src,
+                id: i
+            });
+            i++;
+        });
+        newWindow.document.querySelector('head').innerHTML = '<title>' + title + '</title>';
+        newWindow.document.querySelector('body').append(body);
+        imgSrcs.forEach((img) => {
+            const elImg = document.createElement('img');
+            elImg.src = img.src + '?w=1000';
+            elImg.addEventListener('load', () => {
+                const elImgContainer = newWindow.document.querySelector('#img-' + img.id);
+                elImgContainer.className = 'img-container';
+                elImgContainer.querySelector('img').src = img.src;
+            });
+        });
 
         // Puts focus on the newWindow
         if (window.focus) newWindow.focus();
@@ -332,7 +353,7 @@ export const UI = {
     },
     generateUserBoards: (boards) => {
         const eles = [];
-        const boardsEle = document.querySelector('.my-boards')
+        const boardsEle = document.querySelector('.my-boards');
         const containerEle = boardsEle.querySelector('.container .row');
         boardsEle.querySelectorAll('.container .row > div:not(.template):not(.btn-virtual-add-board)').forEach((el) => {
             containerEle.removeChild(el);
@@ -349,7 +370,7 @@ export const UI = {
         return eles;
     },
     addBoard: (board) => {
-        const boardsEle = document.querySelector('.my-boards')
+        const boardsEle = document.querySelector('.my-boards');
         const containerEle = boardsEle.querySelector('.container .row');
         const template = containerEle.querySelector('.template').outerHTML;
         board.link = `/mindnote/users/me/boards/${board.id}/`;
@@ -380,7 +401,7 @@ export const UI = {
     },
     showBoardForm: (container) => {
         const title = container.dataset['title'] || '';
-        const elBoardTitle = container.querySelector('.board-title')
+        const elBoardTitle = container.querySelector('.board-title');
         elBoardTitle.value = title;
         if (container.classExists('show-form')) {
             container.removeClass('show-form');
@@ -397,7 +418,7 @@ export const UI = {
             setTimeout(() => {
                 container.removeClass('show-form');
                 container.removeClass('hide-form');
-            }, 300)
+            }, 300);
 
         }
     },
@@ -474,4 +495,4 @@ export const UI = {
             container.querySelector('.auth-google').removeClass('hide');
         },
     }
-}
+};

@@ -13,14 +13,14 @@ export const Swissknife = {
             return false;
         },
         getTutorialSingleton: (stepsClass, useModalOverlay) => {
-            Shepherd.on('complete', (e) => {
+            window.Shepherd.on('complete', () => {
                 history.pushState({}, '', location.pathname);
             });
-            Shepherd.on('cancel', (e) => {
+            window.Shepherd.on('cancel', () => {
                 history.pushState({}, '', location.pathname);
             });
             if (!window.MindnoteTutorial) {
-                window['MindnoteTutorial'] = new Shepherd.Tour({
+                window['MindnoteTutorial'] = new window.Shepherd.Tour({
                     defaultStepOptions: {
                         scrollTo: {
                             behavior: 'smooth',
@@ -56,7 +56,7 @@ export const Swissknife = {
         }
     },
     getQueryString: (key) => {
-        const queryStrings = location.search.substring(1).split('&')
+        const queryStrings = location.search.substring(1).split('&');
         const result = queryStrings.find((qs) => {
             if (qs.indexOf(`${key}=`) === 0) {
                 return true;
@@ -69,4 +69,4 @@ export const Swissknife = {
         }
         return '';
     }
-}
+};

@@ -27,7 +27,7 @@ export const authApiService = {
             const postBody = {
                 title: data.title,
                 uniquename: data.uniquename
-            }
+            };
             const fetchOption = {
                 method: 'POST',
                 headers: {
@@ -139,7 +139,7 @@ export const authApiService = {
     },
     node: {
         patch: async (data, sendResponse) => {
-            return new Promise(async (resolve, reject) => {
+            return async (resolve) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.NODE;
                 api = api.bind(data);
                 const fetchOption = {
@@ -172,11 +172,11 @@ export const authApiService = {
                     sendResponse(result);
                 }
                 resolve(result);
-            });
+            };
         }
     },
     nodes: {
-        get: async (data, sendResponse) => {
+        get: async (data) => {
             let apiNode = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.NODES;
             apiNode = apiNode.bind(data);
             let fetchOption = {
@@ -185,7 +185,7 @@ export const authApiService = {
                     'Authorization': 'Bearer ' + data.token
                 }
             };
-            const resp = await _fetch(apiNode, fetchOption)
+            const resp = await _fetch(apiNode, fetchOption);
 
             if (resp.status === 200) {
                 const data = await resp.json();
@@ -226,7 +226,7 @@ export const authApiService = {
             };
 
             if (data.selectedNode) {
-                postBody['parent_node_id'] = data.selectedNode.id
+                postBody['parent_node_id'] = data.selectedNode.id;
             }
 
             let fetchOption = {
@@ -236,7 +236,7 @@ export const authApiService = {
                 },
                 body: JSON.stringify(postBody)
             };
-            const resp = await _fetch(apiNode, fetchOption)
+            const resp = await _fetch(apiNode, fetchOption);
 
             if (resp.status === 200) {
                 const data = await resp.json();
@@ -254,7 +254,7 @@ export const authApiService = {
                     data: {
                         errorMsg: 'create post failed'
                     }
-                }
+                };
                 if (sendResponse) {
                     sendResponse(result);
                 }
@@ -263,7 +263,7 @@ export const authApiService = {
         }
     },
     relationship: {
-        get: async (data, sendResponse) => {
+        get: async (data) => {
             let apiNode = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.RELATIONSHIP;
             apiNode = apiNode.bind(data);
             let fetchOption = {
@@ -272,7 +272,7 @@ export const authApiService = {
                     'Authorization': 'Bearer ' + data.token
                 }
             };
-            const resp = await _fetch(apiNode, fetchOption)
+            const resp = await _fetch(apiNode, fetchOption);
 
             if (resp.status === 200) {
                 const data = await resp.json();
@@ -289,7 +289,7 @@ export const authApiService = {
                 };
             }
         },
-        post: async (data, sendResponse) => {
+        post: async (data) => {
             let apiNode = _API.ENDPOINT + _API.AUTHORIZED_CONTROLLER.RELATIONSHIP;
             apiNode = apiNode.bind(data);
 
@@ -305,7 +305,7 @@ export const authApiService = {
                 },
                 body: JSON.stringify(postBody)
             };
-            const resp = await _fetch(apiNode, fetchOption)
+            const resp = await _fetch(apiNode, fetchOption);
 
             if (resp.status === 200) {
                 const data = await resp.json();
@@ -323,14 +323,14 @@ export const authApiService = {
             }
         }
     }
-}
+};
 
 export const apiService = {
     nodes: {
         get: async (data) => {
             let url = _API.ENDPOINT + _API.CONTROLLER.NODES;
             url = url.bind(data);
-            const resp = await fetch(url)
+            const resp = await fetch(url);
             if (resp.status === 200) {
                 const data = await resp.json();
                 return {
@@ -351,7 +351,7 @@ export const apiService = {
         get: async (data) => {
             let url = _API.ENDPOINT + _API.CONTROLLER.RELATIONSHIP;
             url = url.bind(data);
-            const resp = await fetch(url)
+            const resp = await fetch(url);
             if (resp.status === 200) {
                 const data = await resp.json();
                 return {
@@ -370,7 +370,7 @@ export const apiService = {
     },
     auth: {
         post: async (data, sendResponse) => {
-            return new Promise(async (resolve, reject) => {
+            return async (resolve) => {
                 // check token is validated
                 const fetchOption = {
                     method: 'POST',
@@ -379,7 +379,7 @@ export const apiService = {
                     }),
                 };
 
-                const resp = await _fetch(_API.ENDPOINT + _API.CONTROLLER.AUTH, fetchOption)
+                const resp = await _fetch(_API.ENDPOINT + _API.CONTROLLER.AUTH, fetchOption);
                 let result;
                 if (resp.status === 200) {
                     const board = await resp.json();
@@ -402,10 +402,10 @@ export const apiService = {
                     sendResponse(result);
                 }
                 resolve(result);
-            });
+            };
         }
     }
-}
+};
 
 const _fetch = (url, option, withCatch) => {
     if (option.cache) {
@@ -417,7 +417,7 @@ const _fetch = (url, option, withCatch) => {
             ...option.headers,
             'Content-Type': 'application/json'
         }
-    }
+    };
     if (!withCatch) {
         newOption['cache'] = 'no-cache';
     } else {

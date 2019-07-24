@@ -38,7 +38,7 @@ import {
 
 import {
     MyBoardTutorialStepsClass
-} from '/mindnote/controller/main/me/board/tutorial-steps.js'
+} from '/mindnote/controller/main/me/board/tutorial-steps.js';
 
 export class MyBoard extends RouterController {
     constructor(elHTML, parentController, args, context) {
@@ -47,7 +47,7 @@ export class MyBoard extends RouterController {
         this.boardId = args.boardId;
         this.board = null;
         this.deletedMode = false;
-        this.md = window.markdownit();;
+        this.md = window.markdownit();
         this.cy = null;
         this.bindEvent();
     }
@@ -69,7 +69,7 @@ export class MyBoard extends RouterController {
             const nodes = (await api.authApiService.nodes.get({
                 boardId: this.boardId,
                 token: this.token
-            })).data
+            })).data;
             const relationship = (await api.authApiService.relationship.get({
                 boardId: this.boardId,
                 token: this.token
@@ -103,7 +103,7 @@ export class MyBoard extends RouterController {
             this.elHTML.querySelector('.markdown-container').innerHTML = detail;
         });
 
-        this.elHTML.querySelector('.btn-fullscreen').addEventListener('click', (e) => {
+        this.elHTML.querySelector('.btn-fullscreen').addEventListener('click', () => {
             if (this.elHTML.querySelector('.node-form').classExists('fullscreen')) {
                 UI.nodeForm.exitFullscreen(this.elHTML);
             } else {
@@ -113,7 +113,7 @@ export class MyBoard extends RouterController {
             }
         });
 
-        document.querySelector('.btn-add').addEventListener('click', async (e) => {
+        document.querySelector('.btn-add').addEventListener('click', async () => {
             const title = document.querySelector('.title').value;
             const description = document.querySelector('.description').value;
             const token = localStorage.getItem('token');
@@ -135,12 +135,12 @@ export class MyBoard extends RouterController {
                     resp.data
                 ]);
                 if (Swissknife.Tutorial.isTutorialMode()) {
-                    Swissknife.Tutorial.gotoTutorialStep('展開修改筆記表單')
+                    Swissknife.Tutorial.gotoTutorialStep('展開修改筆記表單');
                 }
                 UI.hideNodeForm();
             }
         });
-        document.querySelector('.btn-update').addEventListener('click', async (e) => {
+        document.querySelector('.btn-update').addEventListener('click', async () => {
             const title = document.querySelector('.title').value;
             const description = document.querySelector('.description').value;
             if (description.indexOf('Uploading Image URL') !== -1) {
@@ -148,7 +148,7 @@ export class MyBoard extends RouterController {
                     return;
                 }
             }
-            const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
+            const nodeId = document.querySelector('.node-id').value.replace(/node-/gi, '');
             const resp = await api.authApiService.node.patch({
                 title,
                 description,
@@ -180,7 +180,7 @@ export class MyBoard extends RouterController {
                 Swissknife.Tutorial.gotoTutorialStep('刪除資料');
             }
         });
-        document.querySelector('.btn-switch-delete-mode').addEventListener('click', (e) => {
+        document.querySelector('.btn-switch-delete-mode').addEventListener('click', () => {
             this.deletedMode = !this.deletedMode;
             Cyto.isDisableConnecting = this.deletedMode;
             if (this.deletedMode) {
@@ -194,7 +194,7 @@ export class MyBoard extends RouterController {
                 }
             }
         });
-        document.querySelector('.btn-delete-change').addEventListener('click', async (e) => {
+        document.querySelector('.btn-delete-change').addEventListener('click', async () => {
             let nodeIds = this.cy.$('node.deleting').map((node) => {
                 return node.data('id').replace('node-', '');
             });
@@ -226,9 +226,9 @@ export class MyBoard extends RouterController {
                 });
                 if (respForDeleteNode.status === RESPONSE_STATUS.OK) {
                     if (respForDeleteNode.data !== nodeIds.length && respForDeleteNode.data.length > 0) {
-                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, "部份刪除失敗");
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, '部份刪除失敗');
                     } else if (respForDeleteNode.data === 0) {
-                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, "刪除失敗");
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, '刪除失敗');
                     } else {
                         this.cy.$('node.deleting').remove();
                     }
@@ -246,9 +246,9 @@ export class MyBoard extends RouterController {
 
                 if (respForDeleteRelationship.status === RESPONSE_STATUS.OK) {
                     if (respForDeleteRelationship.data !== nodeIds.length && respForDeleteRelationship.data.length > 0) {
-                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, "部份刪除失敗");
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, '部份刪除失敗');
                     } else if (respForDeleteRelationship.data === 0) {
-                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, "刪除失敗");
+                        throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, '刪除失敗');
                     } else {
                         this.cy.$('edge.deleting').remove();
                     }
@@ -269,8 +269,8 @@ export class MyBoard extends RouterController {
 
         document.addEventListener('save-edge', async (e) => {
             const resp = await api.authApiService.relationship.post({
-                parent_node_id: e.detail.parent_node_id.replace(/node\-/gi, ''),
-                child_node_id: e.detail.child_node_id.replace(/node\-/gi, ''),
+                parent_node_id: e.detail.parent_node_id.replace(/node-/gi, ''),
+                child_node_id: e.detail.child_node_id.replace(/node-/gi, ''),
                 token: this.token,
                 boardId: this.boardId
             });
@@ -300,11 +300,11 @@ export class MyBoard extends RouterController {
             const position = {
                 x: e.detail.position.x,
                 y: e.detail.position.y
-            }
+            };
 
             UI.showNodeForm(this.cy, '', '', '', position);
             if (Swissknife.Tutorial.isTutorialMode()) {
-                Swissknife.Tutorial.gotoTutorialStep('新增筆記')
+                Swissknife.Tutorial.gotoTutorialStep('新增筆記');
             }
         });
         document.addEventListener('double-tap-node', (e) => {
@@ -317,7 +317,7 @@ export class MyBoard extends RouterController {
             }
             const title = e.detail.title;
             const desc = e.detail.description;
-            UI.openNodeWindow(title, desc)
+            UI.openNodeWindow(title, desc);
         });
         document.addEventListener('tap-node', (e) => {
             if (this.deletedMode) {
@@ -351,7 +351,7 @@ export class MyBoard extends RouterController {
             const position = {
                 x: e.detail.position.x,
                 y: e.detail.position.y
-            }
+            };
             if (Swissknife.Tutorial.isTutorialMode()) {
                 if (Swissknife.Tutorial.getCurrentStep().id === '展開修改筆記表單') {
                     Swissknife.Tutorial.gotoTutorialStep('修改筆記');
@@ -383,7 +383,7 @@ export class MyBoard extends RouterController {
         });
         document.querySelectorAll('.node-form .title').forEach((el) => {
             el.addEventListener('keyup', (e) => {
-                const nodeId = document.querySelector('.node-id').value.replace(/node\-/gi, '');
+                const nodeId = document.querySelector('.node-id').value.replace(/node-/gi, '');
                 if (e.currentTarget.value === '') {
                     e.currentTarget.dataset['isComposing'] = false;
                 } else {
@@ -418,14 +418,14 @@ export class MyBoard extends RouterController {
             tempElement.style.top = 0;
             document.body.appendChild(tempElement);
             tempElement.select();
-            document.execCommand("copy");
+            document.execCommand('copy');
             document.body.removeChild(tempElement);
-            button.querySelector('span').innerHTML = '已複製'
+            button.querySelector('span').innerHTML = '已複製';
             button.addClass('copied');
             setTimeout(() => {
-                button.querySelector('span').innerHTML = '複製公開連結'
+                button.querySelector('span').innerHTML = '複製公開連結';
                 button.removeClass('copied');
-            }, 3000)
+            }, 3000);
         });
         document.addEventListener('dropdown-node', (e) => {
             api.authApiService.node.patch({
@@ -489,7 +489,7 @@ export class MyBoard extends RouterController {
             const elNodeForm = document.querySelector('.node-form');
             const elNodeDescriptoin = document.querySelector('.node-form #node-description');
             let nodeDescription = elNodeDescriptoin.value;
-            const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node\-/gi, ''));
+            const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node-/gi, ''));
             const base64Files = await MindnoteFileReader.readFilesToBase64(files);
             for (let i = 0; i < base64Files.length; i++) {
                 const injectResult = injectFlag(nodeDescription, elNodeDescriptoin.selectionStart, elNodeDescriptoin.selectionEnd);
@@ -497,7 +497,7 @@ export class MyBoard extends RouterController {
                 base64Files[i].clientSideFlagId = injectResult.flagId;
                 base64Files[i].nodeId = nodeId;
             }
-            elNodeDescriptoin.value = nodeDescription
+            elNodeDescriptoin.value = nodeDescription;
 
             const resp = await api.authApiService.images.post({
                 base64Files,
@@ -512,7 +512,6 @@ export class MyBoard extends RouterController {
                         `![#${resp.data[i].filename}](${Image.generateImageUrl(resp.data[i].filename)})`
                     );
                 }
-                const lastData = resp.data[resp.data.length - 1];
                 elNodeDescriptoin.value = nodeDescription;
             } else {
                 //fix: errorMsg 改成 data.message
@@ -527,7 +526,7 @@ export class MyBoard extends RouterController {
                     `![#${flagId} Uploading Image Title](Uploading Image URL)`,
                     '\r',
                     nodeDescription.substring(end)
-                ]
+                ];
                 return {
                     flagId,
                     content: result.join('')
@@ -552,7 +551,7 @@ export class MyBoard extends RouterController {
                 return;
             }
             const elNodeForm = document.querySelector('.node-form');
-            const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node\-/gi, ''));
+            const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node-/gi, ''));
             const fileData = await MindnoteFileReader.readFileToBase64(files[0]);
             const respForUploadImage = await api.authApiService.images.post({
                 base64Files: [{

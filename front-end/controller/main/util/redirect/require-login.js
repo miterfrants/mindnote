@@ -30,6 +30,6 @@ export class RequireLogin extends RouterController {
     bindingEvent() {
         this.elHTML.querySelector('.auth-google').addEventListener('click', () => {
             document.querySelector('.header .auth-google').click();
-        })
+        });
     }
 }

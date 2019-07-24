@@ -2,7 +2,7 @@ export class MyBoardTutorialStepsClass {
     constructor(tour) {
         return [{
             title: '展開新增筆記表單',
-            text: `點擊<span class="highlight">畫面空白處</span>會彈出新增筆記的表單`,
+            text: '點擊<span class="highlight">畫面空白處</span>會彈出新增筆記的表單',
             attachTo: {
                 element: '.tutorial-anchor',
                 on: 'top'
@@ -101,7 +101,7 @@ export class MyBoardTutorialStepsClass {
             }]
         }, {
             title: '重新排列',
-            text: `點擊重新排列系統會自動幫你把既有的比較做快速的排列，但每一次排列的結果不會一至，所以如果你的排列是有邏輯順序的請不要按這個按鈕。`,
+            text: '點擊重新排列系統會自動幫你把既有的比較做快速的排列，但每一次排列的結果不會一至，所以如果你的排列是有邏輯順序的請不要按這個按鈕。',
             attachTo: {
                 element: '.btn-layout',
                 on: 'left'
@@ -146,7 +146,7 @@ export class MyBoardTutorialStepsClass {
             }]
         }, {
             title: '上傳圖片 - 展開編輯筆記表單',
-            text: `點擊藍色的圓圈`,
+            text: '點擊藍色的圓圈',
             attachTo: {
                 element: '.tutorial-anchor',
                 on: 'top'
@@ -186,7 +186,7 @@ export class MyBoardTutorialStepsClass {
             }]
         }, {
             title: '預覽筆記內容',
-            text: `連點藍色圈圈就可以預覽你剛剛看的筆記內容囉～`,
+            text: '連點藍色圈圈就可以預覽你剛剛看的筆記內容囉～',
             attachTo: {
                 element: '.tutorial-anchor',
                 on: 'top'
@@ -198,6 +198,6 @@ export class MyBoardTutorialStepsClass {
                 text: '下一步',
                 action: tour.next
             }]
-        }]
+        }];
     }
 }

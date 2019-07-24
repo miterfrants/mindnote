@@ -10,7 +10,7 @@ window['MindnoteController'] = [];
 
 export const Route = {
     init: (context) => {
-        window.addEventListener("popstate", function (e) {
+        window.addEventListener('popstate', function () {
             this.console.log('popstate');
             Route.routing(location.pathname, Router, context);
         });
@@ -33,17 +33,17 @@ export const Route = {
 
         // overwrite link tag original behavior
         document.querySelectorAll('a').forEach((el) => {
-            el.addEventListener('click', overWriteLinkBehavior)
+            el.addEventListener('click', overWriteLinkBehavior);
         });
 
         document.addEventListener('DOMNodeInserted', (e) => {
             if (e.target.tagName === 'A') {
                 const htmlElement = e.target;
-                htmlElement.addEventListener('click', overWriteLinkBehavior)
+                htmlElement.addEventListener('click', overWriteLinkBehavior);
             } else if (e.target.querySelectorAll && e.target.querySelectorAll('a').length > 0) {
                 e.target.querySelectorAll('a').forEach((el) => {
                     el.addEventListener('click', overWriteLinkBehavior);
-                })
+                });
             }
         });
 
@@ -57,7 +57,7 @@ export const Route = {
     },
     routing: async (path, routingTable, context, args, pMatchRouter, pParentController) => {
         const matchRouter = pMatchRouter ? pMatchRouter : Route.findMatchRoute(path, routingTable);
-        const isEnd = matchRouter.Router === undefined
+        const isEnd = matchRouter.Router === undefined;
         const regexp = Route.buildRegExp(matchRouter.path, isEnd);
         args = {
             ...args,
@@ -87,7 +87,7 @@ export const Route = {
             htmlPath = matchRouter.html;
         }
         // assign parent controller to next level controller instance
-        const parentController = await Route.executeController(matchRouter.controller, args, context, htmlPath, pParentController)
+        const parentController = await Route.executeController(matchRouter.controller, args, context, htmlPath, pParentController);
 
         // next routing
         const currentPath = path.replace(regexp, '');
@@ -95,7 +95,7 @@ export const Route = {
             // exit routing
             document.querySelectorAll('.child-router').forEach((el) => {
                 el.style.display = '';
-            })
+            });
             return;
         }
         const nextMatchRouter = Route.findMatchRoute(currentPath, matchRouter.Router);
@@ -103,13 +103,13 @@ export const Route = {
             !nextMatchRouter.isRequiredParentPrepareData ||
             (nextMatchRouter.isRequiredParentPrepareData === true && !someThingWrongInPrepareData)
         ) {
-            Route.routing(currentPath, matchRouter.Router, context, args, nextMatchRouter, parentController)
+            Route.routing(currentPath, matchRouter.Router, context, args, nextMatchRouter, parentController);
         }
     },
     findMatchRoute: (currentPath, routingTable) => {
         for (let i = 0; i < routingTable.length; i++) {
             const path = routingTable[i].path;
-            const isEnd = routingTable[i].Router === undefined
+            const isEnd = routingTable[i].Router === undefined;
             const regexp = Route.buildRegExp(path, isEnd);
             if (regexp.test(currentPath)) {
                 return routingTable[i];
@@ -119,8 +119,8 @@ export const Route = {
     executeController: async (controller, args, context, htmlPath, parentController) => {
         // 如果已經有 instance 就不要在執行 initalize
         const instances = window.MindnoteController.filter((instance) => {
-            return instance instanceof controller
-        })
+            return instance instanceof controller;
+        });
         let controllerInstance = null;
         let elHTML = null;
         if (instances.length === 0) {
@@ -138,8 +138,8 @@ export const Route = {
         controllerInstance.enter(args);
         return controllerInstance;
     },
-    prepareData: async (prepareFuncs, args) => {
-        return new Promise(async (resolve, reject) => {
+    prepareData: (prepareFuncs, args) => {
+        return new Promise(async (resolve) => { // eslint-disable-line
             let someThingWrongInPrepareData = false;
             const data = {};
             const tempArgs = {
@@ -161,13 +161,13 @@ export const Route = {
         });
     },
     buildRegExp: (path, isEnd) => {
-        const arrayOfPath = path.split('/')
+        const arrayOfPath = path.split('/');
         const arrayRegString = [];
         const arrayQueryStringKey = [];
         for (let j = 0; j < arrayOfPath.length; j++) {
             if (arrayOfPath[j].substring(0, 1) === '{') {
-                arrayQueryStringKey.push(arrayOfPath[j].replace(/{/gi, '').replace(/}/gi, ''))
-                arrayRegString.push('([0-9|a-z|A-Z|_|-|{|}]+)')
+                arrayQueryStringKey.push(arrayOfPath[j].replace(/{/gi, '').replace(/}/gi, ''));
+                arrayRegString.push('([0-9|a-z|A-Z|_|-|{|}]+)');
             } else {
                 arrayRegString.push(arrayOfPath[j]);
             }
@@ -202,4 +202,4 @@ export const Route = {
             Route.routing(path, routingTable, context);
         }
     }
-}
+};
