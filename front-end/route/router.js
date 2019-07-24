@@ -110,4 +110,4 @@ export const Router = [{
             checkVariable: 'TPDirect'
         }],
     }]
-}]
+}];

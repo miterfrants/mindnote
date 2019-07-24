@@ -20,7 +20,7 @@ export const Toaster = {
         let toasterItem = new ToasterMessage(elToaster, className, message, duration || 5000, link);
         toasterItem.show();
     }
-}
+};
 
 class ToasterMessage {
     constructor(container, className, message, duration, link) {
@@ -47,7 +47,7 @@ class ToasterMessage {
             this.el.removeClass('show');
             setTimeout(() => {
                 this.container.removeChild(this.el);
-            }, 300)
-        }, this.duration)
+            }, 300);
+        }, this.duration);
     }
 }

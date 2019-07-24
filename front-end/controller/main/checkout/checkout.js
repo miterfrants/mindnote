@@ -27,7 +27,7 @@ export class Checkout extends RouterController {
         this.token = args.token;
         this.me = args.me;
         this.appendDotCycleTimer;
-        TPDirect.setupSDK(13848, 'app_N9VZ8fjo8HLgqx882iYUeaH7BgXlIW8TeZ8CF4wlvKo0mP82CKxAKLT50rRq', 'sandbox');
+        window.TPDirect.setupSDK(13848, 'app_N9VZ8fjo8HLgqx882iYUeaH7BgXlIW8TeZ8CF4wlvKo0mP82CKxAKLT50rRq', 'sandbox');
         var fields = {
             number: {
                 // css selector
@@ -43,8 +43,8 @@ export class Checkout extends RouterController {
                 element: '#card-ccv',
                 placeholder: '後三碼'
             }
-        }
-        TPDirect.card.setup({
+        };
+        window.TPDirect.card.setup({
             fields: fields,
             styles: {
                 'input': {
@@ -71,9 +71,9 @@ export class Checkout extends RouterController {
         if (this.me.is_subscribed) {
             history.pushState({}, '', '/mindnote/users/me/boards/');
             if (this.me.is_next_subscribe) {
-                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '你已經是訂閱用戶')
+                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '你已經是訂閱用戶');
             } else {
-                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '目前你還是訂閱用戶，將在下一期取消訂閱')
+                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '目前你還是訂閱用戶，將在下一期取消訂閱');
             }
         }
         UI.header.generateNavigation([{
@@ -100,24 +100,24 @@ export class Checkout extends RouterController {
             elBtnSubscribe.addClass('disabled');
 
             // 取得 TapPay Fields 的 status
-            const tappayStatus = TPDirect.card.getTappayFieldsStatus()
+            const tappayStatus = window.TPDirect.card.getTappayFieldsStatus();
 
             // 確認是否可以 getPrime
             if (tappayStatus.canGetPrime === false) {
                 if (tappayStatus.status.number !== 0) {
-                    Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '信用卡卡號錯誤')
+                    Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '信用卡卡號錯誤');
                 } else if (tappayStatus.status.expiry !== 0) {
-                    Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '不正確的過期時間')
+                    Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '不正確的過期時間');
                 } else if (tappayStatus.status.ccv !== 0) {
-                    Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '卡片背面三碼錯誤')
+                    Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '卡片背面三碼錯誤');
                 }
                 elBtnSubscribe.removeClass('disabled');
                 elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';
                 clearTimeout(this.appendDotCycleTimer);
-                return
+                return;
             }
             // Get prime
-            TPDirect.card.getPrime(async (result) => {
+            window.TPDirect.card.getPrime(async (result) => {
                 if (result.status !== 0) {
                     elBtnSubscribe.removeClass('disabled');
                     elBtnSubscribe.innerHTML = '訂閱 &nbsp;&nbsp;&nbsp;&nbsp; $ 99 / 月';

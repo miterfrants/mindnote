@@ -35,15 +35,15 @@ export class Main extends RouterController {
         this.context = context;
         this.me = args.me;
         this.updateSigninStatusByUserBehavior = false;
-        gapi.load('client:auth2', async () => {
-            await gapi.client.init({
+        window.gapi.load('client:auth2', async () => {
+            await window.gapi.client.init({
                 'apiKey': GOOGLE.AUTH.API_KEY,
                 'clientId': GOOGLE.AUTH.CLIENT_ID,
                 'scope': GOOGLE.AUTH.SCOPE
             });
-            this.context.GoogleAuth = gapi.auth2.getAuthInstance();
+            this.context.GoogleAuth = window.gapi.auth2.getAuthInstance();
             this.context.GoogleAuth.isSignedIn.listen(() => {
-                this._updateSigninStatus()
+                this._updateSigninStatus();
             });
             this._updateSigninStatus();
         });
@@ -51,7 +51,7 @@ export class Main extends RouterController {
     }
 
     async enter(args) {
-        super.enter(args)
+        super.enter(args);
         UI.header.generateNavigation([]);
         if (this.me && !this.me.is_subscribed) {
             UI.unsubscribed();
@@ -67,7 +67,7 @@ export class Main extends RouterController {
     _bindEvent() {
         document.querySelector('.btn-logout').addEventListener('click', () => {
             this.updateSigninStatusByUserBehavior = true;
-            this.context.GoogleAuth.signOut()
+            this.context.GoogleAuth.signOut();
             localStorage.setItem('token', '');
             localStorage.setItem('username', '');
             localStorage.setItem('profile_url', '');
@@ -104,19 +104,19 @@ export class Main extends RouterController {
         document.querySelectorAll('.auth-google').forEach((el) => {
             el.addEventListener('click', () => {
                 this.updateSigninStatusByUserBehavior = true;
-                this.context.GoogleAuth.signIn()
+                this.context.GoogleAuth.signIn();
             });
-        })
+        });
 
         document.querySelector('.profile').addEventListener('click', () => {
             const menu = document.querySelector('.menu');
             if (menu.classExists('hide')) {
-                menu.removeClass('hide')
+                menu.removeClass('hide');
             } else {
-                menu.addClass('hide')
+                menu.addClass('hide');
             }
         });
-    };
+    }
 
     async _updateSigninStatus() {
         const user = this.context.GoogleAuth.currentUser.get();
@@ -136,13 +136,13 @@ export class Main extends RouterController {
                     token = result.data.token;
                     username = result.data.username;
                 } else {
-                    UI.header.generateNavigation([])
+                    UI.header.generateNavigation([]);
                     UI.header.hideAuth();
                     return;
                 }
             }
 
-            UI.setupProfile(user.getBasicProfile().getImageUrl(), user.getBasicProfile().getName())
+            UI.setupProfile(user.getBasicProfile().getImageUrl(), user.getBasicProfile().getName());
             UI.header.showAuth();
             UI.showAuth();
         } else if (token) {

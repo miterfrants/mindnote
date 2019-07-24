@@ -24,15 +24,15 @@ export const Cyto = {
 
         // prepare data
         nodes = nodes.map((node) => {
-            const style = UI.Cyto.getStyle(node.description)
+            const style = UI.Cyto.getStyle(node.description);
             return {
                 ...node,
                 style
-            }
+            };
         });
         // const elements = Cyto.prepareData(nodes, relationship, isEditMode ? 20 : 0);
         const elements = Cyto.prepareData(nodes, relationship, 20);
-        Cyto.cy = cytoscape({
+        Cyto.cy = window.cytoscape({
             container: container,
             layout: {
                 name: 'cose-bilkent',
@@ -111,7 +111,7 @@ export const Cyto = {
                 }
             }],
             elements
-        })
+        });
         window.cyto = Cyto.cy;
         Cyto.cy.add([{
             data: {
@@ -173,8 +173,8 @@ export const Cyto = {
             Cyto.cy.on('mouseup', Cyto.mouseupInEditModeHandler);
             Cyto.cy.on('mousemove', Cyto.mousemoveInEditModeHandler);
         }
-        Cyto.cy.on('doubleTap', Cyto.doubleTapHandler)
-        Cyto.cy.on('re-arrange', (e) => {
+        Cyto.cy.on('doubleTap', Cyto.doubleTapHandler);
+        Cyto.cy.on('re-arrange', () => {
             UI.Cyto.reArrange(Cyto.cy);
         });
 
@@ -187,9 +187,9 @@ export const Cyto = {
             Cyto.createNodeHandler(e, title, description);
         });
         Cyto.cy.on('createNodeDone', Cyto.createNodeDoneHandler);
-        Cyto.cy.on('saveEdgeDone', Cyto.saveEdgeDoneHandler)
+        Cyto.cy.on('saveEdgeDone', Cyto.saveEdgeDoneHandler);
         Cyto.cy.on('updateNodeDone', Cyto.updateNodeDoneHandler);
-        Cyto.cy.on('deleteNodeDone', Cyto.deleteNodeDoneHandler)
+        Cyto.cy.on('deleteNodeDone', Cyto.deleteNodeDoneHandler);
         Cyto.cy.on('layoutstop', (e) => {
             const nodes = e.target.cy.nodes().filter((node) => {
                 if (node.id().indexOf('node-') !== -1) {
@@ -198,7 +198,7 @@ export const Cyto = {
                 return false;
             }).map((node) => {
                 return {
-                    id: Number(node.id().replace(/node\-/gi, '')),
+                    id: Number(node.id().replace(/node-/gi, '')),
                     ...node.position()
                 };
             });
@@ -234,7 +234,7 @@ export const Cyto = {
                     x: nodes[i].x,
                     y: nodes[i].y
                 },
-                group: "nodes",
+                group: 'nodes',
                 grabbable: true
             });
         }
@@ -246,9 +246,9 @@ export const Cyto = {
                     source: 'node-' + relationship[i].parent_node_id,
                     target: 'node-' + relationship[i].child_node_id,
                 },
-                group: "edges",
+                group: 'edges',
                 grabbable: true
-            })
+            });
         }
 
         return elements;
@@ -358,7 +358,7 @@ export const Cyto = {
             }
         } else if (Cyto.isNode(e)) {
             const data = e.target.data();
-            var event = new CustomEvent('tap-node', {
+            const event = new CustomEvent('tap-node', {
                 bubbles: true,
                 cancelable: true,
                 // refactor: 修改為 node 位置
@@ -376,7 +376,7 @@ export const Cyto = {
             Cyto.cy.container().dispatchEvent(event);
         } else if (Cyto.isEdge(e)) {
             const data = e.target.data();
-            var event = new CustomEvent('tap-edge', {
+            const event = new CustomEvent('tap-edge', {
                 bubbles: true,
                 cancelable: true,
                 // refactor: 修改為 node 位置
@@ -398,9 +398,9 @@ export const Cyto = {
                 return;
             }
             if (UI.Cyto.isMouseInBorder(e.target, {
-                    x: e.position.x,
-                    y: e.position.y
-                })) {
+                x: e.position.x,
+                y: e.position.y
+            })) {
                 Cyto._isConnecting = true;
             } else {
                 Cyto._isConnecting = false;

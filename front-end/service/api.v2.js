@@ -30,7 +30,7 @@ export const api = {
 
                 const requestBody = {
                     base64Files: data.base64Files
-                }
+                };
 
                 const fetchOption = {
                     method: 'POST',
@@ -63,7 +63,7 @@ export const api = {
                 const postBody = {
                     title: data.title,
                     uniquename: data.uniquename
-                }
+                };
                 const fetchOption = {
                     method: 'POST',
                     headers: {
@@ -215,7 +215,7 @@ export const api = {
                 };
 
                 if (data.parent_node_id) {
-                    postBody.parent_node_id = data.parent_node_id;
+                    requestBody.parent_node_id = data.parent_node_id;
                 }
 
                 let fetchOption = {
@@ -362,7 +362,7 @@ export const api = {
             }
         }
     }
-}
+};
 
 const _fetch = (url, option) => {
     if (option.cache) {
@@ -374,21 +374,21 @@ const _fetch = (url, option) => {
             ...option.headers,
             'Content-Type': 'application/json'
         }
-    }
+    };
     return fetch(url, newOption);
 };
 
 const _handleRequest = (api, fetchOption, sendResponse, withoutCache) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => { // eslint-disable-line
         let result;
         if (
             fetchOption.method === 'GET' &&
-            MindnoteApiCache[api] !== undefined &&
-            MindnoteApiCache[api][JSON.stringify(fetchOption)] !== undefined &&
+            window.MindnoteApiCache[api] !== undefined &&
+            window.MindnoteApiCache[api][JSON.stringify(fetchOption)] !== undefined &&
             withoutCache !== true
         ) {
 
-            result = MindnoteApiCache[api][JSON.stringify(fetchOption)];
+            result = window.MindnoteApiCache[api][JSON.stringify(fetchOption)];
             if (sendResponse) {
                 sendResponse(result);
             }
@@ -400,9 +400,9 @@ const _handleRequest = (api, fetchOption, sendResponse, withoutCache) => {
             fetchOption.method !== 'GET'
         ) {
             // refactor 現在的做法是只要發生 http method 不是 get 就把整個 cache 清掉，未來的作法應該是 API Response 會對應到 client 端 DB
-            MindnoteApiCache = {};
+            window.MindnoteApiCache = {};
         }
-        let resp
+        let resp;
         try {
             resp = await _fetch(api, fetchOption, withoutCache);
         } catch (error) {
@@ -411,7 +411,7 @@ const _handleRequest = (api, fetchOption, sendResponse, withoutCache) => {
                 data: {
                     errorMsg: error
                 }
-            }
+            };
             if (sendResponse) {
                 sendResponse(result);
             }
@@ -426,8 +426,8 @@ const _handleRequest = (api, fetchOption, sendResponse, withoutCache) => {
                 data: jsonData
             };
             if (fetchOption.method === 'GET') {
-                MindnoteApiCache[api] = MindnoteApiCache[api] || {};
-                MindnoteApiCache[api][JSON.stringify(fetchOption)] = result;
+                window.MindnoteApiCache[api] = window.MindnoteApiCache[api] || {}; // eslint-disable-line
+                window.MindnoteApiCache[api][JSON.stringify(fetchOption)] = result; // eslint-disable-line
             }
         } else {
             const jsonData = await resp.json();

@@ -97,6 +97,6 @@ export class MyBoardsTutorialStepsClass {
                 text: '下一步',
                 action: tour.next
             }]
-        }]
+        }];
     }
 }

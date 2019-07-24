@@ -85,7 +85,7 @@ export class Board extends RouterController {
         document.addEventListener('double-tap-node', (e) => {
             const title = e.detail.title;
             const desc = e.detail.description;
-            UI.openNodeWindow(title, desc)
+            UI.openNodeWindow(title, desc);
             localStorage.setItem('have_learned_tip_double_tap', 'true');
             clearTimeout(this.timerForTip);
         });
@@ -96,9 +96,9 @@ export class Board extends RouterController {
 
     showTip() {
         this.timerForTip = setTimeout(() => {
-            Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '小提示: 如果需要看詳細內容，請對藍色圈圈連點兩次', 5000)
+            Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '小提示: 如果需要看詳細內容，請對藍色圈圈連點兩次', 5000);
             this.showTip();
-        }, this.showTipCountDownDuration)
+        }, this.showTipCountDownDuration);
         this.showTipCountDownDuration *= 3;
     }
 }

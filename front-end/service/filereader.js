@@ -1,6 +1,6 @@
 export const MindnoteFileReader = {
     readFileToBase64: (file) => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const fileReader = new FileReader();
             fileReader.readAsDataURL(file);
             fileReader.addEventListener('loadend', (e) => {
@@ -11,10 +11,10 @@ export const MindnoteFileReader = {
                     contentType: contentType.replace(';', '')
                 });
             });
-        })
+        });
     },
     readFilesToBase64: (files) => {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             let loadImageCount = 0;
             const _base64Files = [];
             for (var i = 0; i < files.length; i++) {
@@ -35,4 +35,4 @@ export const MindnoteFileReader = {
             }
         });
     }
-}
+};

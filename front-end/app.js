@@ -32,7 +32,7 @@ export const APP = {
             }
         });
 
-        window.addEventListener("unhandledrejection", function (e) {
+        window.addEventListener('unhandledrejection', function (e) {
             if (e.reason && e.reason instanceof MindnoteError) {
                 Toaster.popup(e.reason.type, e.reason.reason);
                 e.stopPropagation();
@@ -44,4 +44,4 @@ export const APP = {
         api.init(API, RESPONSE_STATUS);
         Route.init(APP);
     }
-}
+};

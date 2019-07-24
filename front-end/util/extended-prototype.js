@@ -3,14 +3,14 @@ const extendStringProtoType = () => {
         String.prototype.bind = function (variable) {
             var result = this.toString();
             for (var key in variable) {
-                if (typeof variable[key] !== "string" && typeof variable[key] !== "number" && typeof variable[key] !== "boolean") {
+                if (typeof variable[key] !== 'string' && typeof variable[key] !== 'number' && typeof variable[key] !== 'boolean') {
                     continue;
                 }
                 var reg = new RegExp('{' + key + '}', 'gi');
                 result = result.replace(reg, variable[key]);
             }
             return result;
-        }
+        };
     }
 
     if (!String.prototype.toDom) {
@@ -18,12 +18,12 @@ const extendStringProtoType = () => {
             let tempContainer = document.createElement('div');
             tempContainer.innerHTML = this.toString();
             if (tempContainer.childNodes.length > 1) {
-                console.warn('please make sure your html string only one root html element;')
+                console.warn('please make sure your html string only one root html element;');
             }
             return tempContainer.childNodes[0];
-        }
+        };
     }
-}
+};
 
 const extendHTMLElementProtoType = () => {
     if (!HTMLElement.prototype.collectFormData) {
@@ -38,7 +38,7 @@ const extendHTMLElementProtoType = () => {
                 }
             });
             return result;
-        }
+        };
     }
 
     if (!HTMLElement.prototype.clearForm) {
@@ -47,13 +47,13 @@ const extendHTMLElementProtoType = () => {
             inputs.forEach((el) => {
                 el.value = '';
             });
-        }
+        };
     }
 
     if (!HTMLElement.prototype.classExists) {
         HTMLElement.prototype.classExists = function (className) {
-            return this.className.split(' ').indexOf(className) !== -1
-        }
+            return this.className.split(' ').indexOf(className) !== -1;
+        };
     }
 
     if (!HTMLElement.prototype.addClass) {
@@ -63,7 +63,7 @@ const extendHTMLElementProtoType = () => {
                 classes.push(newClassName);
                 this.className = classes.join(' ');
             }
-        }
+        };
     }
 
     if (!HTMLElement.prototype.removeClass) {
@@ -74,15 +74,15 @@ const extendHTMLElementProtoType = () => {
                 classes.splice(index, 1);
                 this.className = classes.join(' ');
             }
-        }
+        };
     }
 
     if (!HTMLElement.prototype.prepend) {
         HTMLElement.prototype.prepend = function (node) {
             this.insertBefore(node, this.childNodes[0]);
-        }
+        };
     }
-}
+};
 
 export {
     extendHTMLElementProtoType,

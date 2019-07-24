@@ -10,6 +10,11 @@ import {
     api
 } from '/mindnote/service/api.v2.js';
 
+import {
+    MINDNOTE_ERROR_TYPE,
+    MindnoteError
+} from '/mindnote/util/mindnote-error.js';
+
 export class RequireBoards extends RouterController {
     async enter(args) {
         super.enter(args);

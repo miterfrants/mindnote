@@ -54,7 +54,7 @@ function saveOriginalChildRouter(controllerInstance) {
     controllerInstance.elHTML.childNodes.forEach((el) => {
         if (el.rel === 'stylesheet') {
             stylesheets.push(el);
-        };
+        }
     });
 
     for (let i = 0; i < stylesheets.length; i++) {
@@ -87,7 +87,7 @@ function setupHTML(controllerInstance) {
     if (!parentController) {
         container = document.querySelector('.root');
     } else {
-        container = recrusiveFindConcreteParent(parentController).elHTML.querySelector('.child-router')
+        container = recrusiveFindConcreteParent(parentController).elHTML.querySelector('.child-router');
     }
 
     if (container) {
@@ -98,7 +98,7 @@ function setupHTML(controllerInstance) {
 
 function recrusiveFindConcreteParent(parentController) {
     if (parentController.elHTML !== null) {
-        return parentController
+        return parentController;
     } else if (parentController.parentController) {
         return recrusiveFindConcreteParent(parentController.parentController);
     } else {
