@@ -47,11 +47,11 @@ Google cloud storage credential JSON. How to generate this credential JSON ?
 2. click `create credentials` dropdown list
 3. select `Service account key`
 4. redirect `Create service account key`
-  - `Service account` select `New service account`
-  - `Service account name ` type your service account name, will be listed in `Goolge IAM`
-  - `Role` choise `Service Usage Consumer`、`Storage Object Admin`
-  - `Key type` choise `JSON`
-  - click `create` button, and download json file
+    - `Service account` select `New service account`
+    - `Service account name ` type your service account name, will be listed in `Goolge IAM`
+    - `Role` choise `Service Usage Consumer`、`Storage Object Admin`
+    - `Key type` choise `JSON`
+    - click `create` button, and download json file
 5. escape json file and replace string to `${GCS Credential JSON}`
 
 ### run docker container
