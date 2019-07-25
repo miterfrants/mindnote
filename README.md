@@ -4,9 +4,6 @@
 ![Serverless Application Architecture (6)](https://user-images.githubusercontent.com/2028693/61886399-3ab9ee00-af32-11e9-9b2d-922fa0dcf4ae.png)
 
 ## API Server (ASP.NET Core Web APIs)
-### build docker image
-`docker build -t mindnote-api-server ./api/ --rm`
-
 ### prepare secrets.json
 ```
 {
@@ -54,6 +51,9 @@ Google cloud storage credential JSON. How to generate this credential JSON ?
     - click `create` button, and download json file
 5. escape json file and replace `${GCS Credential JSON}`
 
+### build docker image
+`docker build -t mindnote-api-server ./api/ --rm`
+
 ### run docker container
 ```
 docker run \
@@ -70,9 +70,15 @@ docker run \
 Docker networking name, put api server to an same intranet with postgres database
 
 **volume**:
-Your secrets.json parent directory
+Your secrets.json parent directory path
+
+### develop mode
+1. ignore above steps `build docker image` & `run docker container`
+2. change directory to api root (ex: cd xxxx/mindnote/api)
+3. run command `dotnet run`, make sure you'r workspace have already installed dotnet core framework
 
 ## Front-End Site (Vanilla JS)
+
 
 ## Chrome Extension (Vanilla JS)
 
