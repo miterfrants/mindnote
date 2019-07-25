@@ -10,8 +10,8 @@
     "Config": {
         "Secrets": {
             "DBConnectionString": "host=${ip};port=${port};database=${dbname};username=${username};password=${pwd}",
-            "JwtKey": "${JWT Key}",
-            "GCSCredential": "${GCS Credential JSON}"
+            "JwtKey": "${jwt_key}",
+            "GCSCredential": "${gcs_credential_json}"
             /* Pay for me!!! */
             "TapPayPartnerKey": "${Third-Party Transaction Private Key}",
         }
@@ -35,10 +35,10 @@ user who is db owner
 **pwd**:
 users' password
 
-**JWT Key**:
+**jwt_key**:
 JSON Web Token security key
 
-**GCS Credential JSON**:
+**gcs_credential_json**:
 Google cloud storage credential JSON. How to generate this credential JSON ?
 1. link to [https://console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials)
 2. click `create credentials` dropdown list
@@ -78,42 +78,41 @@ Your secrets.json parent directory path
 3. run command `dotnet run`, make sure you'r workspace have already installed dotnet core framework
 
 ## Front-End Site (Vanilla JS)
-
-
-## Chrome Extension (Vanilla JS)
-
-# Launch api service
-
-## Build a Docker Image
+### run docker container
 ```
-docker build -t mindnote
-```
-
-## Launch Docker container
-
-```
-docker run \
--e ASPNETCORE_URLS=http://\*:8081 \
---network pgnetwork \
--d \
+docker run -d \
+-p 8082:80 \
+-v ${front_end_path}:/usr/share/nginx/html \
+-v ${nginx_config_path}:/etc/nginx/conf.d/default.conf \
+--name mindnote-front-end \
 --rm \
--v ${your secrets.json folder}:/app/volume \
---name mindnote-api-server \
--p 8081:8081 mindnote-api-server \
---use-database-names
+nginx
 ```
 
-secrets.json
+**front_end_path**:
+front-end directory path (ex: cd xxxs/mindnote/front-end)
+
+**nginx_config_path**:
+nginx config path
+example
 ```
-{
-    "Config": {
-        "Secrets": {
-            "DBConnectionString": "host=127.0.0.1;port=5432;database=xxxx;username=xxxx;password=xxxx",
-            "JwtKey": "xxxx"
-        }
+server {
+    listen      80;
+    server_name localhost;
+    location / {
+        root        /usr/share/nginx/html;
+        index       index.html index.htm;
+        try_files   $uri $uri/ /index.html;
     }
 }
 ```
+
+### develop mode
+1. change directory to `${your path}/mindnote/front-end`
+2. execute command `npm install`
+2. execute command `node local-server.js`
+
+## Chrome Extension (Vanilla JS)
 
 
 backup 
