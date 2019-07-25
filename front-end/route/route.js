@@ -7,11 +7,11 @@ import {
 } from '/mindnote/route/router.js';
 
 window['MindnoteController'] = [];
+window['MindnoteCurrentController'] = null;
 
 export const Route = {
     init: (context) => {
         window.addEventListener('popstate', function () {
-            this.console.log('popstate');
             Route.routing(location.pathname, Router, context);
         });
 
@@ -56,7 +56,11 @@ export const Route = {
         }
     },
     routing: async (path, routingTable, context, args, pMatchRouter, pParentController) => {
+        if (window.MindnoteCurrentController) {
+            Route.recurisvieExitController(window.MindnoteCurrentController);
+        }
         const matchRouter = pMatchRouter ? pMatchRouter : Route.findMatchRoute(path, routingTable);
+
         const isEnd = matchRouter.Router === undefined;
         const regexp = Route.buildRegExp(matchRouter.path, isEnd);
         args = {
@@ -132,11 +136,17 @@ export const Route = {
             controllerInstance = new controller(elHTML, parentController, args, context);
             window.MindnoteController.push(controllerInstance);
         } else {
-            // refactor data from route?
             controllerInstance = instances[0];
         }
+        window.MindnoteCurrentController = controllerInstance; // eslint-disable-line
         controllerInstance.enter(args);
         return controllerInstance;
+    },
+    recurisvieExitController: (controllerInstance) => {
+        controllerInstance.exit();
+        if (controllerInstance.parentController) {
+            Route.recurisvieExitController(controllerInstance.parentController);
+        }
     },
     prepareData: (prepareFuncs, args) => {
         return new Promise(async (resolve) => { // eslint-disable-line

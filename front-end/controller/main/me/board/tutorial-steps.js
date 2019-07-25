@@ -9,10 +9,7 @@ export class MyBoardTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己試試就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '新增筆記',
@@ -29,10 +26,7 @@ export class MyBoardTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己試試就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '展開修改筆記表單',
@@ -45,10 +39,7 @@ export class MyBoardTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己試試就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '修改筆記',
@@ -65,10 +56,7 @@ export class MyBoardTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己試試就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '建立連線',
@@ -94,24 +82,18 @@ export class MyBoardTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己試試就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '重新排列',
-            text: '點擊重新排列系統會自動幫你把既有的比較做快速的排列，但每一次排列的結果不會一至，所以如果你的排列是有邏輯順序的請不要按這個按鈕。',
+            text: '點擊重新排列系統會自動幫你把既有的比較做快速的排列，但每一次排列的結果不會一致，所以如果你的排列是有邏輯順序的請不要按這個按鈕。',
             attachTo: {
                 element: '.btn-layout',
                 on: 'left'
             },
             buttons: [{
                 text: '我自己試試就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '刪除資料',
@@ -139,10 +121,7 @@ export class MyBoardTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己試試就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '上傳圖片 - 展開編輯筆記表單',
@@ -153,10 +132,7 @@ export class MyBoardTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己試試就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '上傳圖片',
@@ -179,10 +155,7 @@ export class MyBoardTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己試試就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '預覽筆記內容',
@@ -193,10 +166,7 @@ export class MyBoardTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己試試就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }];
     }

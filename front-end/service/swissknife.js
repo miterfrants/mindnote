@@ -12,13 +12,8 @@ export const Swissknife = {
             }
             return false;
         },
+        // refactor: rename function name like setupTurtorialSingleton
         getTutorialSingleton: (stepsClass, useModalOverlay) => {
-            window.Shepherd.on('complete', () => {
-                history.pushState({}, '', location.pathname);
-            });
-            window.Shepherd.on('cancel', () => {
-                history.pushState({}, '', location.pathname);
-            });
             if (!window.MindnoteTutorial) {
                 window['MindnoteTutorial'] = new window.Shepherd.Tour({
                     defaultStepOptions: {
@@ -28,6 +23,9 @@ export const Swissknife = {
                         },
                     },
                     useModalOverlay: useModalOverlay
+                });
+                window.Shepherd.on('complete', () => {
+                    history.pushState({}, '', location.pathname);
                 });
             } else {
                 window.MindnoteTutorial.steps = [];
@@ -46,7 +44,9 @@ export const Swissknife = {
             return window.MindnoteTutorial.currentStep;
         },
         endTour: () => {
-            window.MindnoteTutorial.cancel();
+            if (window.MindnoteTutorial) {
+                window.MindnoteTutorial.cancel();
+            }
         }
     },
     appendStylesheetToHead: (elStylesheet) => {
