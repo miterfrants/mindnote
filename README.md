@@ -22,9 +22,8 @@ docker networking name, it will be used in api server launch
 
 
 **pgenv**:
+
 path of postgres env config file 
-
-
 example
 ```
 PG_MODE=primary
