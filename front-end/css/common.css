@@ -6,6 +6,10 @@ body {
     font-family: "Microsoft JhengHei", "微軟正黑體", "PingFang", "STHeiti", "WenQuanYi Zen Hei", Arial, "儷黑 Pro", "LiHei Pro", "DFKai-SB", sans-serif;
 }
 
+button {
+    font-family: "Microsoft JhengHei", "微軟正黑體", "PingFang", "STHeiti", "WenQuanYi Zen Hei", Arial, "儷黑 Pro", "LiHei Pro", "DFKai-SB", sans-serif;
+}
+
 body {
     font-size: 14px;
 }
