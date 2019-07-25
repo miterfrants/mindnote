@@ -16,14 +16,12 @@ docker run -d \
 postgres
 ```
 
-
 **pgnetwork**:
 docker networking name, it will be used in api server launch
 
-
 **pgenv**:
-
 path of postgres env config file 
+
 example
 ```
 PG_MODE=primary
@@ -52,13 +50,9 @@ dpage/pgadmin4
 ```
 
 **pgnetwork**:
-
-
 docker networking name, put pgadmin web server in the same intranet with postgres database
 
-
 **pgadmin_env** optional: 
-
 
 setup pgadmin default username and password
 example
