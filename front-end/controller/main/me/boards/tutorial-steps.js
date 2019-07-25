@@ -15,10 +15,7 @@ export class MyBoardsTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己逛逛就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '修改分類權限',
@@ -33,10 +30,7 @@ export class MyBoardsTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己逛逛就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '修改分類標題',
@@ -59,10 +53,7 @@ export class MyBoardsTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己逛逛就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }, {
             title: '刪除分類',
@@ -92,10 +83,7 @@ export class MyBoardsTutorialStepsClass {
             },
             buttons: [{
                 text: '我自己逛逛就好',
-                action: tour.cancel
-            }, {
-                text: '下一步',
-                action: tour.next
+                action: tour.complete
             }]
         }];
     }

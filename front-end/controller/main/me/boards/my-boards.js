@@ -20,18 +20,14 @@ import {
 } from '/mindnote/service/toaster.js';
 
 import {
-    RouterController
-} from '/mindnote/route/router-controller.js';
-
-import {
-    Swissknife
-} from '/mindnote/service/swissknife.js';
+    TutorialRouterController
+} from '/mindnote/controller/tutorial-router-controller.js';
 
 import {
     MyBoardsTutorialStepsClass
 } from '/mindnote/controller/main/me/boards/tutorial-steps.js';
 
-export class MyBoards extends RouterController {
+export class MyBoards extends TutorialRouterController {
     constructor(elHTML, parentController, args, context) {
         super(elHTML, parentController, args, context);
         this.token = args.token;
@@ -40,12 +36,8 @@ export class MyBoards extends RouterController {
 
     async enter(args) {
         super.enter(args);
-
-        if (Swissknife.Tutorial.isTutorialMode()) {
-            super.showTutorial(MyBoardsTutorialStepsClass, true);
-        }
-
         this.continueDeleteCount = 0;
+        super.showTutorial(MyBoardsTutorialStepsClass, true);
         const resp = await api.authApiService.boards.get({
             ...this.args,
         });
@@ -64,6 +56,10 @@ export class MyBoards extends RouterController {
         UI.generateUserBoards(resp.data).forEach((elBoardCard) => {
             this.initBoardCard(elBoardCard);
         });
+    }
+
+    async exit() {
+        super.exit();
     }
 
     bindEvent() {

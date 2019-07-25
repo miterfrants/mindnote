@@ -29,8 +29,8 @@ import {
 } from '/mindnote/service/image.js';
 
 import {
-    RouterController
-} from '/mindnote/route/router-controller.js';
+    TutorialRouterController
+} from '/mindnote/controller/tutorial-router-controller.js';
 
 import {
     Swissknife
@@ -40,7 +40,7 @@ import {
     MyBoardTutorialStepsClass
 } from '/mindnote/controller/main/me/board/tutorial-steps.js';
 
-export class MyBoard extends RouterController {
+export class MyBoard extends TutorialRouterController {
     constructor(elHTML, parentController, args, context) {
         super(elHTML, parentController, args, context);
         this.token = args.token;
@@ -54,9 +54,7 @@ export class MyBoard extends RouterController {
 
     async enter(args) {
         super.enter(args);
-        if (Swissknife.Tutorial.isTutorialMode()) {
-            super.showTutorial(MyBoardTutorialStepsClass, false);
-        }
+        super.showTutorial(MyBoardTutorialStepsClass, false);
         this.boardId = this.args.boardId;
         if (this.token) {
             if (this.cy) {
@@ -93,6 +91,10 @@ export class MyBoard extends RouterController {
                 this.cy.destroy();
             }
         }
+    }
+
+    async exit() {
+        super.exit();
     }
 
     bindEvent() {
