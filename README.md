@@ -77,7 +77,7 @@ Your secrets.json parent directory path
 2. change directory to api root (ex: cd xxxx/mindnote/api)
 3. run command `dotnet run`, make sure you'r workspace have already installed dotnet core framework
 
-## Front-End Site (Vanilla JS)
+## Front-End (Vanilla JS)
 ### run docker container
 ```
 docker run -d \
@@ -108,50 +108,6 @@ server {
 ```
 
 ### develop mode
-1. change directory to `${your path}/mindnote/front-end`
+1. change directory to `${your repo path}/mindnote/front-end`
 2. execute command `npm install`
 2. execute command `node local-server.js`
-
-## Chrome Extension (Vanilla JS)
-
-
-backup 
-```
-docker run -d \
---rm \
---network pgnetwork \
--p 5432:5432 \
---name postgres \
---env-file /srv/postgres/pg-env.list \
--v /srv/postgres/volume \
-postgres
-
-docker run -d \
---rm \
---network pgnetwork \
--p 5050:5050 \
---name pgadmin \
---env-file /srv/pgadmin/pgadmin-env.list \
--v /srv/pgadmin/volume \
-postgres
-
-docker run \
--e ASPNETCORE_URLS=http://\*:8081 \
---network pgnetwork \
--d \
---rm \
--v /srv/mindnote-api:/app/volume \
---name mindnote-api-server \
--p 8081:8081 mindnote-api-server
-```
-
-```
-docker run -d \
--p 8082:80 \
--v ~/project/mindnote/front-end:/usr/share/nginx/html \
--v /srv/mindnote-front-end/conf.d/default.conf:/etc/nginx/conf.d/default.conf \
---name mindnote-front-end \
---rm \
-nginx
-```
-
