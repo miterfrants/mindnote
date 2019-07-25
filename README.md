@@ -14,12 +14,45 @@
         "Secrets": {
             "DBConnectionString": "host=${ip};port=${port};database=${dbname};username=${username};password=${pwd}",
             "JwtKey": "${JWT Key}",
+            "GCSCredential": "${GCS Credential JSON}"
+            /* Pay for me!!! */
             "TapPayPartnerKey": "${Third-Party Transaction Private Key}",
-            "GCSCredential": "${Google Cloud Storage Credential JSON Private Key}"
         }
     }
 }
 ```
+
+**ip**:
+your postgres db ip in docker network. please check your api server and db in the same 
+intranet.
+
+**port**:
+postgres db default port is `5432`
+
+**dbname**:
+database name
+
+**username**:
+user who is db owner
+
+**pwd**:
+users' password
+
+**JWT Key**:
+JSON Web Token security key
+
+**GCS Credential JSON**:
+Google cloud storage credential JSON. How to generate this credential JSON ?
+1. link to [https://console.cloud.google.com/apis/credentials](https://console.cloud.google.com/apis/credentials)
+2. click `create credentials` dropdown list
+3. select `Service account key`
+4. redirect `Create service account key`
+  - `Service account` select `New service account`
+  - `Service account name ` type your service account name, will be listed in `Goolge IAM`
+  - `Role` choise `Service Usage Consumer`、`Storage Object Admin`
+  - `Key type` choise `JSON`
+  - click `create` button, and download json file
+5. escape json file and replace string to `${GCS Credential JSON}`
 
 ### run docker container
 ```
@@ -28,7 +61,7 @@ docker run \
 --network pgnetwork \
 -d \
 --rm \
--v /srv/mindnote-api:/app/volume \
+-v ${your secrets.json parent folder}:/app/volume \
 --name mindnote-api-server \
 -p 8081:8081 mindnote-api-server
 ```
