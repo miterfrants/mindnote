@@ -21,8 +21,6 @@ docker networking name, it will be used in api server launch
 
 **pgenv**:
 path of postgres env config file 
-
-example
 ```
 PG_MODE=primary
 PG_PRIMARY_USER=xxxx
@@ -64,7 +62,7 @@ PGADMIN_LISTEN_PORT=5050
 pgadmin directory which export files
 
 ### build db schema
-1. find out schema.sql (${your repo path}/mindnote/db/schema.sql)
+1. find out schema.sql (`${your repo path}/mindnote/db/schema.sql`)
 2. login pgadmin web ui
 3. run schema.sql
 
