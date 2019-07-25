@@ -3,6 +3,69 @@
 ## Overview
 ![Serverless Application Architecture (6)](https://user-images.githubusercontent.com/2028693/61886399-3ab9ee00-af32-11e9-9b2d-922fa0dcf4ae.png)
 
+## Postgres Database
+### run postgres docker
+```
+docker run -d \
+--rm \
+--network ${pgnetwork} \
+-p 5432:5432 \
+--name postgres \
+--env-file ${pgenv} \
+-v ${pgvolume} \
+postgres
+```
+**pgnetwork**
+docker networking name, it will be used in api server launch
+
+**pgenv**
+path of postgres env config file 
+example
+```
+PG_MODE=primary
+PG_PRIMARY_USER=xxxx
+PG_PRIMARY_PASSWORD=xxxx
+PG_DATABASE=xxxx
+PG_USER=xxxx
+PG_PASSWORD=xxxx
+PG_ROOT_PASSWORD=xxxx
+PG_PRIMARY_PORT=5432
+```
+
+**pgvolume**
+postgres database store directory
+
+### run pgadmin docker
+```
+docker run -d \
+--rm \
+--network ${pgnetwork} \
+-p 5050:5050 \
+--name pgadmin \
+--env-file ${pgadmin_env} \
+-v ${pgadmin_volume} \
+dpage/pgadmin4
+```
+
+**pgnetwork**
+docker networking name, put pgadmin web server in the same intranet with postgres database
+
+**pgadmin_env** optional
+setup pgadmin default username and password
+example
+```
+PGADMIN_DEFAULT_EMAIL=xxxx
+PGADMIN_DEFAULT_PASSWORD=xxxx
+PGADMIN_LISTEN_PORT=5050
+```
+**pgadmin_volume** 
+pgadmin directory which export files
+
+### build db schema
+1. find out schema.sql (${your repo path}/mindnote/db/schema.sql)
+2. login pgadmin web ui
+3. run schema.sql
+
 ## API Server (ASP.NET Core Web APIs)
 ### prepare secrets.json
 ```
