@@ -1,13 +1,42 @@
 # Architecture
 
 ## Overview
-![Serverless Application Architecture (3)](https://user-images.githubusercontent.com/2028693/61869894-5364dc80-af0f-11e9-824e-f3e1dc849870.png)
+![Serverless Application Architecture (6)](https://user-images.githubusercontent.com/2028693/61886399-3ab9ee00-af32-11e9-9b2d-922fa0dcf4ae.png)
 
-## API Server .NET Core Web API App
+## API Server (ASP.NET Core Web APIs)
+### build docker image
+`docker build -t mindnote-api-server ./api/ --rm`
 
-## Front-End Site Vanilla JS
+### prepare secrets.json
+```
+{
+    "Config": {
+        "Secrets": {
+            "DBConnectionString": "host=${ip};port=${port};database=${dbname};username=${username};password=${pwd}",
+            "JwtKey": "${JWT Key}",
+            "TapPayPartnerKey": "${Third-Party Transaction Private Key}",
+            "GCSCredential": "${Google Cloud Storage Credential JSON Private Key}"
+        }
+    }
+}
+```
 
-## Chrome Extension Vanilla JS
+### run docker container
+```
+docker run \
+-e ASPNETCORE_URLS=http://\*:8081 \
+--network pgnetwork \
+-d \
+--rm \
+-v /srv/mindnote-api:/app/volume \
+--name mindnote-api-server \
+-p 8081:8081 mindnote-api-server
+```
+
+
+## Front-End Site (Vanilla JS)
+
+## Chrome Extension (Vanilla JS)
 
 # Launch api service
 
