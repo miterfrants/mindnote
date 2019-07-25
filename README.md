@@ -1,6 +1,7 @@
 # Architecture
 
 ## Overview
+![Serverless Application Architecture (3)](https://user-images.githubusercontent.com/2028693/61869894-5364dc80-af0f-11e9-824e-f3e1dc849870.png)
 
 ## API Server .NET Core Web API App
 
