@@ -3,11 +3,10 @@ html,
 body {
     padding: 0;
     margin: 0;
-    font-family: Arial, "PingFang", "STHeiti", "WenQuanYi Zen Hei", "儷黑 Pro", "LiHei Pro", "Microsoft JhengHei", "微軟正黑體", "DFKai-SB", sans-serif;
+    font-family: "Microsoft JhengHei", "微軟正黑體", "PingFang", "STHeiti", "WenQuanYi Zen Hei", Arial, "儷黑 Pro", "LiHei Pro", "DFKai-SB", sans-serif;
 }
 
 body {
-    font-family: helvetica;
     font-size: 14px;
 }
 
