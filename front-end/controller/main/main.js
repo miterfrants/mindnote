@@ -77,12 +77,10 @@ export class Main extends RouterController {
         });
 
         document.querySelector('.header .btn-unsubscribe').addEventListener('click', async () => {
+            this.elHTML.querySelector('.menu').addClass('hide');
             if (prompt('你真的要退訂閱嗎？ 如果這是真的，請輸入 \'UNSUBSCRIBE\'') !== 'UNSUBSCRIBE') {
                 return;
             }
-            // if (prompt('Are you sure you want to unsubscribe our service, please type \'UNSUBSCRIBE\'') !== 'UNSUBSCRIBE') {
-            //     return;
-            // }
 
             const resp = await api.authApiService.transaction.delete({
                 token: this.token
@@ -115,6 +113,10 @@ export class Main extends RouterController {
             } else {
                 menu.addClass('hide');
             }
+        });
+
+        this.elHTML.querySelector('.menu-item-my-boards').addEventListener('click', () => {
+            this.elHTML.querySelector('.menu').addClass('hide');
         });
     }
 
