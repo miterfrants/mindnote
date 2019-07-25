@@ -52,16 +52,15 @@ dpage/pgadmin4
 **pgnetwork**:
 docker networking name, put pgadmin web server in the same intranet with postgres database
 
-**pgadmin_env** optional: 
+**pgadmin_env**(optional): 
 
 setup pgadmin default username and password
-example
 ```
 PGADMIN_DEFAULT_EMAIL=xxxx
 PGADMIN_DEFAULT_PASSWORD=xxxx
 PGADMIN_LISTEN_PORT=5050
 ```
-**pgadmin_volume** 
+**pgadmin_volume**:
 pgadmin directory which export files
 
 ### build db schema
