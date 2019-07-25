@@ -331,6 +331,7 @@ export const UI = {
             i++;
         });
         newWindow.document.querySelector('head').innerHTML = '<title>' + title + '</title>';
+        newWindow.document.querySelector('body').innerHTML = '';
         newWindow.document.querySelector('body').append(body);
         imgSrcs.forEach((img) => {
             const elImg = document.createElement('img');
