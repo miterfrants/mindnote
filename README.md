@@ -52,20 +52,25 @@ Google cloud storage credential JSON. How to generate this credential JSON ?
     - `Role` choise `Service Usage Consumer`、`Storage Object Admin`
     - `Key type` choise `JSON`
     - click `create` button, and download json file
-5. escape json file and replace string to `${GCS Credential JSON}`
+5. escape json file and replace `${GCS Credential JSON}`
 
 ### run docker container
 ```
 docker run \
 -e ASPNETCORE_URLS=http://\*:8081 \
---network pgnetwork \
+--network ${pgnetwork} \
 -d \
 --rm \
--v ${your secrets.json parent folder}:/app/volume \
+-v ${volume}:/app/volume \
 --name mindnote-api-server \
 -p 8081:8081 mindnote-api-server
 ```
 
+**pgnetwork**:
+Docker networking name, put api server to an same intranet with postgres database
+
+**volume**:
+Your secrets.json parent directory
 
 ## Front-End Site (Vanilla JS)
 
