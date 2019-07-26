@@ -8,13 +8,46 @@
 }
 
 .main .intro {
-    background: #373a3f;
-    color: white;
+    background: #e0e0e0;
+    color: #666;
     height: 500px;
+    overflow: hidden;
+    position: relative;
 }
 
 .main .intro article {
     max-width: 500px;
+    position: relative;
+    z-index: 2;
+}
+
+.main .intro #particles {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    background-image: url('/mindnote/imgs/main/bg.jpg');
+    background-size: cover;
+    opacity: 0.2;
+}
+
+.main .intro .sit-person {
+    position: absolute;
+    left: 840px;
+    top: 210px;
+    z-index: 1;
+    transform: scale(1.5);
+}
+
+.main .intro .through-bar {
+    width: 990px;
+    height: 220px;
+    position: absolute;
+    background: #b64e4e;
+    transform: rotate(-45deg);
+    top: 120px;
+    z-index: 0;
+    left: 390px;
 }
 
 .main .intro article h1 {
