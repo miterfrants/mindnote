@@ -46,7 +46,7 @@ export function Board(data, clickHandler, removeButtonClickHandler, permissionBu
     }, false);
 
     this.element.querySelector('.btn-link').addEventListener('click', (e) => {
-        window.open([remoteEndpoint + '/mindnote/users/me/boards/', self.data.id, '/'].join(''));
+        window.open([remoteEndpoint + 'mindnote/users/me/boards/', self.data.id, '/'].join(''));
     });
 
     this.element.querySelector('.toggle-button').addEventListener('click', (e) => {

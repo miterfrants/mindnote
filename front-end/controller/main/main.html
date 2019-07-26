@@ -50,62 +50,212 @@
         </div>
     </div>
     <div class="child-router">
+        <div class="intro vert-mid">
+            <div class="container">
+                <article>
+                    <h1>Mindnote</h1>
+                    <p>
+                        Mindnote 不只是一款筆記服務，
+                        更提供了視覺化你的想法、整理資訊、腦力激盪的工具，
+                        可以讓你快速的在網頁上畫出
+                        <a target="_blank" href="https://zh.wikipedia.org/zh-tw/%E5%BF%83%E6%99%BA%E5%9B%BE">
+                            <b>心智圖</b>
+                        </a>，
+                        最後能將整理過的資訊分享給朋友或是工作的夥伴。
+                        <button class="auth-google unauth hide">無須安裝，免費註冊</button>
+                    </p>
+                </article>
+            </div>
+        </div>
+
         <div class="container">
             <div class="row">
                 <div>
-                    <article>
-                        <h1>Mindnote</h1>
-                        <p>
-                            Mindnote 是一個網頁版心智圖服務，提供了想法視覺化、整理資訊、腦力激盪的工具。
-                            並能將整理過的資訊分享給朋友或是工作的夥伴。
-                            <button class="auth-google unauth hide">無須安裝，免費註冊</button>
-                        </p>
-                    </article>
+
                     <article>
                         <h1>該怎麼使用這個服務呢 ?</h1>
-                        <h2>網頁基本介紹</h2>
                         <p>
-                            Mindnote 是由一則一則的筆記所組成，
-                            但如果只是<span class="highlight">筆記</span>功能，我就使用原本的服務 (Evernote、Simplenote、Quip) 就好，
-                            為什麼還要使用 Mindnote 呢？
-                        </p>
-                        <p>
-                            先為科普一下，多數哺乳類動物學習新的事物，都必須透過舊經驗的聯想，來獲得新知識與技能。(補 referrence)
-                        </p>
-                        <p>
-                            所以 Mindnote 提供了筆記與筆記的關連，並把類似的筆記整理在同一個<span class="highlight">分類</span>裡頭
-                        </p>
-                        <p>
-                            最後能將這個整理的知識體系分享給任何一個人。
+                            以下兩個連結，只要十分鐘照著步驟做，就可快速建立自己的筆記與分類。
+                            <a href="/mindnote/require-login/?redirect=%2Fmindnote%2Fusers%2Fme%2Fboards%2F%3Faction%3Dtutorial"
+                                title="分類頁面">
+                                <b>分類教學</b>
+                            </a>、
+                            <a href="/mindnote/require-boards/" title="分類頁面">
+                                <b>筆記教學</b>
+                            </a>
                         </p>
 
-                        <h3>
-                            <a href="/mindnote/require-login/?redirect=%2Fmindnote%2Fusers%2Fme%2Fboards%2F%3Faction%3Dtutorial"
-                                title="分類頁面">分類教學</a>
-                        </h3>
-                        <h3>
-                            <a href="/mindnote/require-boards/" title="分類頁面">筆記教學</a>
-                        </h3>
-                        <h2>
-                            Chrome 外掛使用
-                        </h2>
-                        <p>
-                            ## 安裝外掛<br />
-                            ## 新增分類<br />
-                            ## 修改分類隱私<br />
-                            ## 新增筆記 With 分類<br />
-                            ## 新增筆記 With 父筆記<br />
-                            ## 連結到網頁分類<br />
-                        </p>
                     </article>
                     <article>
                         <h1>付費和免費使用者差別 ?</h1>
+                        <div class="pricing">
+                            <div class="user-type">
+                                <div class="text-center">
+                                    <div class="free-user inline-block">免費使用者</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="paid-user inline-block">付費使用者</div>
+                                </div>
+                            </div>
+                            <div class="price">
+                                <label>價格</label>
+                                <div class="text-center">
+                                    免費
+                                </div>
+                                <div class="text-center">
+                                    NTD $99/月
+                                </div>
+                            </div>
+                            <div class="storage-usage">
+                                <label>筆記分類上限</label>
+                                <div class="text-center">
+                                    2 個
+                                </div>
+                                <div class="text-center">
+                                    無限制
+                                </div>
+                            </div>
+                            <div class="storage-usage">
+                                <label>圖片上傳限制</label>
+                                <div class="text-center">
+                                    200M
+                                </div>
+                                <div class="text-center">
+                                    2G
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    <article>
+                        <h1>
+                            Chrome 外掛使用
+                        </h1>
                         <p>
+                            Chrome 外掛的使用可以讓你在瀏覽網頁的過程更快速有效地蒐集並記錄資料，
+                            點擊
+                            <a href="https://chrome.google.com/webstore/detail/mindnote/pkbffpnjbjmjndpddnkaldjpopkmlach?hl=en"
+                                target="_blank">
+                                <b>安裝連結</b>
+                            </a>，
+                            登入以後會看到以下的介面 (目前只有提供 Google 登入)
                         </p>
+
+                        <div class="half">
+                            <h2>
+                                狀態列
+                            </h2>
+                            <div class="info-bar">
+                                <img src="/mindnote/imgs/tutorial/chrome-ext-layout.png" />
+                            </div>
+                            <h4>
+                                關聯 (左側)
+                            </h4>
+                            <p>
+                                顯示新增筆記時，隸屬的分類或是關聯的父筆記
+                            </p>
+                            <h4>
+                                使用者基本資料 (右側)
+                            </h4>
+                            <p>
+                                Mindnote 只會向 Google 拿到註冊使用者的 email、頭貼、稱呼
+                            </p>
+                        </div>
+                        <div class="half">
+                            <h2>
+                                分頁
+                            </h2>
+                            <div class="tab">
+                                <img src="/mindnote/imgs/tutorial/chrome-ext-layout.png" width="600" />
+                            </div>
+                            <h4>分類</h4>
+                            <p>分類分頁，提供你快速新增、刪除、設定瀏覽權限的功能，並且與網站資料同步。當你點擊其中一個分類時，可以讓未來新增的筆記隸屬於這個分類。</p>
+                            <h4>筆記歷史紀錄</h4>
+                            <p>透過 Chrome 外掛新增的筆記記錄</p>
+                        </div>
+
+                        <div class="clearfix"></div>
+                        <h2>基本操作</h2>
+                        <p>
+                            在網頁選取文字以後按下 <br />
+                            Command + Shift + P (Windows 按下 Ctrl + Shift + P) 會呼叫新增筆記的表單 <br />
+                            Command + Shift + O (Windows 按下 Ctrl + Shift + O) 會把選取的文字塞到剪貼簿
+                        </p>
+                        <!--
+                        <h2>新增某個分類的筆記</h2>
+                        <img src="/mindnote/imgs/tutorial/chrome-ext-popup.gif" />
+
+                        <h2>新增筆記關聯到舊的筆記</h2>
+                        <img src="/mindnote/imgs/tutorial/chrome-ext-popup.gif" />
+                        -->
                     </article>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    <style>
+        .main p {
+            max-width: 800px;
+            line-height: 1.8em;
+        }
+
+        .main .half {
+            float: left;
+            width: calc(50% - 20px);
+            margin-right: 20px;
+        }
+
+        @media (max-width: 992px) {
+            .main .half {
+                float: none;
+                width: 100%;
+            }
+        }
+
+        .main .info-bar {
+            overflow: hidden;
+            border: 1px solid #d8d8d8;
+            display: inline-block;
+            box-shadow: 0 0 8px #ccc;
+            border-radius: 3px;
+            width: 100%;
+            padding-top: 15.5%;
+            position: relative;
+        }
+
+        .main .tab {
+            overflow: hidden;
+            border: 1px solid #d8d8d8;
+            display: inline-block;
+            box-shadow: 0 0 8px #ccc;
+            border-radius: 3px;
+            width: 100%;
+            padding-top: 8.5%;
+            position: relative;
+        }
+
+        .main .info-bar img,
+        .main .tab img {
+            width: 100%;
+            position: absolute;
+            top: 0;
+        }
+
+        .main .tab img {
+            transform: translateY(-17.5%);
+        }
+
+        .clearfix:after {
+            content: " ";
+            /* Older browser do not support empty content */
+            visibility: hidden;
+            display: block;
+            height: 0;
+            clear: both;
+        }
+
+        .main .chrome-ext-layout {
+            width: calc(100% - 400px);
+            float: left;
+        }
+    </style>
 </div>
