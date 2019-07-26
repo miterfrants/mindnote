@@ -6,3 +6,81 @@
     border: 1px solid #2c2c2c;
     box-shadow: none;
 }
+
+.main .intro {
+    background: #373a3f;
+    color: white;
+    height: 500px;
+}
+
+.main .intro article {
+    max-width: 500px;
+}
+
+.main .intro article h1 {
+    font-size: 5em;
+}
+
+.main .intro h1 {
+    border: none;
+
+}
+
+.main .pricing .user-type {
+    display: flex;
+    padding-left: 140px;
+}
+
+.main .pricing .user-type>* {
+    flex: 1;
+}
+
+.main .pricing .user-type>*>div {
+    width: 120px;
+    height: 120px;
+    color: white;
+    line-height: 120px;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.main .pricing .user-type .free-user {
+    background: #999;
+}
+
+.main .pricing .user-type .paid-user {
+    background: #24c0c2
+}
+
+@media (max-width: 992px) {
+    .main .pricing>* {
+        margin-top: 20px;
+    }
+}
+
+.main .pricing p {
+    font-weight: bolder;
+}
+
+.main .pricing .price,
+.main .pricing .storage-usage,
+.main .pricing .boards-limit {
+    display: flex;
+    margin-top: 20px;
+}
+
+.main .pricing .price>*,
+.main .pricing .storage-usage>*,
+.main .pricing .boards-limit>* {
+    flex: 1;
+    text-align: center;
+}
+
+.main .pricing .price>label,
+.main .pricing .storage-usage>label,
+.main .pricing .boards-limit>label {
+    text-align: left;
+    width: 140px;
+    flex: auto;
+    flex-grow: inherit;
+}

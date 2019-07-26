@@ -48,6 +48,11 @@ export const Route = {
         });
 
         function overWriteLinkBehavior(e) {
+            if (e.currentTarget && e.currentTarget.href) {
+                if (e.currentTarget.href.indexOf(location.origin) === -1) {
+                    return;
+                }
+            }
             e.preventDefault();
             e.stopPropagation();
             const newPath = e.currentTarget.href.replace(location.origin, '');
