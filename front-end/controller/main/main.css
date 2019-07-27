@@ -1,3 +1,76 @@
+.main {
+    color: #666;
+}
+
+.main p {
+    max-width: 800px;
+    line-height: 1.8em;
+}
+
+.main .half {
+    float: left;
+    width: calc(50% - 20px);
+    margin-right: 20px;
+}
+
+@media (max-width: 992px) {
+    .main .half {
+        float: none;
+        width: 100%;
+    }
+}
+
+.main .info-bar {
+    overflow: hidden;
+    border: 1px solid #d8d8d8;
+    display: inline-block;
+    box-shadow: 0 0 8px #ccc;
+    border-radius: 3px;
+    width: 100%;
+    padding-top: 15.5%;
+    position: relative;
+}
+
+.main .tab {
+    overflow: hidden;
+    border: 1px solid #d8d8d8;
+    display: inline-block;
+    box-shadow: 0 0 8px #ccc;
+    border-radius: 3px;
+    width: 100%;
+    padding-top: 8.5%;
+    position: relative;
+}
+
+.main .info-bar img,
+.main .tab img {
+    width: 100%;
+    position: absolute;
+    top: 0;
+}
+
+.main .tab img {
+    transform: translateY(-17.5%);
+}
+
+.clearfix:after {
+    content: " ";
+    /* Older browser do not support empty content */
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+}
+
+.main .chrome-ext-layout {
+    width: calc(100% - 400px);
+    float: left;
+}
+
+.main h1 {
+    border: none;
+}
+
 .main .auth-google {
     background: none;
     border-radius: 20px;
@@ -7,18 +80,23 @@
     box-shadow: none;
 }
 
+/* introduction */
 .main .intro {
     background: #e0e0e0;
-    color: #666;
     height: 500px;
     overflow: hidden;
     position: relative;
+    height: 650px;
 }
 
 .main .intro article {
     max-width: 500px;
     position: relative;
     z-index: 2;
+}
+
+.main .intro article h1 {
+    font-size: 5em;
 }
 
 .main .intro #particles {
@@ -33,62 +111,150 @@
 
 .main .intro .sit-person {
     position: absolute;
-    left: 840px;
-    top: 210px;
     z-index: 1;
     transform: scale(1.5);
+    right: 230px;
+    top: 30px;
 }
 
 .main .intro .through-bar {
-    width: 990px;
+    width: 1520px;
     height: 220px;
     position: absolute;
     background: #b64e4e;
     transform: rotate(-45deg);
-    top: 120px;
+    top: 110px;
     z-index: 0;
-    left: 390px;
+    right: -230px;
 }
 
-.main .intro article h1 {
-    font-size: 5em;
+@media (max-width: 1200px) {
+    .main .intro .through-bar {
+        right: -290px;
+        opacity: 0.7
+    }
+
+    .main .intro .sit-person {
+        right: 80px;
+    }
 }
 
-.main .intro h1 {
-    border: none;
+@media (max-width: 1000px) {
+    .main .intro .through-bar {
+        left: -610;
+        opacity: 0.7
+    }
 
+    .main .intro .sit-person {
+        display: none;
+    }
+}
+
+@media (max-width: 767px) {}
+
+/* how to use */
+.main .how-to-use {
+    display: flex;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    color: #ccc;
+    background: #292e31
+}
+
+.main .how-to-use h1 {
+    display: inline-block;
+    position: absolute;
+    white-space: nowrap;
+    height: 100%;
+    top: 0;
+    box-sizing: border-box;
+    border-radius: 0;
+    line-height: 3.5em;
+}
+
+.main .how-to-use p {
+    margin-left: 400px;
+    z-index: 1;
+}
+
+@media (max-width: 767px) {
+    .main .how-to-use {
+        flex-direction: column;
+    }
+
+    .main .how-to-use p {
+        margin-left: 0;
+        margin-top: 50px;
+    }
+}
+
+/* pricing */
+.main .pricing {
+    padding: 40px 0 120px 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.main .pricing h1 {
+    position: absolute;
+    padding: 0;
+}
+
+.main .pricing h1::before {
+    position: absolute;
+    top: -530px;
+    content: '';
+    display: block;
+    background: #fff8a5;
+    width: 830px;
+    height: 1500px;
+    z-index: -1;
+    transform: rotate(45deg);
+    left: 110px;
+}
+
+.main .pricing .plans {
+    margin-left: 400px;
+    width: 500px;
+}
+
+@media (max-width: 991px) {
+    .main .pricing .plans {
+        margin-left: 0;
+        padding-top: 60px;
+    }
 }
 
 .main .pricing .user-type {
     display: flex;
-    padding-left: 140px;
+    margin-left: 140px;
 }
 
 .main .pricing .user-type>* {
     flex: 1;
 }
 
-.main .pricing .user-type>*>div {
+.main .pricing .user-type>*>* {
     width: 120px;
     height: 120px;
     color: white;
     line-height: 120px;
     text-align: center;
-    margin: 20px 0;
 }
 
 .main .pricing .user-type .free-user {
+    position: relative;
     background: #999;
 }
 
 .main .pricing .user-type .paid-user {
-    background: #24c0c2
-}
-
-@media (max-width: 992px) {
-    .main .pricing>* {
-        margin-top: 20px;
-    }
+    display: inline-block;
+    position: relative;
+    background: #24c0c2;
+    animation: shakeCard 1s infinite;
 }
 
 .main .pricing p {
@@ -100,6 +266,14 @@
 .main .pricing .boards-limit {
     display: flex;
     margin-top: 20px;
+}
+
+.main .pricing .price {
+    margin-top: 40px;
+}
+
+.main .pricing .price .highlight {
+    font-size: 2em;
 }
 
 .main .pricing .price>*,
@@ -116,4 +290,43 @@
     width: 140px;
     flex: auto;
     flex-grow: inherit;
+}
+
+.main .pricing .free-user::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #999;
+    bottom: -10px;
+    left: calc(50% - 5px);
+}
+
+.main .pricing .paid-user::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #24c0c2;
+    bottom: -10px;
+    left: calc(50% - 5px);
+}
+
+
+@keyframes shakeCard {
+    0% {
+        transform: translateY(-5px);
+    }
+
+    50% {
+        transform: translateY(0px);
+    }
+
+    100% {
+        transform: translateY(-5px);
+    }
 }

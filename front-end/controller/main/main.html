@@ -46,7 +46,7 @@
     <div class="child-router">
         <div class="intro vert-mid">
             <div id="particles"></div>
-            <div class="container">
+            <div class="container relative">
                 <article>
                     <h1>Mindnote</h1>
                     <p>
@@ -65,194 +65,71 @@
             </div>
         </div>
 
-        <div class="container">
-            <div class="row">
-                <div>
+        <div class="how-to-use">
+            <div class="container">
+                <article class="vert-mid">
+                    <h1>該怎麼使用這個服務呢 ?</h1>
+                    <p>
+                        以下兩個連結，只要十分鐘照著步驟做，就可快速建立自己的筆記與分類。
+                        <a href="/mindnote/require-login/?redirect=%2Fmindnote%2Fusers%2Fme%2Fboards%2F%3Faction%3Dtutorial"
+                            title="分類頁面">
+                            <b>分類教學</b>
+                        </a>、
+                        <a href="/mindnote/require-boards/" title="分類頁面">
+                            <b>筆記教學</b>
+                        </a>、
+                        <a href="/mindnote/chrome-ext/" title="Chrome 外掛教學">
+                            <b>Chrome 外掛教學</b>
+                        </a>
+                    </p>
 
-                    <article>
-                        <h1>該怎麼使用這個服務呢 ?</h1>
-                        <p>
-                            以下兩個連結，只要十分鐘照著步驟做，就可快速建立自己的筆記與分類。
-                            <a href="/mindnote/require-login/?redirect=%2Fmindnote%2Fusers%2Fme%2Fboards%2F%3Faction%3Dtutorial"
-                                title="分類頁面">
-                                <b>分類教學</b>
-                            </a>、
-                            <a href="/mindnote/require-boards/" title="分類頁面">
-                                <b>筆記教學</b>
-                            </a>
-                        </p>
+                </article>
+            </div>
+        </div>
 
-                    </article>
-                    <article>
-                        <h1>付費和免費使用者差別 ?</h1>
-                        <div class="pricing">
-                            <div class="user-type">
-                                <div class="text-center">
-                                    <div class="free-user inline-block">免費使用者</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="paid-user inline-block">付費使用者</div>
-                                </div>
+        <div class="pricing">
+            <div class="container">
+                <article class="compare-free-paid">
+                    <h1>付費和免費使用者差別 ?</h1>
+                    <div class="plans">
+                        <div class="user-type">
+                            <div class="text-center">
+                                <div class="free-user inline-block">免費使用者</div>
                             </div>
-                            <div class="price">
-                                <label>價格</label>
-                                <div class="text-center">
-                                    免費
-                                </div>
-                                <div class="text-center">
-                                    NTD $99/月
-                                </div>
-                            </div>
-                            <div class="storage-usage">
-                                <label>筆記分類上限</label>
-                                <div class="text-center">
-                                    2 個
-                                </div>
-                                <div class="text-center">
-                                    無限制
-                                </div>
-                            </div>
-                            <div class="storage-usage">
-                                <label>圖片上傳限制</label>
-                                <div class="text-center">
-                                    200M
-                                </div>
-                                <div class="text-center">
-                                    2G
-                                </div>
+                            <div class="text-center">
+                                <a href="/mindnote/checkout/" class="paid-user inline-block">付費使用者</a>
                             </div>
                         </div>
-                    </article>
-                    <article>
-                        <h1>
-                            Chrome 外掛使用
-                        </h1>
-                        <p>
-                            Chrome 外掛的使用可以讓你在瀏覽網頁的過程更快速有效地蒐集並記錄資料，
-                            點擊
-                            <a href="https://chrome.google.com/webstore/detail/mindnote/pkbffpnjbjmjndpddnkaldjpopkmlach?hl=en"
-                                target="_blank">
-                                <b>安裝連結</b>
-                            </a>，
-                            登入以後會看到以下的介面 (目前只有提供 Google 登入)
-                        </p>
-
-                        <div class="half">
-                            <h2>
-                                狀態列
-                            </h2>
-                            <div class="info-bar">
-                                <img src="/mindnote/imgs/tutorial/chrome-ext-layout.png" />
+                        <div class="price vert-mid">
+                            <label>價格</label>
+                            <div class="text-center">
+                                免費
                             </div>
-                            <h4>
-                                關聯 (左側)
-                            </h4>
-                            <p>
-                                顯示新增筆記時，隸屬的分類或是關聯的父筆記
-                            </p>
-                            <h4>
-                                使用者基本資料 (右側)
-                            </h4>
-                            <p>
-                                Mindnote 只會向 Google 拿到註冊使用者的 email、頭貼、稱呼
-                            </p>
-                        </div>
-                        <div class="half">
-                            <h2>
-                                分頁
-                            </h2>
-                            <div class="tab">
-                                <img src="/mindnote/imgs/tutorial/chrome-ext-layout.png" width="600" />
+                            <div class="text-center highlight">
+                                NTD $99/月
                             </div>
-                            <h4>分類</h4>
-                            <p>分類分頁，提供你快速新增、刪除、設定瀏覽權限的功能，並且與網站資料同步。當你點擊其中一個分類時，可以讓未來新增的筆記隸屬於這個分類。</p>
-                            <h4>筆記歷史紀錄</h4>
-                            <p>透過 Chrome 外掛新增的筆記記錄</p>
                         </div>
-
-                        <div class="clearfix"></div>
-                        <h2>基本操作</h2>
-                        <p>
-                            在網頁選取文字以後按下 <br />
-                            Command + Shift + P (Windows 按下 Ctrl + Shift + P) 會呼叫新增筆記的表單 <br />
-                            Command + Shift + O (Windows 按下 Ctrl + Shift + O) 會把選取的文字塞到剪貼簿
-                        </p>
-                        <!--
-                        <h2>新增某個分類的筆記</h2>
-                        <img src="/mindnote/imgs/tutorial/chrome-ext-popup.gif" />
-
-                        <h2>新增筆記關聯到舊的筆記</h2>
-                        <img src="/mindnote/imgs/tutorial/chrome-ext-popup.gif" />
-                        -->
-                    </article>
-                </div>
+                        <div class="storage-usage">
+                            <label>筆記分類上限</label>
+                            <div class="text-center">
+                                2 個
+                            </div>
+                            <div class="text-center">
+                                無限制
+                            </div>
+                        </div>
+                        <div class="storage-usage">
+                            <label>圖片上傳限制</label>
+                            <div class="text-center">
+                                200M
+                            </div>
+                            <div class="text-center">
+                                2G
+                            </div>
+                        </div>
+                    </div>
+                </article>
             </div>
         </div>
     </div>
-    <style>
-        .main p {
-            max-width: 800px;
-            line-height: 1.8em;
-        }
-
-        .main .half {
-            float: left;
-            width: calc(50% - 20px);
-            margin-right: 20px;
-        }
-
-        @media (max-width: 992px) {
-            .main .half {
-                float: none;
-                width: 100%;
-            }
-        }
-
-        .main .info-bar {
-            overflow: hidden;
-            border: 1px solid #d8d8d8;
-            display: inline-block;
-            box-shadow: 0 0 8px #ccc;
-            border-radius: 3px;
-            width: 100%;
-            padding-top: 15.5%;
-            position: relative;
-        }
-
-        .main .tab {
-            overflow: hidden;
-            border: 1px solid #d8d8d8;
-            display: inline-block;
-            box-shadow: 0 0 8px #ccc;
-            border-radius: 3px;
-            width: 100%;
-            padding-top: 8.5%;
-            position: relative;
-        }
-
-        .main .info-bar img,
-        .main .tab img {
-            width: 100%;
-            position: absolute;
-            top: 0;
-        }
-
-        .main .tab img {
-            transform: translateY(-17.5%);
-        }
-
-        .clearfix:after {
-            content: " ";
-            /* Older browser do not support empty content */
-            visibility: hidden;
-            display: block;
-            height: 0;
-            clear: both;
-        }
-
-        .main .chrome-ext-layout {
-            width: calc(100% - 400px);
-            float: left;
-        }
-    </style>
 </div>
