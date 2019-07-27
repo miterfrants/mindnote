@@ -11,5 +11,8 @@ namespace Mindnote.Models
         public DateTime? deleted_at { get; set; }
         public int? owner_id { get; set; }
         public int? node_id { get; set; }
+        public decimal? width { get; set; }
+        public decimal? height { get; set; }
+        public decimal? size { get; set; }
     }
 }

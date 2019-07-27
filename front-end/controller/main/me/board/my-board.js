@@ -500,7 +500,6 @@ export class MyBoard extends TutorialRouterController {
                 base64Files[i].nodeId = nodeId;
             }
             elNodeDescriptoin.value = nodeDescription;
-
             const resp = await api.authApiService.images.post({
                 base64Files,
                 token: this.token,
@@ -517,7 +516,11 @@ export class MyBoard extends TutorialRouterController {
                 elNodeDescriptoin.value = nodeDescription;
             } else {
                 //fix: errorMsg 改成 data.message
-                throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                if (resp.httpStatus === 417) {
+                    throw new MindnoteError(MINDNOTE_ERROR_TYPE.WARN, resp.data.errorMsg);
+                } else {
+                    throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
+                }
             }
 
             function injectFlag(content, start, end) {

@@ -64,6 +64,12 @@ namespace Mindnote.Models
                 entity.Property(e => e.filename)
                     .IsRequired()
                     .HasMaxLength(64);
+
+                entity.Property(e => e.height).HasColumnType("numeric(8,2)");
+
+                entity.Property(e => e.size).HasColumnType("numeric(8,2)");
+
+                entity.Property(e => e.width).HasColumnType("numeric(8,2)");
             });
 
             modelBuilder.Entity<node>(entity =>
@@ -102,10 +108,6 @@ namespace Mindnote.Models
 
             modelBuilder.Entity<node_relationship>(entity =>
             {
-                entity.HasIndex(e => new { e.parent_node_id, e.child_node_id })
-                    .HasName("relationship_key")
-                    .IsUnique();
-
                 entity.Property(e => e.id).UseNpgsqlIdentityByDefaultColumn();
 
                 entity.Property(e => e.created_at)
