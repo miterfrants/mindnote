@@ -86,7 +86,7 @@
     height: 500px;
     overflow: hidden;
     position: relative;
-    height: calc(100vh - 52px - 135px / 2);
+    height: 650px;
 }
 
 .main .intro article {

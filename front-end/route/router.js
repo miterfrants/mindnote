@@ -37,6 +37,9 @@ import {
 import {
     RequireBoards
 } from '/mindnote/controller/main/util/redirect/require-boards.js';
+import {
+    chromeExt
+} from '/mindnote/controller/main/chrome-ext/chrome-ext.js';
 
 export const Router = [{
     path: '/mindnote/',
@@ -109,5 +112,10 @@ export const Router = [{
             url: 'https://js.tappaysdk.com/tpdirect/v5.1.0',
             checkVariable: 'TPDirect'
         }],
+    }, {
+        path: 'chrome-ext/',
+        controller: chromeExt,
+        html: '/mindnote/controller/main/chrome-ext/chrome-ext.html',
+        isRequiredParentPrepareData: false
     }]
 }];
