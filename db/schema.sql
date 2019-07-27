@@ -289,47 +289,56 @@ ALTER TABLE public.view_node_relationship OWNER TO webservice;
 -- Name: view_user; Type: VIEW; Schema: public; Owner: webservice
 --
 
-CREATE VIEW public.view_user AS WITH t AS (
-    SELECT
-        transaction.id,
-        transaction.method,
-        transaction.raw_data,
-        transaction.status,
-        transaction.created_at,
-        transaction.deleted_at,
-        transaction.owner_id,
-        transaction.card_holder,
-        transaction.phone,
-        transaction.email,
-        transaction.amount,
-        transaction.discount,
-        transaction.paid_at,
-        transaction.is_next_subscribe,
-        row_number() OVER (PARTITION BY transaction.owner_id ORDER BY transaction.paid_at DESC) AS row_number
-    FROM
-        public.transaction
-    WHERE (to_char(transaction.paid_at, 'YYYYMM'::text) = to_char(now(), 'YYYYMM'::text))
-)
-SELECT
-    "user".id, "user".email, "user".username, "user".hashpwd, "user".birthday, "user".vocation, "user".gender, "user".created_at, "user".deleted_at, "user".salt, "user".latest_login_ip, "user".provider, "user".sub, "user".full_name, "user".phone, CASE WHEN (user_transaction.id IS NOT NULL) THEN
-    TRUE
-ELSE
-    FALSE
-END AS is_subscribed, user_transaction.id AS transaction_id, CASE WHEN (user_transaction.is_next_subscribe IS NOT NULL) THEN
-    user_transaction.is_next_subscribe
-ELSE
-    FALSE
-END AS is_next_subscribe, (
-    SELECT
-        count(*) AS count
-    FROM
-        public.board
-    WHERE ((board.owner_id = "user".id)
-        AND (board.deleted_at IS NULL))) AS board_count
-FROM (public. "user"
-    LEFT JOIN (
-        SELECT
-            t.id,
+create view view_user as (
+ WITH t AS (
+         SELECT transaction.id,
+            transaction.method,
+            transaction.raw_data,
+            transaction.status,
+            transaction.created_at,
+            transaction.deleted_at,
+            transaction.owner_id,
+            transaction.card_holder,
+            transaction.phone,
+            transaction.email,
+            transaction.amount,
+            transaction.discount,
+            transaction.paid_at,
+            transaction.is_next_subscribe,
+            row_number() OVER (PARTITION BY transaction.owner_id ORDER BY transaction.paid_at DESC) AS row_number
+           FROM transaction
+          WHERE to_char(transaction.paid_at, 'YYYYMM'::text) = to_char(now(), 'YYYYMM'::text)
+        )
+ SELECT "user".id,
+    "user".email,
+    "user".username,
+    "user".hashpwd,
+    "user".birthday,
+    "user".vocation,
+    "user".gender,
+    "user".created_at,
+    "user".deleted_at,
+    "user".salt,
+    "user".latest_login_ip,
+    "user".provider,
+    "user".sub,
+    "user".full_name,
+    "user".phone,
+	(select (case when sum(size) is null then 0 else sum(size) end) from image where owner_id = "user".id and deleted_at is null) as storage_usage,
+        CASE
+            WHEN user_transaction.id IS NOT NULL THEN true
+            ELSE false
+        END AS is_subscribed,
+    user_transaction.id AS transaction_id,
+        CASE
+            WHEN user_transaction.is_next_subscribe IS NOT NULL THEN user_transaction.is_next_subscribe
+            ELSE false
+        END AS is_next_subscribe,
+    ( SELECT count(*) AS count
+           FROM board
+          WHERE board.owner_id = "user".id AND board.deleted_at IS NULL) AS board_count
+   FROM "user"
+     LEFT JOIN ( SELECT t.id,
             t.method,
             t.raw_data,
             t.status,
@@ -344,9 +353,8 @@ FROM (public. "user"
             t.paid_at,
             t.is_next_subscribe,
             t.row_number
-        FROM
-            t
-        WHERE (t.row_number = 1)) user_transaction ON (("user".id = user_transaction.owner_id))
+           FROM t
+          WHERE t.row_number = 1) user_transaction ON "user".id = user_transaction.owner_id
 );
 
 ALTER TABLE public.view_user OWNER TO webservice;
