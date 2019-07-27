@@ -1,6 +1,6 @@
 {
   "name": "Mindnote",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A chrome extension which quickly collect idea and knowledge on web",
   "manifest_version": 2,
   "icons": {
@@ -62,7 +62,7 @@
     }
   },
   "oauth2": {
-    "client_id": "675953765772-uvdlm01kmotkh11onjv22r2rja3eoeio.apps.googleusercontent.com",
+    "client_id": "675953765772-iobng4mcdc45qnupc94vp51h7edtbq5p.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/userinfo.email",
       "https://www.googleapis.com/auth/userinfo.profile"

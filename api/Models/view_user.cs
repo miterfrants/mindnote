@@ -12,6 +12,7 @@ namespace Mindnote.Models
         public DateTime? birthday { get; set; }
         public string vocation { get; set; }
         public char? gender { get; set; }
+        public decimal storage_usage { get; set; }
         public DateTime created_at { get; set; }
         public DateTime? deleted_at { get; set; }
         public string salt { get; set; }

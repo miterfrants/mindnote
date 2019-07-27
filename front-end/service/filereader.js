@@ -21,15 +21,21 @@ export const MindnoteFileReader = {
                 const fileReader = new FileReader();
                 fileReader.readAsDataURL(files[i]);
                 fileReader.addEventListener('loadend', (e) => {
-                    loadImageCount += 1;
-                    if (loadImageCount === files.length) {
-                        resolve(_base64Files);
-                    }
                     const imageResult = e.currentTarget.result.replace('data:', '');
                     const contentType = imageResult.substring(0, imageResult.indexOf('base64,'));
-                    _base64Files.push({
-                        data: imageResult.replace(contentType, '').replace('base64,', ''),
-                        contentType: contentType.replace(';', '')
+                    const img = new Image();
+                    img.src = e.currentTarget.result;
+                    img.addEventListener('load', () => {
+                        loadImageCount += 1;
+                        if (loadImageCount === files.length) {
+                            resolve(_base64Files);
+                        }
+                        _base64Files.push({
+                            data: imageResult.replace(contentType, '').replace('base64,', ''),
+                            contentType: contentType.replace(';', ''),
+                            width: img.width,
+                            height: img.height
+                        });
                     });
                 });
             }

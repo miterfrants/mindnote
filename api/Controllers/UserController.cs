@@ -102,6 +102,8 @@ namespace Mindnote.Controllers
                 string contentType = requestBody.base64Files[i].contentType.Value;
                 string clientSideFlagId = requestBody.base64Files[i].clientSideFlagId != null ? requestBody.base64Files[i].clientSideFlagId.Value : "";
                 int nodeId = (int)requestBody.base64Files[i].nodeId.Value;
+                decimal width = (decimal)requestBody.base64Files[i].width.Value;
+                decimal height = (decimal)requestBody.base64Files[i].height.Value;
                 string extensionFilename = ".jpg";
                 if (contentType == "image/jpg" || contentType == "image/jpeg")
                 {
@@ -126,6 +128,15 @@ namespace Mindnote.Controllers
                 string id = Guid.NewGuid().ToString("N");
 
                 MemoryStream stream = new MemoryStream(Convert.FromBase64String(base64Data));
+                Decimal size = stream.Length;
+                if ((user.storage_usage + size) / 1024 / 1024 > 200)
+                {
+                    throw new MindnoteException("上傳的圖片已經超過免費使用者的上限 (200 M)，只要每月 99 元，就能享有 100 倍的上傳空間", HttpStatusCode.ExpectationFailed);
+                }
+                else if ((user.storage_usage + size) / 1024 / 1024 / 1024 > 20)
+                {
+                    throw new MindnoteException("上傳的圖片已經超過付費使用者的上限 (20 G)，請聯繫管理員 miterfrants@gmail.com", HttpStatusCode.InternalServerError);
+                }
                 Google.Apis.Storage.v1.Data.Object resultFromGCS = client.UploadObject(_GCSBucketName, id + extensionFilename, contentType, stream, new UploadObjectOptions()
                 {
                     UserProject = _GCPProjectId,
@@ -140,7 +151,10 @@ namespace Mindnote.Controllers
                     status = Enum.GetName(typeof(JSONResponseStatus), status),
                     filename = resultFromGCS.Name,
                     clientSideFlagId = clientSideFlagId ?? "",
-                    nodeId = nodeId
+                    nodeId = nodeId,
+                    size = resultFromGCS.Size,
+                    width = width,
+                    height = height
                 });
             }
 
@@ -149,7 +163,15 @@ namespace Mindnote.Controllers
             {
                 if (result[i].status == Enum.GetName(typeof(JSONResponseStatus), JSONResponseStatus.OK))
                 {
-                    image image = new image { owner_id = userId, filename = result[i].filename, node_id = result[i].nodeId };
+                    image image = new image
+                    {
+                        owner_id = userId,
+                        filename = result[i].filename,
+                        node_id = result[i].nodeId,
+                        size = result[i].size,
+                        width = result[i].width,
+                        height = result[i].height
+                    };
                     _context.image.Add(image);
                 }
             }
