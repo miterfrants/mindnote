@@ -56,6 +56,7 @@ export class MyBoard extends TutorialRouterController {
         super.enter(args);
         super.showTutorial(MyBoardTutorialStepsClass, false);
         this.boardId = this.args.boardId;
+        this.token = args.token;
         if (this.token) {
             if (this.cy) {
                 this.cy.destroy();
@@ -83,10 +84,8 @@ export class MyBoard extends TutorialRouterController {
             }, {
                 title: this.board.title
             }]);
-            UI.showAuth();
             UI.hideNodeForm();
         } else {
-            UI.hideAuth();
             if (this.cy) {
                 this.cy.destroy();
             }
