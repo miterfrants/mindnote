@@ -47,7 +47,6 @@ export class MyBoard extends TutorialRouterController {
         this.boardId = args.boardId;
         this.board = null;
         this.deletedMode = false;
-        this.md = window.markdownit();
         this.cy = null;
         this.bindEvent();
     }
@@ -65,6 +64,7 @@ export class MyBoard extends TutorialRouterController {
                 boardId: this.boardId,
                 token: this.token
             })).data;
+
             const nodes = (await api.authApiService.nodes.get({
                 boardId: this.boardId,
                 token: this.token
@@ -75,9 +75,12 @@ export class MyBoard extends TutorialRouterController {
             })).data;
 
             const container = UI.getCytoEditContainer();
-            this.cy = Cyto.init(container, nodes, relationship, true);
+            if (!this.context.isServerSideRender) {
+                this.cy = Cyto.init(container, nodes, relationship, true);
+                UI.Cyto.switchToNormalMode(this.cy);
+            }
             UI.switchToNormalMode();
-            UI.Cyto.switchToNormalMode(this.cy);
+
             UI.header.generateNavigation([{
                 title: '我的分類',
                 link: '/mindnote/users/me/boards/'
@@ -100,7 +103,7 @@ export class MyBoard extends TutorialRouterController {
         const elController = document.querySelector('.router-user-board');
         const elNodeForm = elController.querySelector('.node-form');
         this.elHTML.querySelector('textarea').addEventListener('keyup', (e) => {
-            const detail = this.md.render(e.currentTarget.value);
+            const detail = window.markdownit().render(e.currentTarget.value);
             this.elHTML.querySelector('.markdown-container').innerHTML = detail;
         });
 
@@ -108,7 +111,7 @@ export class MyBoard extends TutorialRouterController {
             if (this.elHTML.querySelector('.node-form').classExists('fullscreen')) {
                 UI.nodeForm.exitFullscreen(this.elHTML);
             } else {
-                const detail = this.md.render(this.elHTML.querySelector('textarea').value);
+                const detail = window.markdownit().render(this.elHTML.querySelector('textarea').value);
                 this.elHTML.querySelector('.markdown-container').innerHTML = detail;
                 UI.nodeForm.enterFullscreen(this.elHTML);
             }

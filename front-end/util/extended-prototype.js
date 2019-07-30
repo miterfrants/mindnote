@@ -1,3 +1,7 @@
+import {
+    Loader
+} from "/mindnote/util/loader.js";
+
 const extendStringProtoType = () => {
     if (!String.prototype.bind) {
         String.prototype.bind = function (variable) {
@@ -25,7 +29,7 @@ const extendStringProtoType = () => {
     }
 };
 
-const extendHTMLElementProtoType = () => {
+const extendHTMLElementProtoType = async () => {
     if (!HTMLElement.prototype.collectFormData) {
         HTMLElement.prototype.collectFormData = function () {
             let inputs = this.querySelectorAll('input');

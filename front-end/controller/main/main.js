@@ -20,6 +20,10 @@ import {
 } from '/mindnote/service/toaster.js';
 
 import {
+    CookieUtil
+} from '/mindnote/service/cookie.js';
+
+import {
     MindnoteError,
     MINDNOTE_ERROR_TYPE
 } from '/mindnote/util/mindnote-error.js';
@@ -35,18 +39,20 @@ export class Main extends RouterController {
         this.context = context;
         this.me = args.me;
         this.updateSigninStatusByUserBehavior = false;
-        window.gapi.load('client:auth2', async () => {
-            await window.gapi.client.init({
-                'apiKey': GOOGLE.AUTH.API_KEY,
-                'clientId': GOOGLE.AUTH.CLIENT_ID,
-                'scope': GOOGLE.AUTH.SCOPE
-            });
-            this.context.GoogleAuth = window.gapi.auth2.getAuthInstance();
-            this.context.GoogleAuth.isSignedIn.listen(() => {
+        if (!context.isServerSideRender) {
+            window.gapi.load('client:auth2', async () => {
+                await window.gapi.client.init({
+                    'apiKey': GOOGLE.AUTH.API_KEY,
+                    'clientId': GOOGLE.AUTH.CLIENT_ID,
+                    'scope': GOOGLE.AUTH.SCOPE
+                });
+                this.context.GoogleAuth = window.gapi.auth2.getAuthInstance();
+                this.context.GoogleAuth.isSignedIn.listen(() => {
+                    this._updateSigninStatus();
+                });
                 this._updateSigninStatus();
             });
-            this._updateSigninStatus();
-        });
+        }
         this._bindEvent();
     }
 
@@ -71,6 +77,7 @@ export class Main extends RouterController {
             this.updateSigninStatusByUserBehavior = true;
             this.context.GoogleAuth.signOut();
             localStorage.setItem('token', '');
+            CookieUtil.eraseCookie('token');
             localStorage.setItem('username', '');
             localStorage.setItem('profile_url', '');
             UI.hideAuth();
@@ -139,6 +146,7 @@ export class Main extends RouterController {
                 });
                 if (result.status === RESPONSE_STATUS.OK) {
                     localStorage.setItem('token', result.data.token);
+                    CookieUtil.setCookie('token', result.data.token);
                     localStorage.setItem('username', result.data.username);
                     token = result.data.token;
                     username = result.data.username;

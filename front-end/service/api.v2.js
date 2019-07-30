@@ -4,7 +4,9 @@ import {
 } from '/mindnote/util/extended-prototype.js';
 extendStringProtoType();
 
-window['MindnoteApiCache'] = {};
+if (!window['MindnoteApiCache']) {
+    window['MindnoteApiCache'] = {};
+}
 
 export const api = {
     /**
@@ -331,21 +333,27 @@ export const api = {
             get: async (data) => {
                 let api = _API.ENDPOINT + _API.COMMON.BOARD;
                 api = api.bind(data);
-                return _handleRequest(api, {});
+                return _handleRequest(api, {
+                    method: 'GET'
+                });
             }
         },
         nodes: {
             get: async (data) => {
                 let api = _API.ENDPOINT + _API.COMMON.NODES;
                 api = api.bind(data);
-                return _handleRequest(api, {});
+                return _handleRequest(api, {
+                    method: 'GET'
+                });
             }
         },
         relationship: {
             get: async (data) => {
                 let api = _API.ENDPOINT + _API.COMMON.RELATIONSHIP;
                 api = api.bind(data);
-                return _handleRequest(api, {});
+                return _handleRequest(api, {
+                    method: 'GET'
+                });
             }
         },
         auth: {
@@ -381,14 +389,17 @@ const _fetch = (url, option) => {
 const _handleRequest = (api, fetchOption, sendResponse, withoutCache) => {
     return new Promise(async (resolve) => { // eslint-disable-line
         let result;
+        const newOption = {
+            ...fetchOption
+        };
+        delete newOption.headers;
         if (
             fetchOption.method === 'GET' &&
             window.MindnoteApiCache[api] !== undefined &&
-            window.MindnoteApiCache[api][JSON.stringify(fetchOption)] !== undefined &&
+            window.MindnoteApiCache[api][JSON.stringify(newOption)] !== undefined &&
             withoutCache !== true
         ) {
-
-            result = window.MindnoteApiCache[api][JSON.stringify(fetchOption)];
+            result = window.MindnoteApiCache[api][JSON.stringify(newOption)];
             if (sendResponse) {
                 sendResponse(result);
             }
@@ -427,7 +438,11 @@ const _handleRequest = (api, fetchOption, sendResponse, withoutCache) => {
             };
             if (fetchOption.method === 'GET') {
                 window.MindnoteApiCache[api] = window.MindnoteApiCache[api] || {}; // eslint-disable-line
-                window.MindnoteApiCache[api][JSON.stringify(fetchOption)] = result; // eslint-disable-line
+                const newOption = {
+                    ...fetchOption
+                };
+                delete newOption.headers;
+                window.MindnoteApiCache[api][JSON.stringify(newOption)] = result; // eslint-disable-line
             }
         } else {
             const jsonData = await resp.json();

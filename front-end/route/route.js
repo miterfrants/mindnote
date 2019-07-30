@@ -65,7 +65,6 @@ export const Route = {
             Route.recurisvieExitController(window.MindnoteCurrentController);
         }
         const matchRouter = pMatchRouter ? pMatchRouter : Route.findMatchRoute(path, routingTable);
-
         const isEnd = matchRouter.Router === undefined;
         const regexp = Route.buildRegExp(matchRouter.path, isEnd);
         args = {
@@ -74,9 +73,11 @@ export const Route = {
         };
 
         // load dependency
-        const loader = new Loader();
-        if (matchRouter.dependency) {
-            await loader.load(matchRouter.dependency);
+        if (!context.isServerSideRender) {
+            const loader = new Loader();
+            if (matchRouter.dependency) {
+                await loader.load(matchRouter.dependency);
+            }
         }
 
         // prepare data
@@ -103,7 +104,7 @@ export const Route = {
         if (currentPath.length === 0) {
             // exit routing
             document.querySelectorAll('.child-router').forEach((el) => {
-                el.style.display = '';
+                el.style.visibility = '';
             });
             return;
         }
@@ -112,7 +113,7 @@ export const Route = {
             !nextMatchRouter.isRequiredParentPrepareData ||
             (nextMatchRouter.isRequiredParentPrepareData === true && !someThingWrongInPrepareData)
         ) {
-            Route.routing(currentPath, matchRouter.Router, context, args, nextMatchRouter, parentController);
+            await Route.routing(currentPath, matchRouter.Router, context, args, nextMatchRouter, parentController);
         }
     },
     findMatchRoute: (currentPath, routingTable) => {
@@ -130,6 +131,7 @@ export const Route = {
         const instances = window.MindnoteController.filter((instance) => {
             return instance instanceof controller;
         });
+
         let controllerInstance = null;
         let elHTML = null;
         if (instances.length === 0) {
@@ -143,8 +145,9 @@ export const Route = {
         } else {
             controllerInstance = instances[0];
         }
+
         window.MindnoteCurrentController = controllerInstance; // eslint-disable-line
-        controllerInstance.enter(args);
+        await controllerInstance.enter(args);
         return controllerInstance;
     },
     recurisvieExitController: (controllerInstance) => {

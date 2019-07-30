@@ -73,8 +73,11 @@ export class Board extends RouterController {
         const nodes = respForNodes.data;
         const relationship = respForRelationship.data;
 
-        const container = UI.getCytoContainer();
-        this.cy = Cyto.init(container, nodes, relationship, false);
+        if (!this.context.isServerSideRender) {
+            const container = UI.getCytoContainer();
+            this.cy = Cyto.init(container, nodes, relationship, false);
+        }
+
         const haveLearnedTipDoubleTap = localStorage.getItem('have_learned_tip_double_tap') === 'true';
         if (nodes.length > 0 && !haveLearnedTipDoubleTap) {
             this.showTip();
