@@ -104,7 +104,7 @@ export const Route = {
         if (currentPath.length === 0) {
             // exit routing
             document.querySelectorAll('.child-router').forEach((el) => {
-                el.style.display = '';
+                el.style.visibility = '';
             });
             return;
         }
@@ -113,7 +113,7 @@ export const Route = {
             !nextMatchRouter.isRequiredParentPrepareData ||
             (nextMatchRouter.isRequiredParentPrepareData === true && !someThingWrongInPrepareData)
         ) {
-            Route.routing(currentPath, matchRouter.Router, context, args, nextMatchRouter, parentController);
+            await Route.routing(currentPath, matchRouter.Router, context, args, nextMatchRouter, parentController);
         }
     },
     findMatchRoute: (currentPath, routingTable) => {
@@ -147,7 +147,7 @@ export const Route = {
         }
 
         window.MindnoteCurrentController = controllerInstance; // eslint-disable-line
-        controllerInstance.enter(args);
+        await controllerInstance.enter(args);
         return controllerInstance;
     },
     recurisvieExitController: (controllerInstance) => {

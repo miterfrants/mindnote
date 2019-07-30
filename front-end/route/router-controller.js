@@ -9,19 +9,20 @@ export class RouterController {
         this.context = context;
         this.elOriginalChildNodes = [];
         this.parentController = parentController;
+
         if (elHTML) {
             if (this.elHTML.querySelector('.child-router')) {
-                this.elHTML.querySelector('.child-router').style.display = 'none';
+                this.elHTML.querySelector('.child-router').style.visibility = 'hidden';
             }
             saveOriginalChildRouter(this);
             setupHTML(this);
         }
     }
-    async enter(args) {
+    enter(args) {
         this.args = args;
         if (this.elHTML) {
             if (this.elHTML.querySelector('.child-router')) {
-                this.elHTML.querySelector('.child-router').style.display = 'none';
+                this.elHTML.querySelector('.child-router').style.visibility = 'hidden';
             }
             revertOriginalChildRouter(this);
             setupHTML(this);

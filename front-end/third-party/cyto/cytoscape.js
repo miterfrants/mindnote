@@ -1212,7 +1212,6 @@
             console.warn(msg);
         } else {
             console.log(msg);
-
             if (traceSupported) {
                 console.trace();
             }

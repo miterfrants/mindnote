@@ -45,10 +45,12 @@ const {
     api
 } = imp(frontEndRootPath + '/service/api.v2.js');
 
+const configPath = process.env.NODE_ENV === 'prod' ? '/config.js' : '/config.dev.js';
+
 const {
     RESPONSE_STATUS,
     API
-} = imp(frontEndRootPath + '/config.js');
+} = imp(frontEndRootPath + configPath);
 
 app.all('*/$', async (request, response, next) => {
     try {
@@ -59,10 +61,19 @@ app.all('*/$', async (request, response, next) => {
             destinationPath: 'https://127.0.0.1/'
         }]);
         api.init(API, RESPONSE_STATUS);
-        Route.routing(request.url, Router, {
+        await Route.routing(request.url, Router, {
             isServerSideRender: true
         }, null, null, null, true);
-        response.send(dom.window.document.querySelector('html').innerHTML);
+
+        dom.window.document.querySelectorAll('#MindnoteApiCache').forEach((el) => {
+            el.parentElement.removeChild(el);
+        });
+        const script = dom.window.document.createElement('script');
+        script.id = 'MindnoteApiCache';
+        script.innerHTML = 'window["MindnoteApiCache"] = ' + JSON.stringify(global.window.MindnoteApiCache);
+        dom.window.document.documentElement.innerHTML;
+        dom.window.document.querySelector('head').prepend(script);
+        response.send(dom.window.document.documentElement.innerHTML);
         next(null);
     } catch (error) {
         next(error);
