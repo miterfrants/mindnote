@@ -76,6 +76,9 @@ export class Main extends RouterController {
             UI.hideAuth();
             UI.header.hideAuth();
             UI.header.generateNavigation([]);
+            if (location.pathname !== '/mindnote/') {
+                history.pushState({}, '', '/mindnote/');
+            }
         });
 
         document.querySelector('.header .btn-unsubscribe').addEventListener('click', async () => {
