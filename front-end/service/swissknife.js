@@ -3,7 +3,7 @@ window['MindnoteTutorial'] = null;
 export const Swissknife = {
     Tutorial: {
         isTutorialMode: () => {
-            const queryString = location.search.substring(1);
+            const queryString = location.search ? location.search.substring(1) : '';
             const queryKeyValuePairs = queryString.split('&');
             for (let i = 0; i < queryKeyValuePairs.length; i++) {
                 if (queryKeyValuePairs[i].indexOf('action=tutorial') !== -1) {

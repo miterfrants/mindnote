@@ -424,16 +424,16 @@ export const UI = {
         }
     },
     unsubscribed: () => {
-        document.querySelector('.header .btn-unsubscribe').addClass('hide');
         document.querySelector('.header .btn-subscribe').removeClass('hide');
+        document.querySelector('.header .btn-unsubscribe').addClass('hide');
     },
     unsubscribing: () => {
         document.querySelector('.header .btn-subscribe').addClass('hide');
         document.querySelector('.header .btn-unsubscribe').addClass('hide');
     },
     subscribed: () => {
-        document.querySelector('.header .btn-unsubscribe').removeClass('hide');
         document.querySelector('.header .btn-subscribe').addClass('hide');
+        document.querySelector('.header .btn-unsubscribe').removeClass('hide');
     },
     switchToDeleteMode: () => {
         const elContainer = document.querySelector('.router-user-board');

@@ -1,0 +1,21 @@
+{
+  "name": "render",
+  "version": "1.0.0",
+  "description": "mindnote server side render",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx babel-node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "esm": "git+ssh://git@github.com/miterfrants/esm.git",
+    "express": "^4.17.1",
+    "jsdom": "^15.1.1",
+    "module-alias": "^2.2.0",
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {}
+}
