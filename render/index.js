@@ -46,6 +46,7 @@ const {
 } = imp(frontEndRootPath + '/service/api.v2.js');
 
 const configPath = process.env.NODE_ENV === 'prod' ? '/config.js' : '/config.dev.js';
+const aliasURL = process.env.NODE_ENV === 'prod' ? 'http://127.0.0.1/' : 'https://127.0.0.1/';
 
 const {
     RESPONSE_STATUS,
@@ -55,10 +56,10 @@ const {
 app.all('*/$', async (request, response, next) => {
     try {
         global.location = request._parsedUrl;
-        localStorage.setItem('token', getCookie(request.header('cookie'), 'token'));
+        localStorage.setItem('token', getCookie(request.header('cookie') || '', 'token'));
         recursiveReplaceRouter(Router, [{
             sourcePath: '/mindnote/',
-            destinationPath: 'https://127.0.0.1/'
+            destinationPath: aliasURL
         }]);
         api.init(API, RESPONSE_STATUS);
         await Route.routing(request.url, Router, {
