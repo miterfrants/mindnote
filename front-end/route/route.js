@@ -66,6 +66,7 @@ export const Route = {
         }
         const matchRouter = pMatchRouter ? pMatchRouter : Route.findMatchRoute(path, routingTable);
         const isEnd = matchRouter.Router === undefined;
+
         const regexp = Route.buildRegExp(matchRouter.path, isEnd);
         args = {
             ...args,
