@@ -31,19 +31,25 @@ export class Board extends RouterController {
     constructor(elHTML, parentController, args, context) {
         super(elHTML, parentController, args, context);
         this.cy = null;
-        this.username = args.username;
-        this.token = args.token;
-        this.boardId = args.boardId;
-        this.args = args;
-        this.context = context;
+        this.nodes = [];
+        this.relationship = [];
         this.timerForTip;
         this.showTipCountDownDuration = 6000;
-        this._bindEvent();
     }
+
+    async init() {
+        this.bindEvent();
+    }
+
     async enter(args) {
         super.enter(args);
+    }
+
+    async render(withoutCache) {
+        super.render(withoutCache);
+
         const respForBoard = (await api.apiService.board.get({
-            boardId: this.boardId
+            boardId: this.args.boardId
         }));
 
         if (respForBoard.status !== RESPONSE_STATUS.OK) {
@@ -55,7 +61,7 @@ export class Board extends RouterController {
         }]);
 
         const respForNodes = (await api.apiService.nodes.get({
-            boardId: this.boardId
+            boardId: this.args.boardId
         }));
 
         if (respForNodes.status !== RESPONSE_STATUS.OK) {
@@ -63,28 +69,28 @@ export class Board extends RouterController {
         }
 
         const respForRelationship = (await api.apiService.relationship.get({
-            boardId: this.boardId
+            boardId: this.args.boardId
         }));
 
         if (respForRelationship.status !== RESPONSE_STATUS.OK) {
             throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, respForRelationship.data.errorMsg);
         }
 
-        const nodes = respForNodes.data;
-        const relationship = respForRelationship.data;
+        this.nodes = respForNodes.data;
+        this.relationship = respForRelationship.data;
+    }
 
-        if (!this.context.isServerSideRender) {
-            const container = UI.getCytoContainer();
-            this.cy = Cyto.init(container, nodes, relationship, false);
-        }
+    async postRender() {
+        const container = UI.getCytoContainer();
+        this.cy = Cyto.init(container, this.nodes, this.relationship, false);
 
         const haveLearnedTipDoubleTap = localStorage.getItem('have_learned_tip_double_tap') === 'true';
-        if (nodes.length > 0 && !haveLearnedTipDoubleTap) {
+        if (this.nodes.length > 0 && !haveLearnedTipDoubleTap) {
             this.showTip();
         }
     }
 
-    _bindEvent() {
+    bindEvent() {
         document.addEventListener('double-tap-node', (e) => {
             const title = e.detail.title;
             const desc = e.detail.description;

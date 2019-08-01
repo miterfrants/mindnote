@@ -11,23 +11,34 @@ export class RouterController {
         this.parentController = parentController;
 
         if (elHTML) {
-            if (this.elHTML.querySelector('.child-router')) {
-                this.elHTML.querySelector('.child-router').style.visibility = 'hidden';
+            const classQuery = elHTML.className.split(' ').map((className) => {
+                return `.${className}`;
+            }).join('');
+
+            if (document.querySelector(classQuery)) {
+                this.elHTML = document.querySelector(classQuery);
             }
+
             saveOriginalChildRouter(this);
-            setupHTML(this);
         }
     }
-    enter(args) {
+
+    async enter(args) {
         this.args = args;
+    }
+
+    async render() {
         if (this.elHTML) {
             if (this.elHTML.querySelector('.child-router')) {
                 this.elHTML.querySelector('.child-router').style.visibility = 'hidden';
             }
             revertOriginalChildRouter(this);
-            setupHTML(this);
+            if (this.context.isUpdateDOM) {
+                updateDOM(this);
+            }
         }
     }
+
     async exit() {}
 }
 
@@ -64,7 +75,7 @@ function revertOriginalChildRouter(controllerInstance) {
     }
 }
 
-function setupHTML(controllerInstance) {
+function updateDOM(controllerInstance) {
     let container = null;
     let parentController = controllerInstance.parentController;
     if (!parentController) {

@@ -40,7 +40,7 @@ export const APP = {
                 return;
             }
         });
-
+        APP.isUpdateDOM = false;
         api.init(API, RESPONSE_STATUS);
         Route.init(APP);
     }

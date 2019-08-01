@@ -33,33 +33,28 @@ import {
 } from '/mindnote/route/router-controller.js';
 
 export class Main extends RouterController {
-    constructor(elHTML, parentController, args, context) {
-        super(elHTML, parentController, args, context);
-        this.token = args.token;
-        this.context = context;
-        this.me = args.me;
+    async init(args, context) {
         this.updateSigninStatusByUserBehavior = false;
-        if (!context.isServerSideRender) {
-            window.gapi.load('client:auth2', async () => {
-                await window.gapi.client.init({
-                    'apiKey': GOOGLE.AUTH.API_KEY,
-                    'clientId': GOOGLE.AUTH.CLIENT_ID,
-                    'scope': GOOGLE.AUTH.SCOPE
-                });
-                this.context.GoogleAuth = window.gapi.auth2.getAuthInstance();
-                this.context.GoogleAuth.isSignedIn.listen(() => {
-                    this._updateSigninStatus();
-                });
-                this._updateSigninStatus();
+        this.context = context;
+
+        window.gapi.load('client:auth2', async () => {
+            await window.gapi.client.init({
+                'apiKey': GOOGLE.AUTH.API_KEY,
+                'clientId': GOOGLE.AUTH.CLIENT_ID,
+                'scope': GOOGLE.AUTH.SCOPE
             });
-        }
-        this._bindEvent();
+            this.context.GoogleAuth = window.gapi.auth2.getAuthInstance();
+            this.context.GoogleAuth.isSignedIn.listen(() => {
+                this.updateSigninStatus();
+            });
+            this.updateSigninStatus();
+        });
+        this.bindEvent();
     }
 
     async enter(args) {
         super.enter(args);
         UI.header.generateNavigation([]);
-        this.me = args.me;
         if (args.me) {
             if (args.me.is_subscribed && args.me.is_next_subscribe) {
                 UI.subscribed();
@@ -69,10 +64,9 @@ export class Main extends RouterController {
                 UI.unsubscribed();
             }
         }
-
     }
 
-    _bindEvent() {
+    bindEvent() {
         document.querySelector('.btn-logout').addEventListener('click', () => {
             this.updateSigninStatusByUserBehavior = true;
             this.context.GoogleAuth.signOut();
@@ -95,7 +89,7 @@ export class Main extends RouterController {
             }
 
             const resp = await api.authApiService.transaction.delete({
-                token: this.token
+                token: this.args.token
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
@@ -132,7 +126,7 @@ export class Main extends RouterController {
         });
     }
 
-    async _updateSigninStatus() {
+    async updateSigninStatus() {
         const user = this.context.GoogleAuth.currentUser.get();
         const isGoogleAuthorized = user.hasGrantedScopes(GOOGLE.AUTH.SCOPE);
         let token = localStorage.getItem('token');
@@ -156,12 +150,11 @@ export class Main extends RouterController {
                     return;
                 }
             }
-
             UI.setupProfile(user.getBasicProfile().getImageUrl(), user.getBasicProfile().getName());
             UI.header.showAuth();
             UI.showAuth();
         } else if (token) {
-            UI.setupProfile(profile, this.me.fullname);
+            UI.setupProfile(profile, this.args.me.fullname);
             UI.header.showAuth();
             UI.showAuth();
         } else {
