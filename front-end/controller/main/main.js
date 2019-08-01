@@ -67,7 +67,7 @@ export class Main extends RouterController {
     }
 
     bindEvent() {
-        document.querySelector('.btn-logout').addEventListener('click', () => {
+        this.elHTML.querySelector('.btn-logout').addEventListener('click', () => {
             this.updateSigninStatusByUserBehavior = true;
             this.context.GoogleAuth.signOut();
             localStorage.setItem('token', '');
@@ -82,7 +82,7 @@ export class Main extends RouterController {
             }
         });
 
-        document.querySelector('.header .btn-unsubscribe').addEventListener('click', async () => {
+        this.elHTML.querySelector('.header .btn-unsubscribe').addEventListener('click', async () => {
             this.elHTML.querySelector('.menu').addClass('hide');
             if (prompt('你真的要退訂閱嗎？ 如果這是真的，請輸入 \'UNSUBSCRIBE\'') !== 'UNSUBSCRIBE') {
                 return;
@@ -105,15 +105,15 @@ export class Main extends RouterController {
             }
         });
 
-        document.querySelectorAll('.auth-google').forEach((el) => {
+        this.elHTML.querySelectorAll('.auth-google').forEach((el) => {
             el.addEventListener('click', () => {
                 this.updateSigninStatusByUserBehavior = true;
                 this.context.GoogleAuth.signIn();
             });
         });
 
-        document.querySelector('.profile').addEventListener('click', () => {
-            const menu = document.querySelector('.menu');
+        this.elHTML.querySelector('.profile').addEventListener('click', () => {
+            const menu = this.elHTML.querySelector('.menu');
             if (menu.classExists('hide')) {
                 menu.removeClass('hide');
             } else {
