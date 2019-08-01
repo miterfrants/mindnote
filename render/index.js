@@ -56,24 +56,36 @@ const {
 app.all('*/$', async (request, response, next) => {
     try {
         global.location = request._parsedUrl;
+        /* pre */
+        // initialize html
+        dom.window.document.querySelector('.toaster').innerHTML = '';
+        dom.window.document.querySelectorAll('#MindnoteApiCache').forEach((el) => {
+            el.parentElement.removeChild(el);
+        });
+
+        // setup localstorage
         localStorage.setItem('token', getCookie(request.header('cookie') || '', 'token'));
+
+        // modify routing rule for server-side render
         recursiveReplaceRouter(Router, [{
             sourcePath: '/mindnote/',
             destinationPath: aliasURL
         }]);
+
+        // initialize api url
         api.init(API, RESPONSE_STATUS);
+
+
         await Route.routing(request.url, Router, {
             isServerSideRender: true
         }, null, null, null, true);
 
-        dom.window.document.querySelectorAll('#MindnoteApiCache').forEach((el) => {
-            el.parentElement.removeChild(el);
-        });
+        /* post */
         const script = dom.window.document.createElement('script');
         script.id = 'MindnoteApiCache';
         script.innerHTML = 'window["MindnoteApiCache"] = ' + JSON.stringify(global.window.MindnoteApiCache);
-        dom.window.document.documentElement.innerHTML;
         dom.window.document.querySelector('head').prepend(script);
+
         response.send(dom.window.document.documentElement.innerHTML);
         next(null);
     } catch (error) {
