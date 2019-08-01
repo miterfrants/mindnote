@@ -51,7 +51,6 @@ export function Loader() {
             resolve();
         } else {
             self.checkCount += 1;
-            // console.log(self.checkCount);
             if (self.checkCount < self.max) {
                 setTimeout(() => {
                     _check(dependency, resolve, reject);

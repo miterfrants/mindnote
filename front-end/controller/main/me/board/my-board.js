@@ -43,56 +43,54 @@ import {
 export class MyBoard extends TutorialRouterController {
     constructor(elHTML, parentController, args, context) {
         super(elHTML, parentController, args, context);
-        this.token = args.token;
-        this.boardId = args.boardId;
         this.board = null;
         this.deletedMode = false;
         this.cy = null;
+    }
+
+    async init() {
         this.bindEvent();
     }
 
     async enter(args) {
         super.enter(args);
         super.showTutorial(MyBoardTutorialStepsClass, false);
-        this.boardId = this.args.boardId;
-        this.token = args.token;
-        if (this.token) {
-            if (this.cy) {
-                this.cy.destroy();
-            }
-            this.board = (await api.authApiService.board.get({
-                boardId: this.boardId,
-                token: this.token
-            })).data;
-
-            const nodes = (await api.authApiService.nodes.get({
-                boardId: this.boardId,
-                token: this.token
-            })).data;
-            const relationship = (await api.authApiService.relationship.get({
-                boardId: this.boardId,
-                token: this.token
-            })).data;
-
-            const container = UI.getCytoEditContainer();
-            if (!this.context.isServerSideRender) {
-                this.cy = Cyto.init(container, nodes, relationship, true);
-                UI.Cyto.switchToNormalMode(this.cy);
-            }
-            UI.switchToNormalMode();
-
-            UI.header.generateNavigation([{
-                title: '我的分類',
-                link: '/mindnote/users/me/boards/'
-            }, {
-                title: this.board.title
-            }]);
-            UI.hideNodeForm();
-        } else {
-            if (this.cy) {
-                this.cy.destroy();
-            }
+        if (this.cy) {
+            this.cy.destroy();
         }
+    }
+
+    async render(withoutCache) {
+        super.render(withoutCache);
+        this.board = (await api.authApiService.board.get({
+            boardId: this.args.boardId,
+            token: this.args.token
+        }, null, withoutCache)).data;
+
+        const nodes = (await api.authApiService.nodes.get({
+            boardId: this.args.boardId,
+            token: this.args.token
+        }, null, withoutCache)).data;
+        const relationship = (await api.authApiService.relationship.get({
+            boardId: this.args.boardId,
+            token: this.args.token
+        }, null, withoutCache)).data;
+
+        const container = UI.getCytoEditContainer();
+        // server side no-need run this
+        if (window.cytoscape) {
+            this.cy = Cyto.init(container, nodes, relationship, true);
+            UI.Cyto.switchToNormalMode(this.cy);
+        }
+        UI.switchToNormalMode();
+
+        UI.header.generateNavigation([{
+            title: '我的分類',
+            link: '/mindnote/users/me/boards/'
+        }, {
+            title: this.board.title
+        }]);
+        UI.hideNodeForm();
     }
 
     async exit() {
@@ -100,8 +98,7 @@ export class MyBoard extends TutorialRouterController {
     }
 
     bindEvent() {
-        const elController = document.querySelector('.router-user-board');
-        const elNodeForm = elController.querySelector('.node-form');
+        const elNodeForm = this.elHTML.querySelector('.node-form');
         this.elHTML.querySelector('textarea').addEventListener('keyup', (e) => {
             const detail = window.markdownit().render(e.currentTarget.value);
             this.elHTML.querySelector('.markdown-container').innerHTML = detail;
@@ -117,9 +114,9 @@ export class MyBoard extends TutorialRouterController {
             }
         });
 
-        document.querySelector('.btn-add').addEventListener('click', async () => {
-            const title = document.querySelector('.title').value;
-            const description = document.querySelector('.description').value;
+        this.elHTML.querySelector('.btn-add').addEventListener('click', async () => {
+            const title = this.elHTML.querySelector('.title').value;
+            const description = this.elHTML.querySelector('.description').value;
             const token = localStorage.getItem('token');
 
             this.cy.trigger('createNode', [
@@ -131,7 +128,7 @@ export class MyBoard extends TutorialRouterController {
                 title,
                 description,
                 token,
-                boardId: this.boardId
+                boardId: this.args.boardId
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
@@ -144,20 +141,20 @@ export class MyBoard extends TutorialRouterController {
                 UI.hideNodeForm();
             }
         });
-        document.querySelector('.btn-update').addEventListener('click', async () => {
-            const title = document.querySelector('.title').value;
-            const description = document.querySelector('.description').value;
+        this.elHTML.querySelector('.btn-update').addEventListener('click', async () => {
+            const title = this.elHTML.querySelector('.title').value;
+            const description = this.elHTML.querySelector('.description').value;
             if (description.indexOf('Uploading Image URL') !== -1) {
                 if (!confirm('檔案還沒傳完，你確定要更新現有資料嗎？')) {
                     return;
                 }
             }
-            const nodeId = document.querySelector('.node-id').value.replace(/node-/gi, '');
+            const nodeId = this.elHTML.querySelector('.node-id').value.replace(/node-/gi, '');
             const resp = await api.authApiService.node.patch({
                 title,
                 description,
-                token: this.token,
-                boardId: this.boardId,
+                token: this.args.token,
+                boardId: this.args.boardId,
                 nodeId
             });
 
@@ -175,7 +172,7 @@ export class MyBoard extends TutorialRouterController {
                 UI.hideNodeForm();
             }
         });
-        document.querySelector('.btn-layout').addEventListener('click', (e) => {
+        this.elHTML.querySelector('.btn-layout').addEventListener('click', (e) => {
             if (e.currentTarget.classExists('disabled')) {
                 return;
             }
@@ -184,7 +181,7 @@ export class MyBoard extends TutorialRouterController {
                 Swissknife.Tutorial.gotoTutorialStep('刪除資料');
             }
         });
-        document.querySelector('.btn-switch-delete-mode').addEventListener('click', () => {
+        this.elHTML.querySelector('.btn-switch-delete-mode').addEventListener('click', () => {
             this.deletedMode = !this.deletedMode;
             Cyto.isDisableConnecting = this.deletedMode;
             if (this.deletedMode) {
@@ -198,7 +195,7 @@ export class MyBoard extends TutorialRouterController {
                 }
             }
         });
-        document.querySelector('.btn-delete-change').addEventListener('click', async () => {
+        this.elHTML.querySelector('.btn-delete-change').addEventListener('click', async () => {
             let nodeIds = this.cy.$('node.deleting').map((node) => {
                 return node.data('id').replace('node-', '');
             });
@@ -224,8 +221,8 @@ export class MyBoard extends TutorialRouterController {
             });
             if (nodeIds.length > 0) {
                 const respForDeleteNode = await api.authApiService.nodes.delete({
-                    token: this.token,
-                    boardId: this.boardId,
+                    token: this.args.token,
+                    boardId: this.args.boardId,
                     nodeIds,
                 });
                 if (respForDeleteNode.status === RESPONSE_STATUS.OK) {
@@ -243,8 +240,8 @@ export class MyBoard extends TutorialRouterController {
 
             if (relationshipIds.length > 0) {
                 const respForDeleteRelationship = await api.authApiService.relationship.delete({
-                    token: this.token,
-                    boardId: this.boardId,
+                    token: this.args.token,
+                    boardId: this.args.boardId,
                     relationshipIds,
                 });
 
@@ -268,15 +265,15 @@ export class MyBoard extends TutorialRouterController {
             }
             UI.Cyto.switchToNormalMode(this.cy);
         });
-        document.querySelector('.btn-close').addEventListener('click', UI.hideNodeForm);
-        document.querySelector('.mask').addEventListener('click', UI.hideNodeForm);
+        this.elHTML.querySelector('.btn-close').addEventListener('click', UI.hideNodeForm);
+        this.elHTML.querySelector('.mask').addEventListener('click', UI.hideNodeForm);
 
         document.addEventListener('save-edge', async (e) => {
             const resp = await api.authApiService.relationship.post({
                 parent_node_id: e.detail.parent_node_id.replace(/node-/gi, ''),
                 child_node_id: e.detail.child_node_id.replace(/node-/gi, ''),
-                token: this.token,
-                boardId: this.boardId
+                token: this.args.token,
+                boardId: this.args.boardId
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
@@ -380,23 +377,23 @@ export class MyBoard extends TutorialRouterController {
             // esc
             if (
                 e.keyCode === 27 &&
-                document.querySelector('.node-form').className.split(' ').indexOf('hide') === -1
+                this.elHTML.querySelector('.node-form').className.split(' ').indexOf('hide') === -1
             ) {
                 UI.hideNodeForm();
             }
         });
-        document.querySelectorAll('.node-form .title').forEach((el) => {
+        this.elHTML.querySelectorAll('.node-form .title').forEach((el) => {
             el.addEventListener('keyup', (e) => {
-                const nodeId = document.querySelector('.node-id').value.replace(/node-/gi, '');
+                const nodeId = this.elHTML.querySelector('.node-id').value.replace(/node-/gi, '');
                 if (e.currentTarget.value === '') {
                     e.currentTarget.dataset['isComposing'] = false;
                 } else {
                     const isComposing = e.currentTarget.dataset['isComposing'] === 'true';
                     if (e.keyCode === 13 && isComposing === false) {
                         if (nodeId === '') {
-                            document.querySelector('.btn-add').click();
+                            this.elHTML.querySelector('.btn-add').click();
                         } else {
-                            document.querySelector('.btn-update').click();
+                            this.elHTML.querySelector('.btn-update').click();
                         }
                     }
                     if (e.isComposing) {
@@ -410,7 +407,7 @@ export class MyBoard extends TutorialRouterController {
                 return;
             });
         });
-        document.querySelector('.btn-copy-shared-link').addEventListener('click', (e) => {
+        this.elHTML.querySelector('.btn-copy-shared-link').addEventListener('click', (e) => {
             if (e.currentTarget.classExists('disabled')) {
                 return;
             }
@@ -433,8 +430,8 @@ export class MyBoard extends TutorialRouterController {
         });
         document.addEventListener('dropdown-node', (e) => {
             api.authApiService.node.patch({
-                token: this.token,
-                boardId: this.boardId,
+                token: this.args.token,
+                boardId: this.args.boardId,
                 nodeId: e.detail.nodeId,
                 x: e.detail.position.x,
                 y: e.detail.position.y
@@ -442,8 +439,8 @@ export class MyBoard extends TutorialRouterController {
         });
         document.addEventListener('layout-done', (e) => {
             api.authApiService.nodes.patch({
-                token: this.token,
-                boardId: this.boardId,
+                token: this.args.token,
+                boardId: this.args.boardId,
                 nodes: e.detail.nodes
             });
         });
@@ -490,8 +487,8 @@ export class MyBoard extends TutorialRouterController {
 
         elNodeForm.querySelector('.drop-to-upload-description').addEventListener('drop', async (e) => {
             const files = e.dataTransfer.files;
-            const elNodeForm = document.querySelector('.node-form');
-            const elNodeDescriptoin = document.querySelector('.node-form #node-description');
+            const elNodeForm = this.elHTML.querySelector('.node-form');
+            const elNodeDescriptoin = this.elHTML.querySelector('.node-form #node-description');
             let nodeDescription = elNodeDescriptoin.value;
             const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node-/gi, ''));
             const base64Files = await MindnoteFileReader.readFilesToBase64(files);
@@ -504,7 +501,7 @@ export class MyBoard extends TutorialRouterController {
             elNodeDescriptoin.value = nodeDescription;
             const resp = await api.authApiService.images.post({
                 base64Files,
-                token: this.token,
+                token: this.args.token,
             });
 
             if (resp.status === RESPONSE_STATUS.OK) {
@@ -557,7 +554,7 @@ export class MyBoard extends TutorialRouterController {
                 Toaster.popup(MINDNOTE_ERROR_TYPE.WARN, '封面只有一張，請謹慎挑選');
                 return;
             }
-            const elNodeForm = document.querySelector('.node-form');
+            const elNodeForm = this.elHTML.querySelector('.node-form');
             const nodeId = Number(elNodeForm.querySelector('.node-id').value.replace(/node-/gi, ''));
             const fileData = await MindnoteFileReader.readFileToBase64(files[0]);
             const respForUploadImage = await api.authApiService.images.post({
@@ -565,15 +562,15 @@ export class MyBoard extends TutorialRouterController {
                     ...fileData,
                     nodeId
                 }],
-                token: this.token,
+                token: this.args.token,
             });
             if (respForUploadImage.status === RESPONSE_STATUS.OK) {
                 const data = respForUploadImage.data[0];
                 UI.Cyto.updateBackgroundImage(this.cy, nodeId, Image.generateImageUrl(data.filename, 200));
                 const respForUpdateNode = await api.authApiService.node.patch({
                     cover: data.filename,
-                    token: this.token,
-                    boardId: this.boardId,
+                    token: this.args.token,
+                    boardId: this.args.boardId,
                     nodeId,
                 });
 

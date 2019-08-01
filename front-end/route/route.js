@@ -60,11 +60,11 @@ export const Route = {
             return;
         }
     },
-    routing: async (path, routingTable, context, args, pMatchRouter, pParentController) => {
+    routing: async (path, routers, context, args, pMatchRouter, pParentController) => {
         if (window.MindnoteCurrentController) {
             Route.recurisvieExitController(window.MindnoteCurrentController);
         }
-        const matchRouter = pMatchRouter ? pMatchRouter : Route.findMatchRoute(path, routingTable);
+        const matchRouter = pMatchRouter ? pMatchRouter : Route.findMatchRoute(path, routers);
         const isEnd = matchRouter.Router === undefined;
 
         const regexp = Route.buildRegExp(matchRouter.path, isEnd);
@@ -97,16 +97,20 @@ export const Route = {
         if (matchRouter.html) {
             htmlPath = matchRouter.html;
         }
+
         // assign parent controller to next level controller instance
         const parentController = await Route.executeController(matchRouter.controller, args, context, htmlPath, pParentController);
-
         // next routing
         const currentPath = path.replace(regexp, '');
+        // is end
         if (currentPath.length === 0) {
-            // exit routing
             document.querySelectorAll('.child-router').forEach((el) => {
                 el.style.visibility = '';
             });
+
+            // refactor: use event listener
+            context.isUpdateDOM = true; // eslint-disable-line
+            // exit routing
             return;
         }
         const nextMatchRouter = Route.findMatchRoute(currentPath, matchRouter.Router);
@@ -117,16 +121,19 @@ export const Route = {
             await Route.routing(currentPath, matchRouter.Router, context, args, nextMatchRouter, parentController);
         }
     },
-    findMatchRoute: (currentPath, routingTable) => {
-        for (let i = 0; i < routingTable.length; i++) {
-            const path = routingTable[i].path;
-            const isEnd = routingTable[i].Router === undefined;
+    findMatchRoute: (currentPath, routers) => {
+        for (let i = 0; i < routers.length; i++) {
+            const path = routers[i].path;
+            const isEnd = routers[i].Router === undefined;
             const regexp = Route.buildRegExp(path, isEnd);
             if (regexp.test(currentPath)) {
-                return routingTable[i];
+                return routers[i];
             }
         }
     },
+
+    // server site: constructor -> render
+    // client sit: constructor-> init -> enter -> render -> exit
     executeController: async (controller, args, context, htmlPath, parentController) => {
         // 如果已經有 instance 就不要在執行 initalize
         const instances = window.MindnoteController.filter((instance) => {
@@ -142,13 +149,27 @@ export const Route = {
                 elHTML = html.toDom();
             }
             controllerInstance = new controller(elHTML, parentController, args, context);
+            if (!context.isServerSideRender && controllerInstance.init) {
+                controllerInstance.init(args, context);
+            }
             window.MindnoteController.push(controllerInstance);
         } else {
             controllerInstance = instances[0];
         }
 
         window.MindnoteCurrentController = controllerInstance; // eslint-disable-line
-        await controllerInstance.enter(args);
+        if (!context.isServerSideRender) {
+            await controllerInstance.enter(args);
+            if (controllerInstance.render) {
+                await controllerInstance.render();
+            }
+            if (controllerInstance.postRender) {
+                await controllerInstance.postRender();
+            }
+        } else if (controllerInstance.render) {
+            await controllerInstance.render(true);
+        }
+
         return controllerInstance;
     },
     recurisvieExitController: (controllerInstance) => {
@@ -214,11 +235,11 @@ export const Route = {
         return args;
     },
     runFromController: (context, path, controller) => {
-        const routingTable = Router.filter((routingTable) => {
-            return routingTable.controller === controller;
+        const routers = Router.filter((routers) => {
+            return routers.controller === controller;
         });
-        if (routingTable.length === 1) {
-            Route.routing(path, routingTable, context);
+        if (routers.length === 1) {
+            Route.routing(path, routers, context);
         }
     }
 };

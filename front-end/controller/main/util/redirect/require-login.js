@@ -11,9 +11,7 @@ import {
 } from '/mindnote/service/swissknife.js';
 
 export class RequireLogin extends RouterController {
-    constructor(elHTML, parentController, args, context) {
-        super(elHTML, parentController, args, context);
-        this.token = args.token;
+    async init() {
         this.bindingEvent();
     }
 

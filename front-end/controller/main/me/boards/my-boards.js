@@ -28,9 +28,8 @@ import {
 } from '/mindnote/controller/main/me/boards/tutorial-steps.js';
 
 export class MyBoards extends TutorialRouterController {
-    constructor(elHTML, parentController, args, context) {
-        super(elHTML, parentController, args, context);
-        this.token = args.token;
+    async init() {
+        this.continueDeleteCount = 0;
         this.bindEvent();
     }
 
@@ -38,9 +37,16 @@ export class MyBoards extends TutorialRouterController {
         super.enter(args);
         this.continueDeleteCount = 0;
         super.showTutorial(MyBoardsTutorialStepsClass, true);
+    }
+
+    async render(withoutCache) {
+        super.render(withoutCache);
+        UI.header.generateNavigation([{
+            title: '我的分類'
+        }]);
         const resp = await api.authApiService.boards.get({
             ...this.args,
-        });
+        }, null, withoutCache);
 
         if (resp.status === RESPONSE_STATUS.FAILED) {
             if (resp.httpStatus === 417) {
@@ -49,21 +55,13 @@ export class MyBoards extends TutorialRouterController {
                 throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, resp.data.errorMsg);
             }
         }
-
-        UI.header.generateNavigation([{
-            title: '我的分類'
-        }]);
         UI.generateUserBoards(resp.data).forEach((elBoardCard) => {
             this.initBoardCard(elBoardCard);
         });
     }
 
-    async exit() {
-        super.exit();
-    }
-
     bindEvent() {
-        this.initBoardCard(document.querySelector('.btn-virtual-add-board'));
+        this.initBoardCard(this.elHTML.querySelector('.btn-virtual-add-board'));
     }
 
     async _setPermission(elBoardCard) {
@@ -126,7 +124,7 @@ export class MyBoards extends TutorialRouterController {
                 const title = elBoardCard.querySelector('input.board-title').value;
                 const boardId = elBoardCard.dataset['id'];
                 const resp = (await api.authApiService.board.patch({
-                    token: this.token,
+                    token: this.args.token,
                     title,
                     boardId
                 }));
@@ -176,7 +174,7 @@ export class MyBoards extends TutorialRouterController {
                 }
                 const boardId = elBoardCard.dataset['id'];
                 const resp = await api.authApiService.board.delete({
-                    token: this.token,
+                    token: this.args.token,
                     boardId
                 });
 
@@ -205,7 +203,7 @@ export class MyBoards extends TutorialRouterController {
                 elBtnAddBoard.addClass('disabled');
 
                 let resp = await api.authApiService.boards.post({
-                    token: this.token,
+                    token: this.args.token,
                     title: boardTitle
                 });
 
