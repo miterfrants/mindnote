@@ -58,7 +58,10 @@ app.all('*/$', async (request, response, next) => {
         global.location = request._parsedUrl;
         /* pre */
         // initialize html
-        dom.window.document.querySelector('.toaster').innerHTML = '';
+        const elementToaster = dom.window.document.querySelector('.toaster');
+        if (elementToaster) {
+            elementToaster.innerHTML = '';
+        }
         dom.window.document.querySelectorAll('#MindnoteApiCache').forEach((el) => {
             el.parentElement.removeChild(el);
         });
