@@ -199,8 +199,11 @@ export const UI = {
                 arrayTitle.push(arrayNavigation[i].title);
             }
             document.querySelector('.navigation').innerHTML = arrayNav.join(' > ');
-
-            document.title = arrayTitle.join(' > ') + ' - Mindnote';
+            if (arrayTitle.length > 0) {
+                document.title = arrayTitle.join(' > ') + ' - Mindnote';
+            } else {
+                document.title = 'Mindnote';
+            }
         },
         showToggleButton: () => {
             document.querySelector('.toggle-button').removeClass('hide');

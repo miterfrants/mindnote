@@ -4,8 +4,8 @@ import {
 
 export class RouterController {
     constructor(elHTML, parentController, args, context) {
-        this.elHTML = elHTML;
         this.args = args;
+        this.elHTML = elHTML;
         this.context = context;
         this.elOriginalChildNodes = [];
         this.parentController = parentController;
@@ -17,9 +17,11 @@ export class RouterController {
 
             if (document.querySelector(classQuery)) {
                 this.elHTML = document.querySelector(classQuery);
+            } else {
+                this.elHTML = elHTML;
             }
-
-            saveOriginalChildRouter(this);
+            // fix: if binding event on elHTML not in dom tree
+            saveOriginalChildRouter(this, elHTML);
         }
     }
 
@@ -28,36 +30,33 @@ export class RouterController {
     }
 
     async render() {
-        if (this.elHTML) {
+        if (this.elHTML && this.context.isUpdateDOM) {
             if (this.elHTML.querySelector('.child-router')) {
                 this.elHTML.querySelector('.child-router').style.visibility = 'hidden';
             }
             revertOriginalChildRouter(this);
-            if (this.context.isUpdateDOM) {
-                updateDOM(this);
-            }
+            updateDOM(this);
         }
     }
-
     async exit() {}
 }
 
-function saveOriginalChildRouter(controllerInstance) {
+function saveOriginalChildRouter(controllerInstance, sourceElHTML) {
     // handle stylesheets avoid duplicate load css file
     const stylesheets = [];
-    controllerInstance.elHTML.childNodes.forEach((el) => {
+    sourceElHTML.childNodes.forEach((el) => {
         if (el.rel === 'stylesheet') {
             stylesheets.push(el);
         }
     });
 
     for (let i = 0; i < stylesheets.length; i++) {
-        controllerInstance.elHTML.removeChild(stylesheets[i]);
+        sourceElHTML.removeChild(stylesheets[i]);
         Swissknife.appendStylesheetToHead(stylesheets[i]);
     }
 
     // save original elHTML childNodes
-    const elChildRouter = controllerInstance.elHTML.querySelector('.child-router');
+    const elChildRouter = sourceElHTML.querySelector('.child-router');
     if (elChildRouter) {
         elChildRouter.childNodes.forEach((childNode) => {
             controllerInstance.elOriginalChildNodes.push(childNode);
@@ -81,7 +80,8 @@ function updateDOM(controllerInstance) {
     if (!parentController) {
         container = document.querySelector('.root');
     } else {
-        container = recrusiveFindConcreteParent(parentController).elHTML.querySelector('.child-router');
+        const concreteParent = recrusiveFindConcreteParent(parentController);
+        container = concreteParent.elHTML.querySelector('.child-router');
     }
 
     if (container) {

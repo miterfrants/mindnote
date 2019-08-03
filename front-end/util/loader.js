@@ -20,6 +20,9 @@ export function Loader() {
                 'Content-Type': 'text/html; charset=utf-8'
             }
         });
+        if (resp.status === 200) {
+            window.MindnoteLoaderCache[url] = resp.text();
+        }
         return resp.text();
     };
 

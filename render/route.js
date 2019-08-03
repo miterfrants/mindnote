@@ -52,10 +52,11 @@ export const BackendRoute = {
 
         // initialize api url
         api.init(API, RESPONSE_STATUS);
-        await Route.routing(request.url, Router, {
+        const app = {
             isServerSideRender: true,
             isUpdateDOM: true
-        }, null, null, null, true);
+        };
+        await Route.routing(request.url, Router, app, null, null);
 
         /* post */
         // mindnote api cache

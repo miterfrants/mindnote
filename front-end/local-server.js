@@ -6,15 +6,21 @@ const staticAlias = require('node-static-alias');
 const fs = require('fs');
 
 var fileServer = new staticAlias.Server('./', {
-    alias: [{
-        match: /\/mindnote\/config.js$/,
-        serve: 'config.dev.js'
-    }, {
-        match: /\/mindnote\/([^/]+\/)*([^/]+)\.(js|css|png|woff2|woff|ttf|html|gif|svg|json|jpg)$/,
-        serve: function (params) {
-            return params.reqPath.replace(/mindnote\//gi, '').substring(1);
-        },
-    }]
+    alias: [
+        //     {
+        //     match: /\/mindnote\/([a-z|A-Z|\-|_|0-9]+\/){0,}$/,
+        //     serve: 'index.html'
+        // }, 
+        {
+            match: /\/mindnote\/config.js$/,
+            serve: 'config.dev.js'
+        }, {
+            match: /\/mindnote\/([^/]+\/)*([^/]+)\.(js|css|png|woff2|woff|ttf|html|gif|svg|json|jpg)$/,
+            serve: function (params) {
+                return params.reqPath.replace(/mindnote\//gi, '').substring(1);
+            },
+        }
+    ]
 });
 
 const options = {
@@ -24,7 +30,6 @@ const options = {
 
 http.createServer(options, function (request, response) {
     request.addListener('end', function () {
-        // fix: query string
         let regexp = new RegExp(/\/mindnote\/([a-z|A-Z|\-|_|0-9]+\/){0,}(\?.*)?$/, 'gi');
         if (regexp.test(request.url)) {
             return proxy.web(request, response, {

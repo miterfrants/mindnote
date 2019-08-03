@@ -49,16 +49,21 @@ export class Main extends RouterController {
             });
             this.updateSigninStatus();
         });
+
         this.bindEvent();
     }
 
     async enter(args) {
         super.enter(args);
+    }
+
+    async render() {
+        super.render();
         UI.header.generateNavigation([]);
-        if (args.me) {
-            if (args.me.is_subscribed && args.me.is_next_subscribe) {
+        if (this.args.me) {
+            if (this.args.me.is_subscribed && this.args.me.is_next_subscribe) {
                 UI.subscribed();
-            } else if (args.me.is_subscribed && !args.me.is_next_subscribe) {
+            } else if (this.args.me.is_subscribed && !this.args.me.is_next_subscribe) {
                 UI.unsubscribing();
             } else {
                 UI.unsubscribed();
