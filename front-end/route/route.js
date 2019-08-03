@@ -60,7 +60,7 @@ export const Route = {
             return;
         }
     },
-    routing: async (path, routers, context, args, pMatchRouter, pParentController) => {
+    routing: async (path, routers, context, pMatchRouter, pParentController) => {
         if (window.MindnoteCurrentController) {
             Route.recurisvieExitController(window.MindnoteCurrentController);
         }
@@ -68,10 +68,12 @@ export const Route = {
         const isEnd = matchRouter.Router === undefined;
 
         const regexp = Route.buildRegExp(matchRouter.path, isEnd);
-        args = {
-            ...args,
-            ...Route.extractVariableFromUrl(matchRouter.path, path, regexp)
-        };
+
+        if (!context.args) {
+            context.args = {};
+        }
+        const variableFromURL = Route.extractVariableFromUrl(matchRouter.path, path, regexp);
+        setupContextArgs(context.args, variableFromURL);
 
         // load dependency
         if (!context.isServerSideRender) {
@@ -84,12 +86,9 @@ export const Route = {
         // prepare data
         let someThingWrongInPrepareData = true;
         if (matchRouter.prepareData) {
-            const result = await Route.prepareData(matchRouter.prepareData, args);
+            const result = await Route.prepareData(matchRouter.prepareData, context.args);
             someThingWrongInPrepareData = result.someThingWrongInPrepareData;
-            args = {
-                ...args,
-                ...result.data
-            };
+            setupContextArgs(context.args, result.data);
         }
 
         // execute controller
@@ -99,7 +98,7 @@ export const Route = {
         }
 
         // assign parent controller to next level controller instance
-        const parentController = await Route.executeController(matchRouter.controller, args, context, htmlPath, pParentController);
+        const parentController = await Route.executeController(matchRouter.controller, context, htmlPath, pParentController);
         // next routing
         const currentPath = path.replace(regexp, '');
         // is end
@@ -118,7 +117,7 @@ export const Route = {
             !nextMatchRouter.isRequiredParentPrepareData ||
             (nextMatchRouter.isRequiredParentPrepareData === true && !someThingWrongInPrepareData)
         ) {
-            await Route.routing(currentPath, matchRouter.Router, context, args, nextMatchRouter, parentController);
+            await Route.routing(currentPath, matchRouter.Router, context, nextMatchRouter, parentController);
         }
     },
     findMatchRoute: (currentPath, routers) => {
@@ -134,7 +133,7 @@ export const Route = {
 
     // server site: constructor -> render
     // client sit: constructor-> init -> enter -> render -> exit
-    executeController: async (controller, args, context, htmlPath, parentController) => {
+    executeController: async (controller, context, htmlPath, parentController) => {
         // 如果已經有 instance 就不要在執行 initalize
         const instances = window.MindnoteController.filter((instance) => {
             return instance instanceof controller;
@@ -148,9 +147,9 @@ export const Route = {
                 const html = await resp.text();
                 elHTML = html.toDom();
             }
-            controllerInstance = new controller(elHTML, parentController, args, context);
+            controllerInstance = new controller(elHTML, parentController, context.args, context);
             if (!context.isServerSideRender && controllerInstance.init) {
-                controllerInstance.init(args, context);
+                controllerInstance.init(context.args, context);
             }
             window.MindnoteController.push(controllerInstance);
         } else {
@@ -158,8 +157,8 @@ export const Route = {
         }
 
         window.MindnoteCurrentController = controllerInstance; // eslint-disable-line
-        if (!context.isServerSideRender) {
-            await controllerInstance.enter(args);
+        if (!context.isServerSideRender) { // client side only
+            await controllerInstance.enter(context.args);
             if (controllerInstance.render) {
                 await controllerInstance.render();
             }
@@ -243,3 +242,9 @@ export const Route = {
         }
     }
 };
+
+function setupContextArgs(argsReference, args) {
+    for (const key in args) {
+        argsReference[key] = args[key];
+    }
+}
