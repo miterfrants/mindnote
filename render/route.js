@@ -4,14 +4,14 @@ const imp = require('esm')(module, {
 });
 
 // config
-const configPath = process.env.NODE_ENV === 'prod' ? '/config.js' : '/config.dev.js';
+const frontEndConfigPath = process.env.NODE_ENV === 'prod' ? '/config.js' : '/config.dev.js';
 const aliasURL = process.env.NODE_ENV === 'prod' ? 'http://127.0.0.1/' : 'https://127.0.0.1/';
 
 // import from front-end
 const {
     RESPONSE_STATUS,
     API
-} = imp(config.frontEndRootPath + configPath);
+} = imp(config.frontEndRootPath + 'constants.js');
 
 const {
     Router
@@ -24,6 +24,10 @@ const {
 const {
     api
 } = imp(config.frontEndRootPath + '/service/api.v2.js');
+
+const {
+    APP_CONFIG
+} = imp(config.frontEndRootPath + frontEndConfigPath);
 
 export const BackendRoute = {
     routing: async (request) => {
@@ -51,11 +55,12 @@ export const BackendRoute = {
         }]);
 
         // initialize api url
-        api.init(API, RESPONSE_STATUS);
+        api.initV2(APP_CONFIG.API_ENDPOINT, API, RESPONSE_STATUS);
         const app = {
             isServerSideRender: true,
-            isUpdateDOM: true
+            isUpdateDOMFirstRunRouting: true
         };
+
         await Route.routing(request.url, Router, app, null, null);
 
         /* post */

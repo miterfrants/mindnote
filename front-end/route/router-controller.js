@@ -30,7 +30,7 @@ export class RouterController {
     }
 
     async render() {
-        if (this.elHTML && this.context.isUpdateDOM) {
+        if (this.elHTML && this.context.isUpdateDOMFirstRunRouting) {
             if (this.elHTML.querySelector('.child-router')) {
                 this.elHTML.querySelector('.child-router').style.visibility = 'hidden';
             }

@@ -1,28 +1,3 @@
-export const RESPONSE_STATUS = {
-    OK: 'OK',
-    FAILED: 'FAILED',
-};
-
-export const API = {
-    ENDPOINT: 'https://dev.sapiens.tools:8082/mindnote/api/v1/',
-    AUTHORIZED: {
-        BOARDS: 'users/me/boards/',
-        BOARD: 'users/me/boards/{boardId}/',
-        NODES: 'users/me/boards/{boardId}/nodes/',
-        NODE: 'users/me/boards/{boardId}/nodes/{nodeId}/',
-        RELATIONSHIP: 'users/me/boards/{boardId}/relationship/',
-        TRANSACTION: 'transaction/',
-        ME: 'users/me/',
-        IMAGES: 'users/me/images/'
-    },
-    COMMON: {
-        BOARD: 'boards/{boardId}/',
-        NODES: 'boards/{boardId}/nodes/',
-        RELATIONSHIP: 'boards/{boardId}/relationship/'
-    },
-    AUTHORIZE: 'auth/'
-};
-
 export const GOOGLE = {
     AUTH: {
         SCOPE: 'https://www.googleapis.com/auth/userinfo.email',
@@ -30,3 +5,7 @@ export const GOOGLE = {
         CLIENT_ID: '675953765772-8q0eqscbosdo7uh1crc00rjjvv6v6o43.apps.googleusercontent.com'
     }
 };
+
+export const APP_CONFIG = {
+    API_ENDPOINT: 'https://dev.sapiens.tools:8082/mindnote/api/v1/'
+}

@@ -9,7 +9,7 @@ import {
 } from '/mindnote/service/api.v2.js';
 import {
     RESPONSE_STATUS
-} from '/mindnote/config.js';
+} from '/mindnote/constants.js';
 
 import {
     MindnoteError,

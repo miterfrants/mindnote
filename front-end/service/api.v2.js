@@ -24,6 +24,11 @@ export const api = {
         _API = API;
         _RESPONSE_STATUS = RESPONSE_STATUS;
     },
+    initV2: (ENDPOINT, API, RESPONSE_STATUS) => {
+        _API = API;
+        _API.ENDPOINT = ENDPOINT;
+        _RESPONSE_STATUS = RESPONSE_STATUS;
+    },
     authApiService: {
         images: {
             post: async (data, sendResponse, withoutCache) => {
@@ -47,8 +52,8 @@ export const api = {
         me: {
             get: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.ME;
-                api = api.bind(data);
 
+                api = api.bind(data);
                 let fetchOption = {
                     method: 'GET',
                     headers: {

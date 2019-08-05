@@ -11,12 +11,12 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 // pseudo browser 
 const indexHTML = fs.readFileSync(config.frontEndRootPath + 'index.html', 'utf8');
-const dom = new jsdom.JSDOM(indexHTML);
-global.document = dom.window.document;
-global.HTMLElement = dom.window.HTMLElement;
+global.indexHTML = indexHTML;
 global.fetch = fetch;
+global.HTMLElement = new jsdom.JSDOM('').window.HTMLElement;
+const dom = new jsdom.JSDOM(indexHTML);
 global.window = dom.window;
-_localStorageInstance = {}
+global.document = dom.window.document;
 global.localStorage = {
     getItem: (key) => {
         return _localStorageInstance[key];
@@ -24,7 +24,7 @@ global.localStorage = {
     setItem: (key, value) => {
         _localStorageInstance[key] = value;
     }
-}
+};
 
 const {
     BackendRoute
@@ -34,8 +34,17 @@ const {
 const app = new express();
 app.all('*/$', async (request, response, next) => {
     try {
-        const body = await BackendRoute.routing(request, config.frontEndRootPath);
-        response.send(body);
+        //reset api cache;
+        window.MindnoteApiCache = {};
+        _localStorageInstance = {}
+
+        try {
+            const body = await BackendRoute.routing(request, config.frontEndRootPath);
+            response.send(body);
+        } catch (error) {
+            console.log(error);
+            response.send(indexHTML.replace(/isServerSideRender = true/, 'isServerSideRender = false'));
+        }
         next(null);
     } catch (error) {
         next(error);

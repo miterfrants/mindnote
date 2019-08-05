@@ -3,7 +3,7 @@ import {
 } from '/mindnote/service/api.v2.js';
 import {
     RESPONSE_STATUS
-} from '/mindnote/config.js';
+} from '/mindnote/constants.js';
 import {
     MindnoteError,
     MINDNOTE_ERROR_TYPE
@@ -22,12 +22,37 @@ import {
 } from '/mindnote/route/router-controller.js';
 
 export class Checkout extends RouterController {
-    constructor(elHTML, parentController, args, context) {
-        super(elHTML, parentController, args, context);
-        this.token = args.token;
-        this.me = args.me;
+    async init(args, context) {
         this.appendDotCycleTimer;
         window.TPDirect.setupSDK(13848, 'app_N9VZ8fjo8HLgqx882iYUeaH7BgXlIW8TeZ8CF4wlvKo0mP82CKxAKLT50rRq', 'sandbox');
+        this.bindEvent();
+    }
+    async enter(args) {
+        super.enter(args);
+        if (this.args.me.is_subscribed) {
+            history.pushState({}, '', '/mindnote/users/me/boards/');
+            if (this.me.is_next_subscribe) {
+                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '你已經是訂閱用戶');
+            } else {
+                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '目前你還是訂閱用戶，將在下一期取消訂閱');
+            }
+        }
+    }
+
+    async render() {
+        super.render();
+        UI.header.generateNavigation([{
+            title: '我的分類',
+            link: '/mindnote/users/me/boards/'
+        }]);
+        const container = this.elHTML;
+        container.querySelector('#card_holder').value = this.args.me.fullname;
+        container.querySelector('#email').value = this.args.me.email;
+        container.querySelector('#phone').value = this.args.me.phone;
+        container.querySelector('.btn-subscribe').removeClass('disabled');
+    }
+
+    async postRender() {
         var fields = {
             number: {
                 // css selector
@@ -64,27 +89,6 @@ export class Checkout extends RouterController {
                 }
             }
         });
-        this.bindEvent();
-    }
-    async enter(args) {
-        super.enter(args);
-        if (this.me.is_subscribed) {
-            history.pushState({}, '', '/mindnote/users/me/boards/');
-            if (this.me.is_next_subscribe) {
-                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '你已經是訂閱用戶');
-            } else {
-                Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '目前你還是訂閱用戶，將在下一期取消訂閱');
-            }
-        }
-        UI.header.generateNavigation([{
-            title: '我的分類',
-            link: '/mindnote/users/me/boards/'
-        }]);
-        const container = this.elHTML;
-        container.querySelector('#card_holder').value = this.me.fullname;
-        container.querySelector('#email').value = this.me.email;
-        container.querySelector('#phone').value = this.me.phone;
-        container.querySelector('.btn-subscribe').removeClass('disabled');
     }
 
     bindEvent() {
