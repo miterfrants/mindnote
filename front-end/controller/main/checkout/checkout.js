@@ -31,7 +31,7 @@ export class Checkout extends RouterController {
         super.enter(args);
         if (this.args.me.is_subscribed) {
             history.pushState({}, '', '/mindnote/users/me/boards/');
-            if (this.me.is_next_subscribe) {
+            if (this.args.me.is_next_subscribe) {
                 Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '你已經是訂閱用戶');
             } else {
                 Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '目前你還是訂閱用戶，將在下一期取消訂閱');
@@ -134,7 +134,7 @@ export class Checkout extends RouterController {
                 const email = this.elHTML.querySelector('#email').value;
 
                 const resp = await api.authApiService.transaction.post({
-                    token: this.token,
+                    token: this.args.token,
                     prime: result.card.prime,
                     card_holder,
                     phone,
