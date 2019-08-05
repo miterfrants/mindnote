@@ -4,7 +4,6 @@ const httpProxy = require('http-proxy');
 const proxy = httpProxy.createProxyServer({});
 const staticAlias = require('node-static-alias');
 const fs = require('fs');
-
 var fileServer = new staticAlias.Server('./', {
     alias: [
         //     {
@@ -13,7 +12,7 @@ var fileServer = new staticAlias.Server('./', {
         // }, 
         {
             match: /\/mindnote\/config.js$/,
-            serve: 'config.dev.js'
+            serve: process.env.NODE_ENV === 'prod' ? 'config.js' : 'config.dev.js'
         }, {
             match: /\/mindnote\/([^/]+\/)*([^/]+)\.(js|css|png|woff2|woff|ttf|html|gif|svg|json|jpg)$/,
             serve: function (params) {
@@ -31,6 +30,7 @@ const options = {
 http.createServer(options, function (request, response) {
     request.addListener('end', function () {
         let regexp = new RegExp(/\/mindnote\/([a-z|A-Z|\-|_|0-9]+\/){0,}(\?.*)?$/, 'gi');
+
         if (regexp.test(request.url)) {
             return proxy.web(request, response, {
                 target: 'http://127.0.0.1:8080'

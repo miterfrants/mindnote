@@ -3,8 +3,11 @@ import {
 } from '/mindnote/ui.js';
 
 import {
-    GOOGLE,
     RESPONSE_STATUS
+} from '/mindnote/constants.js';
+
+import {
+    GOOGLE
 } from '/mindnote/config.js';
 
 import {

@@ -4,6 +4,7 @@ package-lock.json
 Migrations
 volume
 secrets.json
+.backup
 *.swp
 *.*~
 project.lock.json

@@ -5,6 +5,10 @@ import {
 import {
     RESPONSE_STATUS,
     API
+} from '/mindnote/constants.js';
+
+import {
+    APP_CONFIG
 } from '/mindnote/config.js';
 
 import {
@@ -19,10 +23,9 @@ import {
     Toaster
 } from '/mindnote/service/toaster.js';
 
-// double tap node will trigger `double-tap-node` event
 export const APP = {
     GoogleAuth: null,
-    run: () => {
+    run: (isUpdateDOMFirstRunRouting) => {
         window.addEventListener('error', (e) => {
             if (e.error && e.error instanceof MindnoteError) {
                 Toaster.popup(e.error.type, e.error.reason);
@@ -40,8 +43,8 @@ export const APP = {
                 return;
             }
         });
-        APP.isUpdateDOM = false;
-        api.init(API, RESPONSE_STATUS);
+        APP.isUpdateDOMFirstRunRouting = !!isUpdateDOMFirstRunRouting;
+        api.initV2(APP_CONFIG.API_ENDPOINT, API, RESPONSE_STATUS);
         Route.init(APP);
     }
 };

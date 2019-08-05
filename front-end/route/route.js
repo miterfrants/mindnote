@@ -84,7 +84,7 @@ export const Route = {
         }
 
         // prepare data
-        let someThingWrongInPrepareData = true;
+        let someThingWrongInPrepareData = false;
         if (matchRouter.prepareData) {
             const result = await Route.prepareData(matchRouter.prepareData, context.args);
             someThingWrongInPrepareData = result.someThingWrongInPrepareData;
@@ -108,10 +108,11 @@ export const Route = {
             });
 
             // refactor: use event listener
-            context.isUpdateDOM = true; // eslint-disable-line
+            context.isUpdateDOMFirstRunRouting = true; // eslint-disable-line
             // exit routing
             return;
         }
+
         const nextMatchRouter = Route.findMatchRoute(currentPath, matchRouter.Router);
         if (
             !nextMatchRouter.isRequiredParentPrepareData ||

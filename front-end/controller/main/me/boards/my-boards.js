@@ -8,7 +8,7 @@ import {
 
 import {
     RESPONSE_STATUS
-} from '/mindnote/config.js';
+} from '/mindnote/constants.js';
 
 import {
     MindnoteError,

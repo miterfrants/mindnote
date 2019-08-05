@@ -156,8 +156,9 @@
         }
 
         import { APP } from '/mindnote/app.js';
+        const isServerSideRender = true;
         setTimeout(()=> {
-            APP.run();
+            APP.run(!isServerSideRender);
         }, timeoutDuration);
     </script>
 </body>
