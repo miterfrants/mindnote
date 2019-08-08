@@ -67,8 +67,12 @@
     float: left;
 }
 
-.main h1 {
+.main .intro h1,
+.main .how-to-use h1,
+.main .pricing h1 {
     border: none;
+    margin: 0;
+    padding: 20px 0;
 }
 
 .main .auth-google {

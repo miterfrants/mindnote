@@ -132,8 +132,9 @@ export const Route = {
         }
     },
 
-    // server site: constructor -> render
-    // client sit: constructor-> init -> enter -> render -> exit
+    // server side: constructor -> render
+    // client side first time: constructor -> init -> enter -> render -> exit
+    // client side seconds time: enter -> render -> exit
     executeController: async (controller, context, htmlPath, parentController) => {
         // 如果已經有 instance 就不要在執行 initalize
         const instances = window.MindnoteController.filter((instance) => {
@@ -149,7 +150,10 @@ export const Route = {
                 elHTML = html.toDom();
             }
             controllerInstance = new controller(elHTML, parentController, context.args, context);
+
+            // client side only
             if (!context.isServerSideRender && controllerInstance.init) {
+                // init: client side first time only ex: binding event listener
                 controllerInstance.init(context.args, context);
             }
             window.MindnoteController.push(controllerInstance);
@@ -159,6 +163,7 @@ export const Route = {
 
         window.MindnoteCurrentController = controllerInstance; // eslint-disable-line
         if (!context.isServerSideRender) { // client side only
+            // client side every time enter router
             await controllerInstance.enter(context.args);
             if (controllerInstance.render) {
                 await controllerInstance.render();

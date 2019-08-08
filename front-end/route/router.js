@@ -19,6 +19,10 @@ import {
 } from '/mindnote/controller/main/board/board.js';
 
 import {
+    Node
+} from '/mindnote/controller/main/board/node/node.js';
+
+import {
     Checkout
 } from '/mindnote/controller/main/checkout/checkout.js';
 
@@ -40,6 +44,9 @@ import {
 import {
     chromeExt
 } from '/mindnote/controller/main/chrome-ext/chrome-ext.js';
+import {
+    MyNode
+} from '/mindnote/controller/main/me/node/my-node.js';
 
 export const Router = [{
     path: '/mindnote/',
@@ -90,6 +97,14 @@ export const Router = [{
                 url: 'https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js',
                 checkVariable: 'markdownit'
             }]
+        }, {
+            path: 'boards/{boardId}/nodes/{nodeId}/',
+            controller: MyNode,
+            html: '/mindnote/controller/main/me/node/my-node.html',
+            dependency: [{
+                url: 'https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js',
+                checkVariable: 'markdownit'
+            }]
         }]
     }, {
         path: 'boards/{boardId}/',
@@ -102,6 +117,10 @@ export const Router = [{
             url: 'https://cdnjs.cloudflare.com/ajax/libs/markdown-it/8.4.2/markdown-it.min.js',
             checkVariable: 'markdownit'
         }]
+    }, {
+        path: 'boards/{boardId}/nodes/{nodeId}/',
+        controller: Node,
+        html: '/mindnote/controller/main/board/node/node.html'
     }, {
         path: 'checkout/',
         controller: Checkout,

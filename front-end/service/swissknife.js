@@ -56,6 +56,9 @@ export const Swissknife = {
         }
     },
     getQueryString: (key) => {
+        if (!location.search || location.search.substring(1).length === 0) {
+            return '';
+        }
         const queryStrings = location.search.substring(1).split('&');
         const result = queryStrings.find((qs) => {
             if (qs.indexOf(`${key}=`) === 0) {

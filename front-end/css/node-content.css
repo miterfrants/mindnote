@@ -1,0 +1,20 @@
+.node-content .title-container {
+    margin-left: auto;
+    margin-right: auto;
+    border-bottom: none;
+    margin-top: 0;
+    padding-top: 3em;
+}
+
+.node-content .title-container h1 {
+    font-size: 2.5em;
+    margin-top: 0;
+    border-bottom: none;
+}
+
+.node-content .title-container h1,
+.node-content .content {
+    width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+}

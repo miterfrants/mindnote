@@ -20,10 +20,11 @@ export function Loader() {
                 'Content-Type': 'text/html; charset=utf-8'
             }
         });
+        const result = await resp.text()
         if (resp.status === 200) {
-            window.MindnoteLoaderCache[url] = resp.text();
+            window.MindnoteLoaderCache[url] = result;
         }
-        return resp.text();
+        return result;
     };
 
     async function _load(dependency) {

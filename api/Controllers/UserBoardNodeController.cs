@@ -26,6 +26,24 @@ namespace Mindnote.Controllers
             _contextForView = contextForView;
             _userService = userService;
         }
+
+        [HttpGet]
+        public ActionResult<view_node> GetNodeInBoard([FromRoute] Int32 boardId, [FromRoute] Int32 nodeId)
+        {
+            string authorization = Request.Headers["Authorization"];
+            string token = authorization.Substring("Bearer ".Length).Trim();
+            Int16 userId = _userService.GetUserId(token);
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
+
+            if (board == null)
+            {
+                throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+            }
+
+            view_node node = _contextForView.view_node.FirstOrDefault(x => x.board_id == board.id && x.deleted_at == null && x.id == nodeId);
+            return node;
+        }
+
         [HttpPatch]
         public ActionResult<node> PatchNode([FromRoute] Int32 boardId, [FromRoute] Int16 nodeId, [FromBody] dynamic requestBody)
         {

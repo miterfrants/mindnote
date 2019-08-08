@@ -6,5 +6,7 @@ const aliases = [{
 
 module.exports = {
     frontEndRootPath,
-    aliases
+    aliases,
+    frontEndConfigPath: process.env.NODE_ENV === 'prod' ? '/config.js' : '/config.dev.js',
+    relativeFrontEndURL: process.env.NODE_ENV === 'prod' ? 'http://127.0.0.1/' : 'https://127.0.0.1/'
 }
