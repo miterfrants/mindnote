@@ -313,6 +313,7 @@ export const Cyto = {
                 bubbles: true,
                 cancelable: true,
                 detail: {
+                    id: Number(data.id.replace(/node-/gi, '')),
                     title: data.title,
                     description: data.description
                 }
@@ -398,9 +399,9 @@ export const Cyto = {
                 return;
             }
             if (UI.Cyto.isMouseInBorder(e.target, {
-                x: e.position.x,
-                y: e.position.y
-            })) {
+                    x: e.position.x,
+                    y: e.position.y
+                })) {
                 Cyto._isConnecting = true;
             } else {
                 Cyto._isConnecting = false;

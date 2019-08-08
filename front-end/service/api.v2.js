@@ -179,6 +179,17 @@ export const api = {
                     }
                 };
                 return _handleRequest(api, fetchOption, sendResponse, withoutCache);
+            },
+            get: async (data, sendResponse, withoutCache) => {
+                let api = _API.ENDPOINT + _API.AUTHORIZED.NODE;
+                api = api.bind(data);
+                const fetchOption = {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + data.token
+                    }
+                };
+                return _handleRequest(api, fetchOption, sendResponse, withoutCache);
             }
         },
         nodes: {

@@ -5,6 +5,10 @@ import {
 extendHTMLElementProtoType();
 extendStringProtoType();
 
+import {
+    Loader
+} from '/mindnote/util/loader.js';
+
 export const UI = {
     Cyto: {
         tempId: 0,
@@ -297,8 +301,8 @@ export const UI = {
         }, 300);
         UI.nodeForm.resetDragDropState();
     },
-    openNodeWindow: (title, description) => {
-        const w = 600;
+    openNodeWindow: async (boardId, nodeId, isSelf) => {
+        const w = 800;
         const dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : window.screenX;
 
         const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
@@ -307,47 +311,11 @@ export const UI = {
         const systemZoom = width / window.screen.availWidth;
         const left = (width - w) / 2 / systemZoom + dualScreenLeft;
         const top = 0;
-        const newWindow = window.open('', title, 'id=popup-mindnote, scrollbars=yes, width=' + w / systemZoom + ', height=' + height / systemZoom + ', top=' + top + ', left=' + left);
-        const template = [
-            '<link rel="stylesheet" type="text/css" href="' + location.origin + '/mindnote/css/common.css">',
-            '<div class="md">',
-            '<h1>{title}</h1>',
-            '{desc}',
-            '</div>'
-        ].join('');
-        const md = window.markdownit();
-        const detail = md.render(description);
-        const result = '<div>' + template
-            .replace(/{title}/gi, title)
-            .replace(/{desc}/gi, detail) + '</div>';
-        const body = result.toDom();
-        const imgSrcs = [];
-        let i = 1;
-        body.querySelectorAll('img').forEach((elImg) => {
-            const src = elImg.src;
-            elImg.src = elImg.src + '?w=10';
-            elImg.outerHTML = '<div class="img-container blur" id="img-' + i + '">' + elImg.outerHTML + '</div>';
-            imgSrcs.push({
-                src,
-                id: i
-            });
-            i++;
-        });
-        newWindow.document.querySelector('head').innerHTML = '<title>' + title + '</title>';
-        newWindow.document.querySelector('body').innerHTML = '';
-        newWindow.document.querySelector('body').append(body);
-        imgSrcs.forEach((img) => {
-            const elImg = document.createElement('img');
-            elImg.src = img.src + '?w=1000';
-            elImg.addEventListener('load', () => {
-                const elImgContainer = newWindow.document.querySelector('#img-' + img.id);
-                elImgContainer.className = 'img-container';
-                elImgContainer.querySelector('img').src = img.src;
-            });
-        });
-
-        // Puts focus on the newWindow
-        if (window.focus) newWindow.focus();
+        const urlPrefix = '/mindnote/';
+        if (isSelf) {
+            urlPrefix += 'users/me/';
+        }
+        window.open(`${urlPrefix}boards/${boardId}/nodes/${nodeId}/?hide-header=true`, '', 'id=popup-mindnote, scrollbars=yes, width=' + w / systemZoom + ', height=' + height / systemZoom + ', top=' + top + ', left=' + left);
     },
     getCytoEditContainer: () => {
         return document.querySelector('.cy-edit-mode');

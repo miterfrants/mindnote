@@ -61,7 +61,7 @@ export class MyBoard extends TutorialRouterController {
     }
 
     async render(withoutCache) {
-        super.render(withoutCache);
+        super.render();
         this.board = (await api.authApiService.board.get({
             boardId: this.args.boardId,
             token: this.args.token
@@ -71,6 +71,7 @@ export class MyBoard extends TutorialRouterController {
             boardId: this.args.boardId,
             token: this.args.token
         }, null, withoutCache)).data;
+        this.args.nodes = nodes;
         const relationship = (await api.authApiService.relationship.get({
             boardId: this.args.boardId,
             token: this.args.token
@@ -316,9 +317,7 @@ export class MyBoard extends TutorialRouterController {
             if (Swissknife.Tutorial.isTutorialMode()) {
                 Swissknife.Tutorial.endTour();
             }
-            const title = e.detail.title;
-            const desc = e.detail.description;
-            UI.openNodeWindow(title, desc);
+            UI.openNodeWindow(this.args.boardId, e.detail.id, true);
         });
         document.addEventListener('tap-node', (e) => {
             if (this.deletedMode) {

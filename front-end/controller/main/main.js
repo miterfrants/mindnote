@@ -34,6 +34,9 @@ import {
 import {
     RouterController
 } from '/mindnote/route/router-controller.js';
+import {
+    Swissknife
+} from '/mindnote/service/swissknife.js';
 
 export class Main extends RouterController {
     async init(args, context) {
@@ -58,6 +61,11 @@ export class Main extends RouterController {
 
     async enter(args) {
         super.enter(args);
+        if (Swissknife.getQueryString('hide-header') === 'true') {
+            this.elHTML.querySelector('.header').addClass('hide');
+        } else {
+            this.elHTML.querySelector('.header').removeClass('hide');
+        }
     }
 
     async render() {

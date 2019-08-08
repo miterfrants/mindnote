@@ -92,9 +92,7 @@ export class Board extends RouterController {
 
     bindEvent() {
         document.addEventListener('double-tap-node', (e) => {
-            const title = e.detail.title;
-            const desc = e.detail.description;
-            UI.openNodeWindow(title, desc);
+            UI.openNodeWindow(this.args.boardId, e.detail.id, false);
             localStorage.setItem('have_learned_tip_double_tap', 'true');
             clearTimeout(this.timerForTip);
         });
