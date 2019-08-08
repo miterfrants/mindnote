@@ -311,7 +311,7 @@ export const UI = {
         const systemZoom = width / window.screen.availWidth;
         const left = (width - w) / 2 / systemZoom + dualScreenLeft;
         const top = 0;
-        const urlPrefix = '/mindnote/';
+        let urlPrefix = '/mindnote/';
         if (isSelf) {
             urlPrefix += 'users/me/';
         }
