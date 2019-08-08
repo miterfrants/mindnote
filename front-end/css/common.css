@@ -391,10 +391,6 @@ a.toaster-item::after {
     overflow: hidden;
 }
 
-.md {
-    padding: 10px;
-}
-
 /* overwrite */
 .shepherd-text {
     text-align: left;
