@@ -41,7 +41,7 @@ export class Board extends RouterController {
     }
 
     async init() {
-        this.bindEvent();
+        this._bindEvent();
     }
 
     async enter(args) {
@@ -68,7 +68,9 @@ export class Board extends RouterController {
             title: respForBoard.data.username ? respForBoard.data.title + ' - ' + respForBoard.data.username : respForBoard.data.title,
             image: ImageService.generateImageUrl(respForBoard.data.filename, 1000)
         });
+    }
 
+    async postRender() {
         const respForNodes = (await api.apiService.nodes.get({
             boardId: this.args.boardId
         }));
@@ -85,32 +87,30 @@ export class Board extends RouterController {
             throw new MindnoteError(MINDNOTE_ERROR_TYPE.ERROR, respForRelationship.data.errorMsg);
         }
 
-        this.nodes = respForNodes.data;
-        this.relationship = respForRelationship.data;
-    }
+        const nodes = respForNodes.data;
+        const relationship = respForRelationship.data;
 
-    async postRender() {
         const container = UI.getCytoContainer();
-        this.cy = Cyto.init(container, this.nodes, this.relationship, false);
+        this.cy = Cyto.init(container, nodes, relationship, false);
 
         const haveLearnedTipDoubleTap = localStorage.getItem('have_learned_tip_double_tap') === 'true';
         if (this.nodes.length > 0 && !haveLearnedTipDoubleTap) {
-            this.showTip();
+            this._showTip();
         }
     }
 
-    bindEvent() {
+    _bindEvent() {
         document.addEventListener('double-tap-node', (e) => {
             UI.openNodeWindow(this.args.boardId, e.detail.id, false);
             localStorage.setItem('have_learned_tip_double_tap', 'true');
             clearTimeout(this.timerForTip);
         });
-        document.querySelector('.btn-layout').addEventListener('click', () => {
+        this.elHTML.querySelector('.btn-layout').addEventListener('click', () => {
             UI.Cyto.reArrange(this.cy);
         });
     }
 
-    showTip() {
+    _showTip() {
         this.timerForTip = setTimeout(() => {
             Toaster.popup(MINDNOTE_ERROR_TYPE.INFO, '小提示: 如果需要看詳細內容，請對藍色圈圈連點兩次', 5000);
             this.showTip();
