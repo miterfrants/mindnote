@@ -26,6 +26,9 @@ import {
 import {
     RouterController
 } from '/mindnote/route/router-controller.js';
+import {
+    ImageService
+} from '/mindnote/service/image.js';
 
 export class Board extends RouterController {
     constructor(elHTML, parentController, args, context) {
@@ -59,6 +62,12 @@ export class Board extends RouterController {
         UI.header.generateNavigation([{
             title: respForBoard.data.title
         }]);
+
+        // set metadata
+        UI.header.setMetaData({
+            title: respForBoard.data.username ? respForBoard.data.title + ' - ' + respForBoard.data.username : respForBoard.data.title,
+            image: ImageService.generateImageUrl(respForBoard.data.filename, 1000)
+        });
 
         const respForNodes = (await api.apiService.nodes.get({
             boardId: this.args.boardId

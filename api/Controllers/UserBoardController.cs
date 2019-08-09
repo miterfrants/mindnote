@@ -26,13 +26,13 @@ namespace Mindnote.Controllers
             _userService = userService;
         }
         [HttpGet]
-        public ActionResult<board> GetBoard([FromRoute] Int32 boardId)
+        public ActionResult<view_board> GetBoard([FromRoute] Int32 boardId)
         {
             string authorization = Request.Headers["Authorization"];
             string token = authorization.Substring("Bearer ".Length).Trim();
             Int16 userId = _userService.GetUserId(token);
 
-            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
+            view_board board = _contextForView.view_board.FirstOrDefault(x => x.id == boardId && x.owner_id == userId && x.deleted_at == null);
             if (board == null)
             {
                 throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
@@ -85,6 +85,18 @@ namespace Mindnote.Controllers
             {
                 board.uniquename = requestBody.uniquename;
             }
+            if (requestBody.image_id != null && board.image_id != (int)requestBody.image_id)
+            {
+                if (board.image_id != null)
+                {
+                    image existedImage = new image { id = (board.image_id ?? -1) };
+                    Console.WriteLine((board.image_id ?? -1));
+                    _context.Attach<image>(existedImage);
+                    existedImage.deleted_at = DateTime.Now;
+                }
+                board.image_id = requestBody.image_id;
+            }
+
             _context.SaveChanges();
             return board;
         }

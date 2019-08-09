@@ -123,6 +123,7 @@ export const api = {
             patch: async (data, sendResponse, withoutCache) => {
                 let api = _API.ENDPOINT + _API.AUTHORIZED.BOARD;
                 api = api.bind(data);
+
                 const fetchOption = {
                     method: 'PATCH',
                     headers: {
@@ -131,7 +132,8 @@ export const api = {
                     body: JSON.stringify({
                         title: data.title,
                         uniquename: data.uniquename,
-                        is_public: data.is_public
+                        is_public: data.is_public,
+                        image_id: data.image_id
                     })
                 };
                 return _handleRequest(api, fetchOption, sendResponse, withoutCache);

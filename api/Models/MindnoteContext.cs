@@ -53,6 +53,9 @@ namespace Mindnote.Models
 
             modelBuilder.Entity<image>(entity =>
             {
+                entity.HasIndex(e => e.owner_id)
+                    .HasName("idx_image_owner");
+
                 entity.Property(e => e.id).UseNpgsqlIdentityByDefaultColumn();
 
                 entity.Property(e => e.created_at)
@@ -65,11 +68,11 @@ namespace Mindnote.Models
                     .IsRequired()
                     .HasMaxLength(64);
 
-                entity.Property(e => e.height).HasColumnType("numeric(8,2)");
+                entity.Property(e => e.height).HasColumnType("numeric(12,2)");
 
-                entity.Property(e => e.size).HasColumnType("numeric(8,2)");
+                entity.Property(e => e.size).HasColumnType("numeric(12,2)");
 
-                entity.Property(e => e.width).HasColumnType("numeric(8,2)");
+                entity.Property(e => e.width).HasColumnType("numeric(12,2)");
             });
 
             modelBuilder.Entity<node>(entity =>

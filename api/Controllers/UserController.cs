@@ -3,6 +3,7 @@ using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Dynamic;
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -101,9 +102,14 @@ namespace Mindnote.Controllers
                 string base64Data = requestBody.base64Files[i].data.Value;
                 string contentType = requestBody.base64Files[i].contentType.Value;
                 string clientSideFlagId = requestBody.base64Files[i].clientSideFlagId != null ? requestBody.base64Files[i].clientSideFlagId.Value : "";
-                int nodeId = (int)requestBody.base64Files[i].nodeId.Value;
                 decimal width = (decimal)requestBody.base64Files[i].width.Value;
                 decimal height = (decimal)requestBody.base64Files[i].height.Value;
+
+                int nodeId = -1;
+                if (requestBody.base64Files[i].nodeId != null)
+                {
+                    nodeId = (int)requestBody.base64Files[i].nodeId.Value;
+                }
                 string extensionFilename = ".jpg";
                 if (contentType == "image/jpg" || contentType == "image/jpeg")
                 {
@@ -146,16 +152,17 @@ namespace Mindnote.Controllers
                 {
                     status = JSONResponseStatus.FAILED;
                 }
-                result.Add(new
-                {
-                    status = Enum.GetName(typeof(JSONResponseStatus), status),
-                    filename = resultFromGCS.Name,
-                    clientSideFlagId = clientSideFlagId ?? "",
-                    nodeId = nodeId,
-                    size = resultFromGCS.Size,
-                    width = width,
-                    height = height
-                });
+
+                dynamic resultItem = new ExpandoObject();
+                resultItem.status = Enum.GetName(typeof(JSONResponseStatus), status);
+                resultItem.filename = resultFromGCS.Name;
+                resultItem.clientSideFlagId = clientSideFlagId ?? "";
+                resultItem.nodeId = nodeId;
+                resultItem.size = resultFromGCS.Size;
+                resultItem.width = width;
+                resultItem.height = height;
+
+                result.Add(resultItem);
             }
 
             // check gcs result and save local db
@@ -167,15 +174,22 @@ namespace Mindnote.Controllers
                     {
                         owner_id = userId,
                         filename = result[i].filename,
-                        node_id = result[i].nodeId,
                         size = result[i].size,
                         width = result[i].width,
                         height = result[i].height
                     };
+
+                    if (result[i].nodeId != -1)
+                    {
+                        image.node_id = result[i].nodeId;
+                    }
+
+                    result[i].imageContext = image;
                     _context.image.Add(image);
                 }
             }
             _context.SaveChanges();
+
             return result;
         }
     }

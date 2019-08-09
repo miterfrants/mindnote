@@ -24,16 +24,16 @@ namespace Mindnote.Controllers
 
 
         [HttpGet]
-        public ActionResult<List<board>> GetAll()
+        public ActionResult<List<view_board>> GetAll()
         {
-            return _context.board.Where(x => x.is_public == true && x.deleted_at == null).OrderByDescending(x => x.created_at).Take(20).ToList();
+            return _contextForView.view_board.Where(x => x.is_public == true && x.deleted_at == null).OrderByDescending(x => x.created_at).Take(20).ToList();
         }
 
         [HttpGet]
         [Route("{boardId}/")]
-        public ActionResult<board> Get([FromRoute] Int32 boardId)
+        public ActionResult<view_board> Get([FromRoute] Int32 boardId)
         {
-            board result = _context.board.FirstOrDefault(x =>
+            view_board result = _contextForView.view_board.FirstOrDefault(x =>
                 x.id == boardId && x.deleted_at == null);
             if (result == null)
             {

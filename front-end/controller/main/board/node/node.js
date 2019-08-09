@@ -19,6 +19,9 @@ import {
 import {
     Swissknife
 } from '/mindnote/service/swissknife.js';
+import {
+    ImageService
+} from '/mindnote/service/image.js';
 
 export class Node extends RouterController {
     constructor(elHTML, parentController, args, context) {
@@ -38,9 +41,6 @@ export class Node extends RouterController {
         this.elHTML.querySelector('.title').innerHTML = this.node.title;
         this.elHTML.querySelector('.content').innerHTML = markdownit().render(this.node.description);
         UI.header.generateNavigation([{
-            title: '我的分類',
-            link: '/mindnote/users/me/boards/'
-        }, {
             title: this.board.title,
             link: `/mindnote/users/me/boards/${this.args.boardId}/`
         }, {
@@ -51,6 +51,22 @@ export class Node extends RouterController {
         } else {
             document.querySelector('.header').removeClass('hide');
         }
+
+        let title = '';
+        if (this.board.username) {
+            title = this.node.title + ' - ' + this.board.title + ' - ' + this.board.username;
+        } else {
+            title = this.node.title + ' - ' + this.board.title
+        }
+
+        let metaData = {
+            title
+        };
+        if (this.node.cover) {
+            metaData.image = ImageService.generateImageUrl(this.node.cover, 1000);
+        }
+
+        UI.header.setMetaData(metaData);
     }
 
     async _getTargetNode(withoutCache) {

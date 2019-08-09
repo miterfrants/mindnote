@@ -203,17 +203,42 @@ export const UI = {
                 arrayTitle.push(arrayNavigation[i].title);
             }
             document.querySelector('.navigation').innerHTML = arrayNav.join(' > ');
-            if (arrayTitle.length > 0) {
-                document.title = arrayTitle.join(' > ') + ' - Mindnote';
-            } else {
-                document.title = 'Mindnote';
-            }
         },
         showToggleButton: () => {
             document.querySelector('.toggle-button').removeClass('hide');
         },
         hideToggleButton: () => {
             document.querySelector('.toggle-button').addClass('hide');
+        },
+        setMetaData: (data) => {
+            let elMetaOgUrl = document.querySelector('meta[property="og:url"]');
+            if (!elMetaOgUrl) {
+                elMetaOgUrl = document.createElement('meta');
+                document.head.appendChild(elMetaOgUrl);
+            }
+            elMetaOgUrl.setAttribute('property', 'og:url');
+            elMetaOgUrl.setAttribute('content', location.href.toString());
+
+
+            let elMetaOgTitle = document.querySelector('meta[property="og:title"]');
+            if (!elMetaOgTitle) {
+                elMetaOgTitle = document.createElement('meta');
+                document.head.appendChild(elMetaOgTitle);
+            }
+            elMetaOgTitle.setAttribute('property', 'og:title');
+            elMetaOgTitle.setAttribute('content', data.title);
+
+            document.querySelector('head title').innerHTML = data.title;
+
+            let elMetaOgImage = document.querySelector('meta[property="og:image"]');
+            if (!elMetaOgImage) {
+                elMetaOgImage = document.createElement('meta');
+                document.head.appendChild(elMetaOgImage);
+            }
+            elMetaOgImage.setAttribute('property', 'og:image');
+            elMetaOgImage.setAttribute('content', data.image);
+
+
         }
     },
     showAuth: () => {

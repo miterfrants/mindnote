@@ -2,7 +2,7 @@ import {
     UI
 } from '/mindnote/ui.js';
 import {
-    Image
+    ImageService
 } from '/mindnote/service/image.js';
 export const Cyto = {
     _isEditMode: false,
@@ -228,7 +228,7 @@ export const Cyto = {
                     background: nodes[i].style.background,
                     size: nodes[i].style.size,
                     borderWidth: borderWidth,
-                    backgroundImage: nodes[i].cover ? [Image.generateImageUrl(nodes[i].cover, 200)] : []
+                    backgroundImage: nodes[i].cover ? [ImageService.generateImageUrl(nodes[i].cover, 200)] : []
                 },
                 position: {
                     x: nodes[i].x,
