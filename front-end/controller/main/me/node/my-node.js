@@ -53,7 +53,9 @@ export class MyNode extends RouterController {
         this.board = await this._getTargetBoard(withoutCache);
         this.elHTML.querySelector('.title').innerHTML = this.node.title;
         this.elHTML.querySelector('.content').innerHTML = markdownit()
-            .use(MarkdownItAttrs)
+            .use(MarkdownItAttrs, {
+                allowedAttributes: ['data-height']
+            })
             .render(this.node.description);
         UI.header.generateNavigation([{
             title: '我的分類',

@@ -400,6 +400,9 @@ a.toaster-item::after {
     padding-bottom: 30px;
 }
 
+.md img {
+    width: 100%;
+}
 
 .md .img-container img.blur {
     filter: blur(20px);
