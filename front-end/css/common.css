@@ -124,6 +124,25 @@ button {
     border: 5px solid white;
 }
 
+.btn-copy-shared-link {
+    width: 160px;
+    overflow: hidden;
+    height: 41px;
+    display: block;
+    background: #24c0c1;
+    color: white;
+    border-radius: 30px;
+    border: none;
+    padding: 10px 20px;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-copy-shared-link.copied {
+    background: #fac32d;
+}
+
 button.disabled {
     pointer-events: none;
     cursor: not-allowed;

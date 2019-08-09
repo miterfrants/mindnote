@@ -27,6 +27,9 @@ export class MyNode extends RouterController {
         this.node = null;
         this.board = null;
     }
+    async init() {
+        this._bindEvent();
+    }
     async enter(args) {
         super.enter(args);
         this.node = null;
@@ -76,7 +79,21 @@ export class MyNode extends RouterController {
             return resp.data;
         }
     }
-
+    async _bindEvent() {
+        this.elHTML.querySelector('.btn-copy-shared-link').addEventListener('click', (e) => {
+            if (e.currentTarget.classExists('disabled')) {
+                return;
+            }
+            const button = e.currentTarget;
+            Swissknife.copyText(window.location.origin + '/mindnote/boards/' + this.args.boardId + '/nodes/' + this.args.nodeId + '/');
+            button.querySelector('span').innerHTML = '已複製';
+            button.addClass('copied');
+            setTimeout(() => {
+                button.querySelector('span').innerHTML = '複製公開連結';
+                button.removeClass('copied');
+            }, 3000);
+        });
+    }
     async _getTargetBoard(withoutCache) {
         const resp = await api.authApiService.board.get({
             boardId: this.args.boardId,

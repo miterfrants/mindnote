@@ -71,5 +71,17 @@ export const Swissknife = {
             return decodeURIComponent(result.split('=')[1]);
         }
         return '';
+    },
+    copyText: (text) => {
+        const tempElement = document.createElement('textarea');
+        tempElement.value = text;
+        tempElement.style.opacity = 0;
+        tempElement.style.position = 'fixed';
+        tempElement.style.top = 0;
+        document.body.appendChild(tempElement);
+        tempElement.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempElement);
     }
+
 };

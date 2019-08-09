@@ -27,16 +27,6 @@
     overflow: hidden;
 }
 
-.function-buttons .btn-copy-shared-link {
-    width: 160px;
-    overflow: hidden;
-    height: 37px;
-}
-
-.function-buttons .btn-copy-shared-link.copied {
-    background: #fac32d;
-}
-
 .function-buttons .btn-delete-change {
     background: #fac32d;
 }
