@@ -1,28 +1,41 @@
 import {
     RouterController
 } from '/mindnote/route/router-controller.js';
+
 import {
     api
 } from '/mindnote/service/api.v2.js';
+
 import {
     RESPONSE_STATUS
 } from '/mindnote/constants.js';
+
 import {
     MindnoteError,
     MINDNOTE_ERROR_TYPE
 } from '/mindnote/util/mindnote-error.js';
+
 import {
     UI
 } from '/mindnote/ui.js';
+
 import {
     markdownit
 } from '/mindnote/third-party/markdow-it/mdit.min.js';
+
+import {
+    MarkdownItAttrs
+} from '/mindnote/third-party/markdow-it/markdown-it-attrs.browser.js';
+
 import {
     Swissknife
 } from '/mindnote/service/swissknife.js';
+
 import {
     ImageService
 } from '/mindnote/service/image.js';
+
+import LazyLoad from '/mindnote/third-party/lazyload/lazyload.esm.js';
 
 export class Node extends RouterController {
     constructor(elHTML, parentController, args, context) {
@@ -39,13 +52,15 @@ export class Node extends RouterController {
         this.board = null;
     }
     async render(withoutCache) {
-        this.node = await this._getTargetNode(withoutCache);
-        const elNodeContent = `<div>${markdownit().render(this.node.description)}</div>`.toDom();
-        const elLazyloadNodeContent = this._lazyloadImage(elNodeContent);
         super.render();
+        this.node = await this._getTargetNode(withoutCache);
         this.board = await this._getTargetBoard(withoutCache);
         this.elHTML.querySelector('.title').innerHTML = this.node.title;
-        this.elHTML.querySelector('.content').innerHTML = elLazyloadNodeContent.innerHTML;
+        this.elHTML.querySelector('.content').innerHTML = markdownit()
+            .use(MarkdownItAttrs, {
+                allowedAttributes: ['data-height']
+            })
+            .render(this.node.description);
         UI.header.generateNavigation([{
             title: this.board.title,
             link: `/mindnote/boards/${this.args.boardId}/`
@@ -54,12 +69,43 @@ export class Node extends RouterController {
         }]);
         this._showOrHideHeader();
         this._setMetadata();
+        this._lazyloadImage();
     }
-    _lazyloadImage(elNodeContent) {
-        elNodeContent.querySelectorAll('img').forEach((img) => {
-            img.src += img.src.indexOf('?') === -1 ? '?rot&w=1000' : '&rot&w=1000';
+
+    async postRender() {
+        new LazyLoad({
+            elements_selector: '.lazyload',
+            callback_loaded: (el) => {
+                el.removeClass('blur');
+            },
+            load_delay: 1000
         });
-        return elNodeContent;
+    }
+
+    _lazyloadImage() {
+        this.elHTML.querySelectorAll('.content img').forEach((img) => {
+            const elImageContainer = document.createElement('span');
+            elImageContainer.addClass('img-container');
+
+            const elImageParent = img.parentElement;
+            elImageParent.insertBefore(elImageContainer, img);
+            elImageContainer.appendChild(img);
+
+            const heightPercentage = img.dataset['height'];
+            elImageContainer.style.paddingTop = heightPercentage;
+            const questionMarkPosition = img.src.indexOf('?');
+            const rotQueryKeyPosition = img.src.indexOf('rot', questionMarkPosition);
+            const widthKeyPosition = img.src.indexOf('w=', questionMarkPosition);
+            if (rotQueryKeyPosition === -1) {
+                img.src += questionMarkPosition === -1 ? '?rot' : '&rot';
+            }
+            img.dataset['src'] = img.src + '&w=1000';
+            img.addClass('lazyload');
+            if (widthKeyPosition === -1) {
+                img.src += '&w=10';
+            }
+            img.addClass('blur');
+        });
     }
     _showOrHideHeader() {
         if (Swissknife.getQueryString('hide-header') === 'true') {

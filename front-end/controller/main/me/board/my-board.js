@@ -109,7 +109,9 @@ export class MyBoard extends TutorialRouterController {
         const elNodeForm = this.elHTML.querySelector('.node-form');
         this.elHTML.querySelector('textarea').addEventListener('keyup', (e) => {
             const detail = markdownit()
-                .use(MarkdownItAttrs)
+                .use(MarkdownItAttrs, {
+                    allowedAttributes: ['data-height']
+                })
                 .render(e.currentTarget.value);
             this.elHTML.querySelector('.markdown-container').innerHTML = detail;
         });
@@ -119,7 +121,9 @@ export class MyBoard extends TutorialRouterController {
                 UI.nodeForm.exitFullscreen(this.elHTML);
             } else {
                 const detail = markdownit()
-                    .use(MarkdownItAttrs)
+                    .use(MarkdownItAttrs, {
+                        allowedAttributes: ['data-height']
+                    })
                     .render(this.elHTML.querySelector('textarea').value);
                 this.elHTML.querySelector('.markdown-container').innerHTML = detail;
                 UI.nodeForm.enterFullscreen(this.elHTML);
