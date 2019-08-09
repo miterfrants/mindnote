@@ -9,7 +9,8 @@ const indexHTML = fs.readFileSync(config.frontEndRootPath + 'index.html', 'utf8'
 module.exports = {
     init,
     reset,
-    writeApiCacheToFrontEnd
+    writeApiCacheToFrontEnd,
+    writeStyleSheetCacheToFrontEnd
 }
 
 function init() {
@@ -34,6 +35,7 @@ function init() {
 function reset(request) {
     global.location = request._parsedUrl;
     global.location.href = 'https://' + request.headers.host + global.location.href;
+    global.location.origin = 'https://' + request.headers.host;
     global.window.MindnoteApiCache = {};
     global._localStorageInstance = {}
     global.window.MindnoteController = [];
@@ -44,7 +46,7 @@ function reset(request) {
     if (elementToaster) {
         elementToaster.innerHTML = '';
     }
-    window.document.querySelectorAll('#Mindnote').forEach((el) => {
+    window.document.querySelectorAll('.Mindnote').forEach((el) => {
         el.parentElement.removeChild(el);
     });
     window.document.querySelector('head title').innerHTML = '';
@@ -57,8 +59,17 @@ function writeApiCacheToFrontEnd() {
     // mindnote api cache
     const script = window.document.createElement('script');
     const scriptsArray = [];
-    script.id = 'Mindnote';
+    script.className = 'Mindnote';
     scriptsArray.push('window["MindnoteApiCache"] = ' + JSON.stringify(global.window.MindnoteApiCache));
+    script.innerHTML = scriptsArray.join('\r\n');
+    window.document.querySelector('head').prepend(script);
+}
+
+function writeStyleSheetCacheToFrontEnd() {
+    const script = window.document.createElement('script');
+    const scriptsArray = [];
+    script.className = 'Mindnote';
+    scriptsArray.push('window["MindnoteStylesheet"] = ' + JSON.stringify(global.window.MindnoteStylesheet));
     script.innerHTML = scriptsArray.join('\r\n');
     window.document.querySelector('head').prepend(script);
 }

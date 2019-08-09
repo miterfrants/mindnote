@@ -1,4 +1,6 @@
-window['MindnoteStylesheet'] = [];
+if (!window['MindnoteStylesheet']) {
+    window['MindnoteStylesheet'] = [];
+}
 window['MindnoteTutorial'] = null;
 export const Swissknife = {
     Tutorial: {
@@ -50,6 +52,9 @@ export const Swissknife = {
         }
     },
     appendStylesheetToHead: (elStylesheet) => {
+        if (elStylesheet.href.indexOf('http') === -1) {
+            elStylesheet.href = location.origin + elStylesheet.href;
+        }
         if (window.MindnoteStylesheet.indexOf(elStylesheet.href) === -1) {
             document.head.appendChild(elStylesheet);
             window.MindnoteStylesheet.push(elStylesheet.href);

@@ -47,6 +47,7 @@ export const App = {
         // use front-end routing
         await Route.routing(request.url, Router, context, null, null);
         fakeBrowser.writeApiCacheToFrontEnd();
+        fakeBrowser.writeStyleSheetCacheToFrontEnd();
 
         return window.document.documentElement.innerHTML;
     }
