@@ -40,6 +40,14 @@ import {
     MyBoardTutorialStepsClass
 } from '/mindnote/controller/main/me/board/tutorial-steps.js';
 
+import {
+    markdownit
+} from '/mindnote/third-party/markdow-it/mdit.min.js';
+
+import {
+    MarkdownItAttrs
+} from '/mindnote/third-party/markdow-it/markdown-it-attrs.browser.js';
+
 export class MyBoard extends TutorialRouterController {
     constructor(elHTML, parentController, args, context) {
         super(elHTML, parentController, args, context);
@@ -100,7 +108,9 @@ export class MyBoard extends TutorialRouterController {
     _bindEvent() {
         const elNodeForm = this.elHTML.querySelector('.node-form');
         this.elHTML.querySelector('textarea').addEventListener('keyup', (e) => {
-            const detail = window.markdownit().render(e.currentTarget.value);
+            const detail = markdownit()
+                .use(MarkdownItAttrs)
+                .render(e.currentTarget.value);
             this.elHTML.querySelector('.markdown-container').innerHTML = detail;
         });
 
@@ -108,7 +118,9 @@ export class MyBoard extends TutorialRouterController {
             if (this.elHTML.querySelector('.node-form').classExists('fullscreen')) {
                 UI.nodeForm.exitFullscreen(this.elHTML);
             } else {
-                const detail = window.markdownit().render(this.elHTML.querySelector('textarea').value);
+                const detail = markdownit()
+                    .use(MarkdownItAttrs)
+                    .render(this.elHTML.querySelector('textarea').value);
                 this.elHTML.querySelector('.markdown-container').innerHTML = detail;
                 UI.nodeForm.enterFullscreen(this.elHTML);
             }
@@ -508,7 +520,7 @@ export class MyBoard extends TutorialRouterController {
                 for (var i = 0; i < resp.data.length; i++) {
                     nodeDescription = nodeDescription.replace(
                         `![#${resp.data[i].clientSideFlagId} Uploading Image Title](Uploading Image URL)`,
-                        `![#${resp.data[i].filename}](${ImageService.generateImageUrl(resp.data[i].filename)})`
+                        `![#${resp.data[i].filename}](${ImageService.generateImageUrl(resp.data[i].filename)}){data-height=${resp.data[i].height * 100 / resp.data[i].width}%}`
                     );
                 }
                 elNodeDescriptoin.value = nodeDescription;
