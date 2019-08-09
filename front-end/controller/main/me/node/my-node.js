@@ -55,7 +55,11 @@ export class MyNode extends RouterController {
     }
     _lazyloadImage() {
         this.elHTML.querySelectorAll('.content img').forEach((img) => {
-            img.src += img.src.indexOf('?') === -1 ? '?rot' : '&rot';
+            const questionMarkPosition = img.src.indexOf('?');
+            const rotQueryKeyPosition = img.src.indexOf('rot', questionMarkPosition);
+            if (rotQueryKeyPosition === -1) {
+                img.src += img.src.indexOf('?') === -1 ? '?rot' : '&rot';
+            }
         });
     }
     _showOrHideHeader() {
