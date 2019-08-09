@@ -33,7 +33,7 @@ function init() {
 
 function reset(request) {
     global.location = request._parsedUrl;
-
+    global.location.href = '//' + request.headers.host + global.location.href;
     global.window.MindnoteApiCache = {};
     global._localStorageInstance = {}
     global.window.MindnoteController = [];
