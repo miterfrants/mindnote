@@ -402,10 +402,7 @@ a.toaster-item::after {
 
 .md img {
     width: 100%;
-}
-
-.md .img-container img.blur {
-    filter: blur(20px);
+    transition: opacity 0.3s;
 }
 
 .md .img-container {
@@ -421,7 +418,6 @@ a.toaster-item::after {
     position: absolute;
     top: 0;
     width: 100%;
-    transition: filter 0.1s;
 }
 
 /* overwrite */

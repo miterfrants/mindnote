@@ -72,10 +72,10 @@ export class MyNode extends RouterController {
     async postRender() {
         new LazyLoad({
             elements_selector: '.lazyload',
+            load_delay: 1000,
             callback_loaded: (el) => {
-                el.removeClass('blur');
-            },
-            load_delay: 1000
+                el.style.opacity = 1;
+            }
         });
     }
     _lazyloadImage() {
@@ -95,12 +95,18 @@ export class MyNode extends RouterController {
             if (rotQueryKeyPosition === -1) {
                 img.src += questionMarkPosition === -1 ? '?rot' : '&rot';
             }
-            img.dataset['src'] = img.src + '&w=1000';
             img.addClass('lazyload');
             if (widthKeyPosition === -1) {
-                img.src += '&w=10';
+                img.dataset['src'] = img.src + '&w=1000';
+                img.src += '&w=30&blur=30';
+
+            } else {
+                img.dataset['src'] = img.src;
+                img.src = img.src.replace(/w=\d{1,5}/gi, 'w=30&blur=30');
             }
-            img.addClass('blur');
+            img.style.opacity = 0;
+            elImageContainer.style.backgroundImage = `url(${img.src})`;
+            elImageContainer.style.backgroundSize = 'cover';
         });
     }
     _showOrHideHeader() {
