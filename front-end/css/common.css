@@ -400,10 +400,6 @@ a.toaster-item::after {
     padding-bottom: 30px;
 }
 
-.md img {
-    width: 100%;
-    transition: filter 0.1s;
-}
 
 .md .img-container img.blur {
     filter: blur(20px);
@@ -413,11 +409,16 @@ a.toaster-item::after {
     width: 100%;
     overflow: hidden;
     position: relative;
+    background: #ccc;
+    padding-bottom: 0;
+    display: block;
 }
 
 .md .img-container img {
     position: absolute;
     top: 0;
+    width: 100%;
+    transition: filter 0.1s;
 }
 
 /* overwrite */

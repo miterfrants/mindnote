@@ -72,13 +72,19 @@ export class MyNode extends RouterController {
             elements_selector: '.lazyload',
             callback_loaded: (el) => {
                 el.removeClass('blur');
-            }
+            },
+            load_delay: 1000
         });
     }
     _lazyloadImage() {
         this.elHTML.querySelectorAll('.content img').forEach((img) => {
-            const elImageContainer = img.parentElement;
+            const elImageContainer = document.createElement('span');
             elImageContainer.addClass('img-container');
+
+            const elImageParent = img.parentElement;
+            elImageParent.insertBefore(elImageContainer, img);
+            elImageContainer.appendChild(img);
+
             const heightPercentage = img.dataset['height'];
             elImageContainer.style.paddingTop = heightPercentage;
             const questionMarkPosition = img.src.indexOf('?');
@@ -90,7 +96,7 @@ export class MyNode extends RouterController {
             img.dataset['src'] = img.src + '&w=1000';
             img.addClass('lazyload');
             if (widthKeyPosition === -1) {
-                img.src += questionMarkPosition === -1 ? 'w=10' : '&w=10';
+                img.src += '&w=10';
             }
             img.addClass('blur');
         });
