@@ -8,7 +8,8 @@ import {
     RESPONSE_STATUS
 } from '/mindnote/constants.js';
 import {
-    MindnoteError
+    MindnoteError,
+    MINDNOTE_ERROR_TYPE
 } from '/mindnote/util/mindnote-error.js';
 import {
     UI
@@ -56,7 +57,7 @@ export class Node extends RouterController {
         if (this.board.username) {
             title = this.node.title + ' - ' + this.board.title + ' - ' + this.board.username;
         } else {
-            title = this.node.title + ' - ' + this.board.title
+            title = this.node.title + ' - ' + this.board.title;
         }
 
         let metaData = {
