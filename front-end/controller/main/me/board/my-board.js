@@ -25,7 +25,7 @@ import {
 } from '/mindnote/service/filereader.js';
 
 import {
-    Image
+    ImageService
 } from '/mindnote/service/image.js';
 
 import {
@@ -96,6 +96,8 @@ export class MyBoard extends TutorialRouterController {
 
     async exit() {
         super.exit();
+        // update board cover
+        this._updateCover();
     }
 
     bindEvent() {
@@ -436,7 +438,8 @@ export class MyBoard extends TutorialRouterController {
                 y: e.detail.position.y
             });
         });
-        document.addEventListener('layout-done', (e) => {
+        document.addEventListener('layout-done', async (e) => {
+            // update node position
             api.authApiService.nodes.patch({
                 token: this.args.token,
                 boardId: this.args.boardId,
@@ -508,7 +511,7 @@ export class MyBoard extends TutorialRouterController {
                 for (var i = 0; i < resp.data.length; i++) {
                     nodeDescription = nodeDescription.replace(
                         `![#${resp.data[i].clientSideFlagId} Uploading Image Title](Uploading Image URL)`,
-                        `![#${resp.data[i].filename}](${Image.generateImageUrl(resp.data[i].filename)})`
+                        `![#${resp.data[i].filename}](${ImageService.generateImageUrl(resp.data[i].filename)})`
                     );
                 }
                 elNodeDescriptoin.value = nodeDescription;
@@ -565,7 +568,7 @@ export class MyBoard extends TutorialRouterController {
             });
             if (respForUploadImage.status === RESPONSE_STATUS.OK) {
                 const data = respForUploadImage.data[0];
-                UI.Cyto.updateBackgroundImage(this.cy, nodeId, Image.generateImageUrl(data.filename, 200));
+                UI.Cyto.updateBackgroundImage(this.cy, nodeId, ImageService.generateImageUrl(data.filename, 200));
                 const respForUpdateNode = await api.authApiService.node.patch({
                     cover: data.filename,
                     token: this.args.token,
@@ -585,6 +588,20 @@ export class MyBoard extends TutorialRouterController {
             UI.nodeForm.resetDragDropState();
             e.stopPropagation();
             e.preventDefault();
+        });
+    }
+
+    async _updateCover() {
+        const base64File = await ImageService.extractBase64DataFromURL(this.cy.png())
+        api.authApiService.images.post({
+            base64Files: [base64File],
+            token: this.args.token
+        }, (e) => {
+            api.authApiService.board.patch({
+                token: this.args.token,
+                boardId: this.args.boardId,
+                image_id: e.data[0].imageContext.id
+            });
         });
     }
 }

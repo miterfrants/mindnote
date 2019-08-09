@@ -19,6 +19,7 @@ namespace Mindnote.Models
         public virtual DbQuery<view_node_relationship> view_node_relationship { get; set; }
         public virtual DbQuery<view_node> view_node { get; set; }
         public virtual DbQuery<view_user> view_user { get; set; }
+        public virtual DbQuery<view_board> view_board { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -26,6 +27,7 @@ namespace Mindnote.Models
             modelBuilder.Query<view_node_relationship>().ToView("view_node_relationship");
             modelBuilder.Query<view_node>().ToView("view_node");
             modelBuilder.Query<view_user>().ToView("view_user");
+            modelBuilder.Query<view_board>().ToView("view_board");
         }
     }
 }
