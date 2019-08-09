@@ -1,25 +1,37 @@
 import {
     RouterController
 } from '/mindnote/route/router-controller.js';
+
 import {
     api
 } from '/mindnote/service/api.v2.js';
+
 import {
     RESPONSE_STATUS
 } from '/mindnote/constants.js';
+
 import {
     MindnoteError,
     MINDNOTE_ERROR_TYPE
 } from '/mindnote/util/mindnote-error.js';
+
 import {
     UI
 } from '/mindnote/ui.js';
+
 import {
     markdownit
 } from '/mindnote/third-party/markdow-it/mdit.min.js';
+
+import {
+    MarkdownItAttrs
+} from '/mindnote/third-party/markdow-it/markdown-it-attrs.browser.js';
+
 import {
     Swissknife
 } from '/mindnote/service/swissknife.js';
+
+import LazyLoad from '/mindnote/third-party/lazyload/lazyload.esm.js';
 
 export class MyNode extends RouterController {
     constructor(elHTML, parentController, args, context) {
@@ -40,7 +52,9 @@ export class MyNode extends RouterController {
         this.node = await this._getTargetNode(withoutCache);
         this.board = await this._getTargetBoard(withoutCache);
         this.elHTML.querySelector('.title').innerHTML = this.node.title;
-        this.elHTML.querySelector('.content').innerHTML = markdownit().render(this.node.description);
+        this.elHTML.querySelector('.content').innerHTML = markdownit()
+            .use(MarkdownItAttrs)
+            .render(this.node.description);
         UI.header.generateNavigation([{
             title: '我的分類',
             link: '/mindnote/users/me/boards/'
@@ -53,9 +67,32 @@ export class MyNode extends RouterController {
         this._showOrHideHeader();
         this._lazyloadImage();
     }
+    async postRender() {
+        new LazyLoad({
+            elements_selector: '.lazyload',
+            callback_loaded: (el) => {
+                el.removeClass('blur');
+            }
+        });
+    }
     _lazyloadImage() {
         this.elHTML.querySelectorAll('.content img').forEach((img) => {
-            img.src += img.src.indexOf('?') === -1 ? '?rot' : '&rot';
+            const elImageContainer = img.parentElement;
+            elImageContainer.addClass('img-container');
+            const heightPercentage = img.dataset['height'];
+            elImageContainer.style.paddingTop = heightPercentage;
+            const questionMarkPosition = img.src.indexOf('?');
+            const rotQueryKeyPosition = img.src.indexOf('rot', questionMarkPosition);
+            const widthKeyPosition = img.src.indexOf('w=', questionMarkPosition);
+            if (rotQueryKeyPosition === -1) {
+                img.src += questionMarkPosition === -1 ? '?rot' : '&rot';
+            }
+            img.dataset['src'] = img.src + '&w=1000';
+            img.addClass('lazyload');
+            if (widthKeyPosition === -1) {
+                img.src += questionMarkPosition === -1 ? 'w=10' : '&w=10';
+            }
+            img.addClass('blur');
         });
     }
     _showOrHideHeader() {
