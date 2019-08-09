@@ -39,23 +39,36 @@ export class Node extends RouterController {
         this.board = null;
     }
     async render(withoutCache) {
-        super.render();
         this.node = await this._getTargetNode(withoutCache);
+        const elNodeContent = `<div>${markdownit().render(this.node.description)}</div>`.toDom();
+        const elLazyloadNodeContent = this._lazyloadImage(elNodeContent);
+        super.render();
         this.board = await this._getTargetBoard(withoutCache);
         this.elHTML.querySelector('.title').innerHTML = this.node.title;
-        this.elHTML.querySelector('.content').innerHTML = markdownit().render(this.node.description);
+        this.elHTML.querySelector('.content').innerHTML = elLazyloadNodeContent.innerHTML;
         UI.header.generateNavigation([{
             title: this.board.title,
-            link: `/mindnote/users/me/boards/${this.args.boardId}/`
+            link: `/mindnote/boards/${this.args.boardId}/`
         }, {
             title: this.node.title
         }]);
+        this._showOrHideHeader();
+        this._setMetadata();
+    }
+    _lazyloadImage(elNodeContent) {
+        elNodeContent.querySelectorAll('img').forEach((img) => {
+            img.src += img.src.indexOf('?') === -1 ? '?rot&w=1000' : '&rot&w=1000';
+        });
+        return elNodeContent;
+    }
+    _showOrHideHeader() {
         if (Swissknife.getQueryString('hide-header') === 'true') {
             document.querySelector('.header').addClass('hide');
         } else {
             document.querySelector('.header').removeClass('hide');
         }
-
+    }
+    _setMetadata() {
         let title = '';
         if (this.board.username) {
             title = this.node.title + ' - ' + this.board.title + ' - ' + this.board.username;
@@ -69,7 +82,6 @@ export class Node extends RouterController {
         if (this.node.cover) {
             metaData.image = ImageService.generateImageUrl(this.node.cover, 1000);
         }
-
         UI.header.setMetaData(metaData);
     }
     async _bindEvent() {

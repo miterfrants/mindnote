@@ -50,6 +50,15 @@ export class MyNode extends RouterController {
         }, {
             title: this.node.title
         }]);
+        this._showOrHideHeader();
+        this._lazyloadImage();
+    }
+    _lazyloadImage() {
+        this.elHTML.querySelectorAll('.content img').forEach((img) => {
+            img.src += img.src.indexOf('?') === -1 ? '?rot' : '&rot';
+        });
+    }
+    _showOrHideHeader() {
         if (Swissknife.getQueryString('hide-header') === 'true') {
             document.querySelector('.header').addClass('hide');
         } else {

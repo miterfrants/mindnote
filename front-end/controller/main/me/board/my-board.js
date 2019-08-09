@@ -49,7 +49,7 @@ export class MyBoard extends TutorialRouterController {
     }
 
     async init() {
-        this.bindEvent();
+        this._bindEvent();
     }
 
     async enter(args) {
@@ -67,24 +67,6 @@ export class MyBoard extends TutorialRouterController {
             token: this.args.token
         }, null, withoutCache)).data;
 
-        const nodes = (await api.authApiService.nodes.get({
-            boardId: this.args.boardId,
-            token: this.args.token
-        }, null, withoutCache)).data;
-        this.args.nodes = nodes;
-        const relationship = (await api.authApiService.relationship.get({
-            boardId: this.args.boardId,
-            token: this.args.token
-        }, null, withoutCache)).data;
-
-        const container = UI.getCytoEditContainer();
-        // server side no-need run this
-        if (window.cytoscape) {
-            this.cy = Cyto.init(container, nodes, relationship, true);
-            UI.Cyto.switchToNormalMode(this.cy);
-        }
-        UI.switchToNormalMode();
-
         UI.header.generateNavigation([{
             title: '我的分類',
             link: '/mindnote/users/me/boards/'
@@ -94,13 +76,28 @@ export class MyBoard extends TutorialRouterController {
         UI.hideNodeForm();
     }
 
+    async postRender() {
+        const nodes = (await api.authApiService.nodes.get({
+            boardId: this.args.boardId,
+            token: this.args.token
+        }, null)).data;
+        const relationship = (await api.authApiService.relationship.get({
+            boardId: this.args.boardId,
+            token: this.args.token
+        }, null)).data;
+        const container = UI.getCytoEditContainer();
+        this.cy = Cyto.init(container, nodes, relationship, true);
+        UI.Cyto.switchToNormalMode(this.cy);
+        UI.switchToNormalMode();
+    }
+
     async exit() {
         super.exit();
         // update board cover
         this._updateCover();
     }
 
-    bindEvent() {
+    _bindEvent() {
         const elNodeForm = this.elHTML.querySelector('.node-form');
         this.elHTML.querySelector('textarea').addEventListener('keyup', (e) => {
             const detail = window.markdownit().render(e.currentTarget.value);
@@ -414,7 +411,7 @@ export class MyBoard extends TutorialRouterController {
             }
             const button = e.currentTarget;
             const tempElement = document.createElement('textarea');
-            tempElement.value = `${location.origin}/mindnote/boards/${this.board.id }/`;
+            tempElement.value = `${location.origin}/mindnote/boards/${this.args.boardId }/`;
             tempElement.style.opacity = 0;
             tempElement.style.position = 'fixed';
             tempElement.style.top = 0;

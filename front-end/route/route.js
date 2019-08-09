@@ -165,7 +165,7 @@ export const Route = {
         if (!context.isServerSideRender) { // client side only
             // client side every time enter router
             await controllerInstance.enter(context.args);
-            if (controllerInstance.render) {
+            if (controllerInstance.render && context.isUpdateDOMFirstRunRouting) {
                 await controllerInstance.render();
             }
             if (controllerInstance.postRender) {

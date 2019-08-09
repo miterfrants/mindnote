@@ -1,9 +1,9 @@
 export const ImageService = {
     generateImageUrl: (imgFilename, w) => {
         if (w !== undefined) {
-            return `https://sapiens-tools-mindnote.imgix.net/${imgFilename}?w=${w}`;
+            return `https://sapiens-tools-mindnote.imgix.net/${imgFilename}?w=${w}&rot`;
         } else {
-            return `https://sapiens-tools-mindnote.imgix.net/${imgFilename}`;
+            return `https://sapiens-tools-mindnote.imgix.net/${imgFilename}?rot`;
         }
     },
     replaceImage: () => {
