@@ -102,8 +102,16 @@ namespace Mindnote.Controllers
                 string base64Data = requestBody.base64Files[i].data.Value;
                 string contentType = requestBody.base64Files[i].contentType.Value;
                 string clientSideFlagId = requestBody.base64Files[i].clientSideFlagId != null ? requestBody.base64Files[i].clientSideFlagId.Value : "";
-                decimal width = (decimal)requestBody.base64Files[i].width.Value;
-                decimal height = (decimal)requestBody.base64Files[i].height.Value;
+                decimal width = -1;
+                if (requestBody.base64Files[i].width != null)
+                {
+                    width = (decimal)requestBody.base64Files[i].width.Value;
+                }
+                decimal height = -1;
+                if (requestBody.base64Files[i].height != null)
+                {
+                    height = (decimal)requestBody.base64Files[i].height.Value;
+                }
 
                 int nodeId = -1;
                 if (requestBody.base64Files[i].nodeId != null)
@@ -175,9 +183,15 @@ namespace Mindnote.Controllers
                         owner_id = userId,
                         filename = result[i].filename,
                         size = result[i].size,
-                        width = result[i].width,
-                        height = result[i].height
                     };
+                    if (result[i].width != -1)
+                    {
+                        image.width = result[i].width;
+                    }
+                    if (result[i].height != -1)
+                    {
+                        image.height = result[i].height;
+                    }
 
                     if (result[i].nodeId != -1)
                     {
