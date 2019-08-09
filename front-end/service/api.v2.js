@@ -365,6 +365,15 @@ export const api = {
                 });
             }
         },
+        node: {
+            get: async (data) => {
+                let api = _API.ENDPOINT + _API.COMMON.NODE;
+                api = api.bind(data);
+                return _handleRequest(api, {
+                    method: 'GET'
+                });
+            }
+        },
         relationship: {
             get: async (data) => {
                 let api = _API.ENDPOINT + _API.COMMON.RELATIONSHIP;

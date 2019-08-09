@@ -89,5 +89,31 @@ namespace Mindnote.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("{boardId}/nodes/{nodeId}/")]
+        public ActionResult<view_node> GetNode([FromRoute] Int32 boardId, [FromRoute] Int32 nodeId)
+        {
+            view_node result = _contextForView.view_node.FirstOrDefault(x =>
+                x.id == nodeId && x.deleted_at == null && x.board_id == boardId);
+
+            board board = _context.board.FirstOrDefault(x => x.id == boardId && x.deleted_at == null);
+            if (board == null)
+            {
+                throw new MindnoteException("嗚喔！ 筆記的分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+            }
+            else if (!board.is_public)
+            {
+                throw new MindnoteException("這個分類被作者隱藏起來了～～", HttpStatusCode.Unauthorized);
+            }
+            else if (result == null)
+            {
+                throw new MindnoteException("嗚喔！ 筆記已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
+            }
+            else
+            {
+                return result;
+            }
+        }
+
     }
 }
