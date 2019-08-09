@@ -90,7 +90,6 @@ namespace Mindnote.Controllers
                 if (board.image_id != null)
                 {
                     image existedImage = new image { id = (board.image_id ?? -1) };
-                    Console.WriteLine((board.image_id ?? -1));
                     _context.Attach<image>(existedImage);
                     existedImage.deleted_at = DateTime.Now;
                 }
