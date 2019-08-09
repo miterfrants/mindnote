@@ -77,10 +77,9 @@ export class Node extends RouterController {
         if (filterNode.length > 0) {
             return filterNode[0];
         } else {
-            const resp = await api.authApiService.node.get({
+            const resp = await api.apiService.node.get({
                 boardId: this.args.boardId,
-                nodeId: this.args.nodeId,
-                token: this.args.token
+                nodeId: this.args.nodeId
             }, null, withoutCache);
             if (resp.status === RESPONSE_STATUS.FAILED) {
                 if (resp.httpStatus === 417) {
@@ -94,9 +93,8 @@ export class Node extends RouterController {
     }
 
     async _getTargetBoard(withoutCache) {
-        const resp = await api.authApiService.board.get({
-            boardId: this.args.boardId,
-            token: this.args.token
+        const resp = await api.apiService.board.get({
+            boardId: this.args.boardId
         }, null, withoutCache);
         if (resp.status === RESPONSE_STATUS.FAILED) {
             if (resp.httpStatus === 417) {

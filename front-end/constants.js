@@ -17,6 +17,7 @@ export const API = {
     COMMON: {
         BOARD: 'boards/{boardId}/',
         NODES: 'boards/{boardId}/nodes/',
+        NODE: 'boards/{boardId}/nodes/{nodeId}/',
         RELATIONSHIP: 'boards/{boardId}/relationship/'
     },
     AUTHORIZE: 'auth/',
