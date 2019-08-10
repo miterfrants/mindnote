@@ -400,6 +400,14 @@ a.toaster-item::after {
     padding-bottom: 30px;
 }
 
+.md ul {
+    padding-left: 20px;
+}
+
+.md ul li {
+    padding: 15px 0;
+}
+
 .md img {
     width: 100%;
     transition: opacity 0.3s;
