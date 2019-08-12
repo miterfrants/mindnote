@@ -80,6 +80,12 @@ export class Main extends RouterController {
                 UI.unsubscribed();
             }
         }
+
+        // set metadata
+        UI.header.setMetaData({
+            title: 'Mindnote 心智筆記',
+            image: location.origin + '/mindnote/imgs/apple-icon-180x180.png'
+        });
     }
 
     bindEvent() {

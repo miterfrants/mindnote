@@ -50,6 +50,19 @@ function reset(request) {
         el.parentElement.removeChild(el);
     });
     window.document.querySelector('head title').innerHTML = '';
+    elOgUrl = document.querySelector('meta[property="og:url"]');
+    elOgTitle = document.querySelector('meta[property="og:title"]');
+    elOgImage = document.querySelector('meta[property="og:image"]');
+
+    if (elOgUrl) {
+        document.querySelector('head').removeChild(elOgUrl);
+    }
+    if (elOgTitle) {
+        document.querySelector('head').removeChild(elOgTitle);
+    }
+    if (elOgImage) {
+        document.querySelector('head').removeChild(elOgImage);
+    }
 
     // setup fake localstorage 
     localStorage.setItem('token', _getCookie(request.header('cookie') || '', 'token'));
