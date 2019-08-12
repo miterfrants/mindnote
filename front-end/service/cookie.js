@@ -1,14 +1,15 @@
 export const CookieUtil = {
     setCookie: (name, value, days) => {
+        let expires = '';
         if (days) {
             var date = new Date();
             date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            var expires = "; expires=" + date.toGMTString();
-        } else var expires = "";
-        document.cookie = name + "=" + value + expires + "; path=/";
+            expires = '; expires=' + date.toGMTString();
+        }
+        document.cookie = name + '=' + value + expires + '; path=/';
     },
     getCookie: (name) => {
-        var nameEQ = name + "=";
+        var nameEQ = name + '=';
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {
             var c = ca[i];
@@ -18,6 +19,6 @@ export const CookieUtil = {
         return null;
     },
     eraseCookie: (name) => {
-        createCookie(name, "", -1);
+        CookieUtil.setCookie(name, '', -1);
     }
-}
+};
