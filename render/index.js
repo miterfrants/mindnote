@@ -1,5 +1,9 @@
 const config = require('./config.js');
 const express = require('express');
+const fs = require('fs');
+const fetch = require('node-fetch');
+const DOMParser = require('xmldom').DOMParser;
+
 const imp = require('esm')(module, {
     alias: config.aliases
 });
@@ -7,7 +11,45 @@ const {
     App
 } = imp('./app.js');
 
+const {
+    APP_CONFIG
+} = imp(config.frontEndRootPath + config.frontEndConfigPath);
+
 const app = new express();
+
+app.get('/sitemap.xml', async (request, response, next) => {
+    try {
+        const filePath = `${__dirname}/sitemap.xml`;
+        const bytesFile = fs.readFileSync(filePath);
+        const xmlString = new Buffer.alloc(bytesFile.length, bytesFile).toString('ascii');;
+        const dom = new DOMParser();
+        const doc = dom.parseFromString(xmlString);
+        doc.getElementsByTagName('url');
+        response.header('Content-Type', 'application/xml');
+        const resp = await fetch(`${APP_CONFIG.API_ENDPOINT}boards/sitemap`);
+        const data = await resp.json();
+        const elUrlSet = doc.getElementsByTagName('urlset')[0];
+
+        for (let i = 0; i < data.length; i++) {
+            const elUrl = doc.createElement('url');
+            const elLoc = doc.createElement('loc');
+            const elLastmod = doc.createElement('lastmod');
+
+            elLoc.appendChild(doc.createTextNode(`https://sapiens.tools/mindnote/boards/${data[i].id}`));
+            elLastmod.appendChild(doc.createTextNode(data[i].latest_updated_at));
+
+            elUrl.appendChild(elLoc);
+            elUrl.appendChild(elLastmod);
+            elUrlSet.appendChild(elUrl);
+        }
+
+        response.end(doc.toString());
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+
 app.all('*/$', async (request, response, next) => {
     try {
         //reset api cache;

@@ -18,6 +18,7 @@ namespace Mindnote.Models
         public bool is_public { get; set; }
         public string uniquename { get; set; }
         public int? image_id { get; set; }
+        public DateTime? updated_at { get; set; }
 
         public virtual ICollection<node> node { get; set; }
     }

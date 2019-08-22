@@ -8,4 +8,4 @@ export const GOOGLE = {
 
 export const APP_CONFIG = {
     API_ENDPOINT: 'https://dev.sapiens.tools:8082/mindnote/api/v1/'
-}
+};

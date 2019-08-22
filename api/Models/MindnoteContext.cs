@@ -49,6 +49,8 @@ namespace Mindnote.Models
                     .HasMaxLength(128);
 
                 entity.Property(e => e.uniquename).HasMaxLength(256);
+
+                entity.Property(e => e.updated_at).HasColumnType("timestamp(6) with time zone");
             });
 
             modelBuilder.Entity<image>(entity =>
@@ -98,6 +100,10 @@ namespace Mindnote.Models
                 entity.Property(e => e.title)
                     .IsRequired()
                     .HasMaxLength(512);
+
+                entity.Property(e => e.updated_at)
+                    .HasColumnType("timestamp(6) with time zone")
+                    .HasDefaultValueSql("now()");
 
                 entity.Property(e => e.x).HasColumnType("numeric");
 

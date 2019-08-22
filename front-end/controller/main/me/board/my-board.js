@@ -605,6 +605,9 @@ export class MyBoard extends TutorialRouterController {
     }
 
     async _updateCover() {
+        if (!this.cy) {
+            return;
+        }
         const base64File = await ImageService.extractBase64DataFromURL(this.cy.png());
         api.authApiService.images.post({
             base64Files: [base64File],

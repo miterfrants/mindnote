@@ -16,6 +16,7 @@ namespace Mindnote.Models
         public decimal? x { get; set; }
         public decimal? y { get; set; }
         public string cover { get; set; }
+        public DateTime? updated_at { get; set; }
 
         public virtual board board_ { get; set; }
     }
