@@ -17,5 +17,6 @@ namespace Mindnote.Models
         public decimal? width { get; set; }
         public decimal? height { get; set; }
         public string username { get; set; }
+        public DateTime? latest_updated_at { get; set; }
     }
 }

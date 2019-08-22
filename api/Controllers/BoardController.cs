@@ -22,11 +22,24 @@ namespace Mindnote.Controllers
             _contextForView = contextForView;
         }
 
-
         [HttpGet]
         public ActionResult<List<view_board>> GetAll()
         {
             return _contextForView.view_board.Where(x => x.is_public == true && x.deleted_at == null).OrderByDescending(x => x.created_at).Take(20).ToList();
+        }
+
+        [HttpGet]
+        [Route("sitemap/")]
+        public ActionResult<List<dynamic>> GetAllForSiteMap()
+        {
+            return _contextForView.view_board.Where(x => x.is_public == true && x.deleted_at == null)
+                .OrderByDescending(x => x.created_at)
+                .Select(board => new
+                {
+                    latest_updated_at = board.latest_updated_at,
+                    id = board.id
+                })
+                .ToList<dynamic>();
         }
 
         [HttpGet]

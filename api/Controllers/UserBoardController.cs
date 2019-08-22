@@ -25,6 +25,7 @@ namespace Mindnote.Controllers
             _contextForView = contextForView;
             _userService = userService;
         }
+
         [HttpGet]
         public ActionResult<view_board> GetBoard([FromRoute] Int32 boardId)
         {
@@ -53,6 +54,7 @@ namespace Mindnote.Controllers
                 throw new MindnoteException("嗚喔！ 分類已經被刪除，無法瀏覽", HttpStatusCode.NotFound);
             }
             board.deleted_at = DateTime.Now;
+            board.updated_at = DateTime.Now;
             _context.SaveChanges();
 
             JSONResponse result = new JSONResponse(JSONResponseStatus.OK, new { });
@@ -95,7 +97,7 @@ namespace Mindnote.Controllers
                 }
                 board.image_id = requestBody.image_id;
             }
-
+            board.updated_at = DateTime.Now;
             _context.SaveChanges();
             return board;
         }

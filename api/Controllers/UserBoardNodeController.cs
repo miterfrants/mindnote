@@ -79,6 +79,8 @@ namespace Mindnote.Controllers
                 node.cover = requestBody.cover;
             }
 
+            node.updated_at = DateTime.Now;
+
             _context.SaveChanges();
             return node;
         }
@@ -106,6 +108,8 @@ namespace Mindnote.Controllers
             {
                 relationship.deleted_at = DateTime.Now;
             }
+
+            node.updated_at = DateTime.Now;
 
             Int32 deleteResult = _context.SaveChanges();
             JSONResponse result = new JSONResponse(JSONResponseStatus.OK, new { });

@@ -61,6 +61,7 @@ namespace Mindnote.Controllers
             }
 
             node newNode = new node { title = node.title, description = node.description, owner_id = userId, board_id = board.id };
+
             _context.node.Add(newNode);
             _context.SaveChanges();
 
@@ -97,6 +98,7 @@ namespace Mindnote.Controllers
                 _context.Attach<node>(existedNode);
                 existedNode.x = nodeFromRequest.x;
                 existedNode.y = nodeFromRequest.y;
+                existedNode.updated_at = DateTime.Now;
                 nodeIds.Add((Int32)nodeFromRequest.id);
             }
             _context.SaveChanges();
@@ -121,6 +123,7 @@ namespace Mindnote.Controllers
             foreach (node node in nodes)
             {
                 node.deleted_at = DateTime.Now;
+                node.updated_at = DateTime.Now;
             }
 
             return _context.SaveChanges();
