@@ -17,7 +17,7 @@ const {
 
 const app = new express();
 
-app.get('/sitemap.xml', async (request, response, next) => {
+app.get('/mindnote/sitemap.xml', async (request, response, next) => {
     try {
         const filePath = `${__dirname}/sitemap.xml`;
         const bytesFile = fs.readFileSync(filePath);
@@ -26,17 +26,31 @@ app.get('/sitemap.xml', async (request, response, next) => {
         const doc = dom.parseFromString(xmlString);
         doc.getElementsByTagName('url');
         response.header('Content-Type', 'application/xml');
-        const resp = await fetch(`${APP_CONFIG.API_ENDPOINT}boards/sitemap`);
-        const data = await resp.json();
+        const respForBoard = await fetch(`${APP_CONFIG.API_ENDPOINT}boards/sitemap`);
+        const dataForBoard = await respForBoard.json();
         const elUrlSet = doc.getElementsByTagName('urlset')[0];
-
-        for (let i = 0; i < data.length; i++) {
+        for (let i = 0; i < dataForBoard.length; i++) {
             const elUrl = doc.createElement('url');
             const elLoc = doc.createElement('loc');
             const elLastmod = doc.createElement('lastmod');
 
-            elLoc.appendChild(doc.createTextNode(`https://sapiens.tools/mindnote/boards/${data[i].id}`));
-            elLastmod.appendChild(doc.createTextNode(data[i].latest_updated_at));
+            elLoc.appendChild(doc.createTextNode(`https://sapiens.tools/mindnote/boards/${dataForBoard[i].id}`));
+            elLastmod.appendChild(doc.createTextNode(dataForBoard[i].latest_updated_at));
+
+            elUrl.appendChild(elLoc);
+            elUrl.appendChild(elLastmod);
+            elUrlSet.appendChild(elUrl);
+        }
+
+        const respForNode = await fetch(`${APP_CONFIG.API_ENDPOINT}nodes/sitemap`);
+        const dataForNode = await respForNode.json();
+        for (let i = 0; i < dataForNode.length; i++) {
+            const elUrl = doc.createElement('url');
+            const elLoc = doc.createElement('loc');
+            const elLastmod = doc.createElement('lastmod');
+
+            elLoc.appendChild(doc.createTextNode(`https://sapiens.tools/mindnote/boards/${dataForNode[i].board_id}/nodes/${dataForNode[i].id}`));
+            elLastmod.appendChild(doc.createTextNode(dataForNode[i].latest_updated_at));
 
             elUrl.appendChild(elLoc);
             elUrl.appendChild(elLastmod);
