@@ -11,6 +11,7 @@ namespace Mindnote.Models
         public string link { get; set; }
         public DateTime? created_at { get; set; }
         public DateTime? deleted_at { get; set; }
+        public DateTime? updated_at { get; set; }
         public int? owner_id { get; set; }
         public int? board_id { get; set; }
         public string board_title { get; set; }

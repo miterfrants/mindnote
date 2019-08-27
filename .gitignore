@@ -1,10 +1,19 @@
+#Custom 
+.backup
+
+#Docker
+.docker-run
+
+#secrets
+secrets.json
+pg-env.list
+pgadmin-env.list
+
 # Node Module
 node_modules
 package-lock.json
 Migrations
 volume
-secrets.json
-.backup
 *.swp
 *.*~
 project.lock.json
