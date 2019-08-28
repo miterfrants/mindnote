@@ -2,8 +2,8 @@ Docker Run Command
 ```
 docker run -d \
 -p 8082:80 \
--v ~/project/mindnote/front-end:/usr/share/mindnote/front-end \
--v ~/project/mindnote/front-end/nginx.conf:/etc/nginx/conf.d/default.conf \
+-v /usr/share/mindnote/front-end:/usr/share/mindnote/front-end \
+-v /usr/share/mindnote/render/nginx.conf:/etc/nginx/conf.d/default.conf \
 --name mindnote-front-end \
 --rm \
 mindnote-front-end

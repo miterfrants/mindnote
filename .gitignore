@@ -6,8 +6,8 @@
 
 #secrets
 secrets.json
-pg-env.list
-pgadmin-env.list
+pg.env
+pgadmin.env
 
 # Node Module
 node_modules
