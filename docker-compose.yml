@@ -1,0 +1,54 @@
+version: "3.7"
+services:
+    mindnote-front-end:
+        image: mindnote-front-end
+        ports:
+            - "8082:80"
+        networks:
+            pgnetwork:
+                ipv4_address: 172.18.0.4
+
+        volumes:
+            - /usr/share/mindnote/front-end:/usr/share/mindnote/front-end
+            - /usr/share/mindnote/render/nginx.conf:/etc/nginx/conf.d/default.conf
+
+    postgres:
+        image: postgres
+        ports:
+            - "5432"
+        networks:
+            pgnetwork:
+                ipv4_address: 172.18.0.3
+        env_file:
+            - /usr/share/mindnote/db/pg.env
+        volumes:
+            - /usr/share/mindnote/db/pg-volume:/var/lib/postgresql/data
+
+    pgadmin:
+        image: dpage/pgadmin4
+        ports:
+            - "5050:5050"
+        networks:
+            pgnetwork:
+                ipv4_address: 172.18.0.5
+        env_file:
+            - /usr/share/mindnote/db/pgadmin.env
+        volumes:
+            - /usr/share/mindnote/db/pgadmin-volume:/var/lib/pgadmin
+
+    api:
+        image: mindnote-api-server
+        ports:
+            - "8081:80"
+        networks:
+            pgnetwork:
+                ipv4_address: 172.18.0.2
+        volumes:
+            - /usr/share/mindnote/api/secrets.json:/app/secrets.json
+
+networks:
+    pgnetwork:
+        external: true
+        ipam:
+            config:
+                - subnet: 172.18.0.0/24

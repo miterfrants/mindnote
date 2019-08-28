@@ -5,7 +5,7 @@ docker run \
 --network pgnetwork \
 -d \
 --rm \
--v ./secrets.json:/app/secrets.json \
+-v /usr/share/mindnote/api/secrets.json:/app/secrets.json \
 --name mindnote-api-server \
 -p 8081:8081 \
 mindnote-api-server
